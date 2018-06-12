@@ -39,46 +39,70 @@ func collection() (*mongo.Collection, error) {
 }
 
 // Save agrega un token a la base de datos
-func save(token Token) (Token, error) {
+func insert(token *Token) (*Token, error) {
 	if err := validateSchema(token); err != nil {
-		return token, err
+		return nil, err
 	}
 
 	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
-		return token, err
+		return nil, err
 	}
 
-	if len(token.ID()) > 0 {
-		_id, _ := objectid.FromHex(token.ID())
+	res, err := collection.InsertOne(context.Background(), token)
+	if err != nil {
+		db.HandleError(err)
+		return nil, err
+	}
 
-		_, err := collection.UpdateOne(context.Background(),
-			bson.NewDocument(bson.EC.ObjectID("_id", _id)),
-			bson.NewDocument(
-				bson.EC.SubDocumentFromElements("$set",
-					bson.EC.Boolean("enabled", token.Enabled),
-				),
-			))
+	token.SetID(res.InsertedID.(objectid.ObjectID))
 
-		if err != nil {
-			db.HandleError(err)
-			return token, err
-		}
-	} else {
-		res, err := collection.InsertOne(context.Background(), token)
-		if err != nil {
-			db.HandleError(err)
-			return token, err
-		}
+	return token, nil
+}
 
-		token.SetID(res.InsertedID.(objectid.ObjectID))
+// Save agrega un token a la base de datos
+func update(token *Token) (*Token, error) {
+	if err := validateSchema(token); err != nil {
+		return nil, err
+	}
+
+	collection, err := collection()
+	if err != nil {
+		db.HandleError(err)
+		return nil, err
+	}
+
+	_id, err := objectid.FromHex(token.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = collection.UpdateOne(context.Background(),
+		bson.NewDocument(bson.EC.ObjectID("_id", _id)),
+		bson.NewDocument(
+			bson.EC.SubDocumentFromElements("$set",
+				bson.EC.Boolean("enabled", token.Enabled),
+			),
+		))
+
+	if err != nil {
+		db.HandleError(err)
+		return nil, err
 	}
 
 	return token, nil
 }
 
-func validateSchema(token Token) error {
+// Save agrega un token a la base de datos
+func save(token *Token) (*Token, error) {
+	if len(token.ID()) > 0 {
+		return update(token)
+	}
+	return insert(token)
+}
+
+func validateSchema(token *Token) error {
 	token.UserID = strings.TrimSpace(token.UserID)
 
 	result := make(validator.ValidationErrors)
@@ -137,7 +161,7 @@ func findByID(tokenID string) (*Token, error) {
 
 	token := newTokenFromBson(*result)
 
-	return &token, nil
+	return token, nil
 }
 
 func findByUserID(tokenID string) (*Token, error) {
@@ -169,7 +193,7 @@ func findByUserID(tokenID string) (*Token, error) {
 
 	token := newTokenFromBson(*result)
 
-	return &token, nil
+	return token, nil
 }
 
 func delete(tokenID string) error {
@@ -180,7 +204,7 @@ func delete(tokenID string) error {
 	}
 
 	token.Enabled = false
-	_, err = save(*token)
+	_, err = save(token)
 
 	if err != nil {
 		db.HandleError(err)

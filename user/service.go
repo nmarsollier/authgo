@@ -24,9 +24,8 @@ func SignUp(user *NewUser) (string, error) {
 	if err != nil {
 		if errors.IsUniqueKeyError(err) {
 			return "", ErrLoginExist
-		} else {
-			return "", err
 		}
+		return "", err
 	}
 
 	tokenString, err := token.Create(newUser.ID())
@@ -79,7 +78,7 @@ func ChangePassword(userID string, current string, newPassword string) error {
 		return err
 	}
 
-	_, err = save(*user)
+	_, err = save(user)
 	if err != nil {
 		return err
 	}

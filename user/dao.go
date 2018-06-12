@@ -41,48 +41,70 @@ func collection() (*mongo.Collection, error) {
 	return collection, nil
 }
 
-func save(user User) (User, error) {
+func insert(user *User) (*User, error) {
 	if err := validateSchema(user); err != nil {
-		return user, err
+		return nil, err
 	}
 
 	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
-		return user, err
+		return nil, err
 	}
 
-	if len(user.ID()) > 0 {
-		_id, _ := objectid.FromHex(user.ID())
+	res, err := collection.InsertOne(context.Background(), user)
+	if err != nil {
+		db.HandleError(err)
+		return nil, err
+	}
 
-		_, err := collection.UpdateOne(context.Background(),
-			bson.NewDocument(bson.EC.ObjectID("_id", _id)),
-			bson.NewDocument(
-				bson.EC.SubDocumentFromElements("$set",
-					bson.EC.String("password", user.Password),
-					bson.EC.String("name", user.Name),
-					bson.EC.Boolean("enabled", user.Enabled),
-				),
-			))
+	user.SetID(res.InsertedID.(objectid.ObjectID))
 
-		if err != nil {
-			db.HandleError(err)
-			return user, err
-		}
-	} else {
-		res, err := collection.InsertOne(context.Background(), user)
-		if err != nil {
-			db.HandleError(err)
-			return user, err
-		}
+	return user, nil
+}
 
-		user.SetID(res.InsertedID.(objectid.ObjectID))
+func update(user *User) (*User, error) {
+	if err := validateSchema(user); err != nil {
+		return nil, err
+	}
+
+	collection, err := collection()
+	if err != nil {
+		db.HandleError(err)
+		return nil, err
+	}
+
+	_id, err := objectid.FromHex(user.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = collection.UpdateOne(context.Background(),
+		bson.NewDocument(bson.EC.ObjectID("_id", _id)),
+		bson.NewDocument(
+			bson.EC.SubDocumentFromElements("$set",
+				bson.EC.String("password", user.Password),
+				bson.EC.String("name", user.Name),
+				bson.EC.Boolean("enabled", user.Enabled),
+			),
+		))
+
+	if err != nil {
+		db.HandleError(err)
+		return nil, err
 	}
 
 	return user, nil
 }
 
-func validateSchema(user User) error {
+func save(user *User) (*User, error) {
+	if len(user.ID()) > 0 {
+		return update(user)
+	}
+	return insert(user)
+}
+
+func validateSchema(user *User) error {
 	user.Login = strings.TrimSpace(user.Login)
 	user.Name = strings.TrimSpace(user.Name)
 	user.Password = strings.TrimSpace(user.Password)
@@ -143,14 +165,13 @@ func findByID(userID string) (*User, error) {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, ErrID
-		} else {
-			return nil, err
 		}
+		return nil, err
 	}
 
 	user := newUserFromBson(*result)
 
-	return &user, nil
+	return user, nil
 }
 
 // FindByLogin lee un usuario desde la db
@@ -174,7 +195,7 @@ func findByLogin(login string) (*User, error) {
 
 	user := newUserFromBson(*result)
 
-	return &user, nil
+	return user, nil
 }
 
 // Delete marca un usuario como borrado en la base de datos

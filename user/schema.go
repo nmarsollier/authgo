@@ -17,8 +17,8 @@ type User struct {
 	Enabled  bool     `bson:"enabled"`
 }
 
-func newUser() User {
-	return User{Enabled: true}
+func newUser() *User {
+	return &User{Enabled: true}
 }
 
 // SetID sets the user id based on ObjectID
@@ -31,8 +31,8 @@ func (e *User) ID() string {
 	return e._id
 }
 
-func newUserFromBson(document bson.Document) User {
-	return User{
+func newUserFromBson(document bson.Document) *User {
+	return &User{
 		_id:      lookup.ObjectID(document, "_id"),
 		Login:    lookup.String(document, "login"),
 		Name:     lookup.String(document, "name"),

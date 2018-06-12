@@ -14,8 +14,8 @@ type Token struct {
 }
 
 // New creates new User
-func newToken() Token {
-	return Token{Enabled: true}
+func newToken() *Token {
+	return &Token{Enabled: true}
 }
 
 // SetID sets the user id based on ObjectID
@@ -29,8 +29,8 @@ func (e *Token) ID() string {
 }
 
 // NewFromBson creates new User form bson.Document
-func newTokenFromBson(document bson.Document) Token {
-	return Token{
+func newTokenFromBson(document bson.Document) *Token {
+	return &Token{
 		_id:     lookup.ObjectID(document, "_id"),
 		UserID:  lookup.String(document, "userId"),
 		Enabled: lookup.Bool(document, "enabled"),
