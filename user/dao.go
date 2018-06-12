@@ -10,12 +10,12 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/nmarsollier/ms_auth_go/tools/db"
+	"github.com/nmarsollier/authgo/tools/db"
 )
 
 // UsersCollection obtiene la colección de Usuarios
 func userCollection() (*mongo.Collection, error) {
-	database, err := db.Database()
+	database, err := db.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func userCollection() (*mongo.Collection, error) {
 		},
 	)
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		fmt.Print(err.Error())
 	}
 
@@ -48,7 +48,7 @@ func saveUser(user User) (User, error) {
 
 	collection, err := userCollection()
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		return user, err
 	}
 
@@ -66,13 +66,13 @@ func saveUser(user User) (User, error) {
 			))
 
 		if err != nil {
-			db.HandleConnectionError(err)
+			db.HandleError(err)
 			return user, err
 		}
 	} else {
 		res, err := collection.InsertOne(context.Background(), user)
 		if err != nil {
-			db.HandleConnectionError(err)
+			db.HandleError(err)
 			return user, err
 		}
 
@@ -132,7 +132,7 @@ func findUserByID(userID string) (*User, error) {
 
 	collection, err := userCollection()
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		return nil, err
 	}
 
@@ -140,7 +140,7 @@ func findUserByID(userID string) (*User, error) {
 	filter := bson.NewDocument(bson.EC.ObjectID("_id", _id))
 	err = collection.FindOne(context.Background(), filter).Decode(result)
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, InvalidUserIdError
 		} else {
@@ -157,7 +157,7 @@ func findUserByID(userID string) (*User, error) {
 func findUserByLogin(login string) (*User, error) {
 	collection, collectionError := userCollection()
 	if collectionError != nil {
-		db.HandleConnectionError(collectionError)
+		db.HandleError(collectionError)
 		return nil, collectionError
 	}
 
@@ -165,7 +165,7 @@ func findUserByLogin(login string) (*User, error) {
 	filter := bson.NewDocument(bson.EC.String("login", login))
 	err := collection.FindOne(context.Background(), filter).Decode(result)
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, InvalidLoginError
 		} else {
@@ -187,7 +187,7 @@ func deleteUser(userID string) error {
 
 	collection, err := userCollection()
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		return err
 	}
 
@@ -197,7 +197,7 @@ func deleteUser(userID string) error {
 
 	_, err = collection.UpdateOne(context.Background(), filter, user)
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		return err
 	}
 

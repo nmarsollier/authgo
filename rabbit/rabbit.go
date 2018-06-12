@@ -5,22 +5,23 @@ import (
 	"errors"
 	"log"
 
-	"github.com/nmarsollier/ms_auth_go/tools/config"
+	"github.com/nmarsollier/authgo/tools/env"
 	"github.com/streadway/amqp"
 )
 
-var ChannelNotInitializedError = errors.New("Channel not initialized")
+// ErrChannelNotInitialized Rabbit channel could not be initialized
+var ErrChannelNotInitialized = errors.New("Channel not initialized")
 
 var channel *amqp.Channel
 
-type Message struct {
+type message struct {
 	Type    string `json:"type"`
 	Message string `json:"message"`
 }
 
-func getChannel() (*amqp.Channel, error) {
+func get() (*amqp.Channel, error) {
 	if channel == nil {
-		conn, err := amqp.Dial(config.Environment().RabbitUrl)
+		conn, err := amqp.Dial(env.Get().RabbitURL)
 		if err != nil {
 			return nil, err
 		}
@@ -32,7 +33,7 @@ func getChannel() (*amqp.Channel, error) {
 		channel = ch
 	}
 	if channel == nil {
-		return nil, ChannelNotInitializedError
+		return nil, ErrChannelNotInitialized
 	}
 	return channel, nil
 }
@@ -50,12 +51,12 @@ func getChannel() (*amqp.Channel, error) {
  *     }
  */
 func SendLogout(token string) error {
-	message := Message{
+	send := message{
 		Type:    "logout",
 		Message: token,
 	}
 
-	chanel, err := getChannel()
+	chanel, err := get()
 	if err != nil {
 		channel = nil
 		return err
@@ -75,7 +76,7 @@ func SendLogout(token string) error {
 		return err
 	}
 
-	body, err := json.Marshal(message)
+	body, err := json.Marshal(send)
 	if err != nil {
 		return err
 	}

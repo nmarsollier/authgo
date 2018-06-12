@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
-	"github.com/nmarsollier/ms_auth_go/tools/bsontools"
+	"github.com/nmarsollier/authgo/tools/bsontools"
 	"golang.org/x/crypto/bcrypt"
 )
 

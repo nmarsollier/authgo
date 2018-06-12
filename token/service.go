@@ -8,7 +8,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/ms_auth_go/rabbit"
+	"github.com/nmarsollier/authgo/rabbit"
 	cache "github.com/patrickmn/go-cache"
 )
 

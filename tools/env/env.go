@@ -1,4 +1,4 @@
-package config
+package env
 
 import (
 	"encoding/json"
@@ -7,25 +7,25 @@ import (
 	"os"
 )
 
+// Configuration properties
 type Configuration struct {
 	Port      int    `json:"port"`
-	RabbitUrl string `json:"rabbitUrl"`
-	MongoUrl  string `json:"mongoUrl"`
+	RabbitURL string `json:"rabbitUrl"`
+	MongoURL  string `json:"mongoUrl"`
+	WWWWPath  string `json:"wwwPath"`
 }
 
-var defaultConfig = Configuration{
+var config = Configuration{
 	Port:      3000,
-	RabbitUrl: "amqp://localhost",
-	MongoUrl:  "mongodb://localhost:27017",
+	RabbitURL: "amqp://localhost",
+	MongoURL:  "mongodb://localhost:27017",
+	WWWWPath:  "www",
 }
-
-var config Configuration
 var initialized = false
 
-func Environment() Configuration {
+// Get system configuration properties
+func Get() *Configuration {
 	if !initialized {
-		config = defaultConfig
-
 		if file, err := os.Open("config.json"); err == nil {
 			err = json.NewDecoder(file).Decode(&config)
 			if err != nil {
@@ -38,5 +38,5 @@ func Environment() Configuration {
 		initialized = true
 	}
 
-	return config
+	return &config
 }

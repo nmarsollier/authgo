@@ -8,8 +8,8 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
-	"github.com/nmarsollier/ms_auth_go/controller"
-	"github.com/nmarsollier/ms_auth_go/tools/config"
+	"github.com/nmarsollier/authgo/controller"
+	"github.com/nmarsollier/authgo/tools/env"
 )
 
 func main() {
@@ -25,14 +25,14 @@ func main() {
 		ValidateHeaders: false,
 	}))
 
-	r.Use(static.Serve("/", static.LocalFile("www", false)))
+	r.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, false)))
 
 	r.POST("/auth/password", controller.ChangePassword)
 	r.POST("/auth/signin", controller.SignIn)
 	r.GET("/auth/signout", controller.SignOut)
 	r.POST("/auth/signup", controller.SignUp)
 	r.GET("/auth/currentUser", controller.CurrentUser)
-	r.Run(fmt.Sprintf(":%d", config.Environment().Port))
+	r.Run(fmt.Sprintf(":%d", env.Get().Port))
 }
 
 func preflight(c *gin.Context) {

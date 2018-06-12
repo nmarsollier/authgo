@@ -1,6 +1,6 @@
 package user
 
-import "github.com/nmarsollier/ms_auth_go/tools/errors"
+import "github.com/nmarsollier/authgo/tools/errors"
 
 var InvalidUserIdError = errors.NewValidationErrorError("id", "Invalid")
 var InvalidLoginError = errors.NewValidationErrorError("login", "Invalid")

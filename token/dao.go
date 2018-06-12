@@ -10,11 +10,11 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/nmarsollier/ms_auth_go/tools/db"
+	"github.com/nmarsollier/authgo/tools/db"
 )
 
 func tokenCollection() (*mongo.Collection, error) {
-	db, err := db.Database()
+	db, err := db.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func saveToken(token Token) (Token, error) {
 
 	collection, err := tokenCollection()
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		return token, err
 	}
 
@@ -61,13 +61,13 @@ func saveToken(token Token) (Token, error) {
 			))
 
 		if err != nil {
-			db.HandleConnectionError(err)
+			db.HandleError(err)
 			return token, err
 		}
 	} else {
 		res, err := collection.InsertOne(context.Background(), token)
 		if err != nil {
-			db.HandleConnectionError(err)
+			db.HandleError(err)
 			return token, err
 		}
 
@@ -119,7 +119,7 @@ func findTokenByID(tokenID string) (*Token, error) {
 
 	collection, err := tokenCollection()
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		return nil, err
 	}
 
@@ -127,7 +127,7 @@ func findTokenByID(tokenID string) (*Token, error) {
 	filter := bson.NewDocument(bson.EC.ObjectID("_id", *_id))
 	err = collection.FindOne(context.Background(), filter).Decode(result)
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, UnauthorizedError
 		} else {
@@ -148,7 +148,7 @@ func findTokenByUserID(tokenID string) (*Token, error) {
 
 	collection, err := tokenCollection()
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		return nil, err
 	}
 
@@ -160,7 +160,7 @@ func findTokenByUserID(tokenID string) (*Token, error) {
 	)
 	err = collection.FindOne(context.Background(), filter).Decode(result)
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, UnauthorizedError
 		} else {
@@ -176,7 +176,7 @@ func findTokenByUserID(tokenID string) (*Token, error) {
 func deleteToken(tokenID string) error {
 	token, err := findTokenByID(tokenID)
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		return err
 	}
 
@@ -184,7 +184,7 @@ func deleteToken(tokenID string) error {
 	_, err = saveToken(*token)
 
 	if err != nil {
-		db.HandleConnectionError(err)
+		db.HandleError(err)
 		return err
 	}
 

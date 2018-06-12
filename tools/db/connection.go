@@ -7,16 +7,16 @@ import (
 
 	"github.com/mongodb/mongo-go-driver/core/topology"
 	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/nmarsollier/ms_auth_go/tools/config"
+	"github.com/nmarsollier/authgo/tools/env"
 )
 
 var database *mongo.Database
 
-// Database returns the database
-func Database() (*mongo.Database, error) {
+// Get the mongo database
+func Get() (*mongo.Database, error) {
 	if database == nil {
 		client, err := mongo.NewClientWithOptions(
-			config.Environment().MongoUrl,
+			env.Get().MongoURL,
 			mongo.ClientOpt.ServerSelectionTimeout(time.Second),
 		)
 		if err != nil {
@@ -34,8 +34,8 @@ func Database() (*mongo.Database, error) {
 	return database, nil
 }
 
-// HandleConnectionError función a llamar cuando se produce un error de db
-func HandleConnectionError(err error) {
+// HandleError función a llamar cuando se produce un error de db
+func HandleError(err error) {
 	if err == topology.ErrServerSelectionTimeout {
 		database = nil
 	}

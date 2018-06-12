@@ -1,8 +1,8 @@
 package user
 
 import (
-	"github.com/nmarsollier/ms_auth_go/token"
-	"github.com/nmarsollier/ms_auth_go/tools/errors"
+	"github.com/nmarsollier/authgo/token"
+	"github.com/nmarsollier/authgo/tools/errors"
 )
 
 type NewUserRequest struct {

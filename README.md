@@ -26,13 +26,13 @@ export PATH="$PATH:$GOPATH/bin:$GOROOT/bin"
 Para descargar el proyecto correctamente hay que ejecutar :
 
 ```bash
-go get github.com/nmarsollier/ms_auth_go
+go get github.com/nmarsollier/authgo
 ```
 
 Una vez descargado, tendremos el codigo fuente del proyecto en la carpeta
 
 ```bash
-cd $GOPATH/src/github.com/nmarsollier/ms_auth_go
+cd $GOPATH/src/github.com/nmarsollier/authgo
 ```
 
 Instalar Librerías requeridas
@@ -46,8 +46,8 @@ Build y ejecución
 -
 
 ```bash
-go install github.com/nmarsollier/ms_auth_go
-ms_auth_go
+go install github.com/nmarsollier/authgo
+authgo
 ```
 
 Apidoc
@@ -59,7 +59,7 @@ Apidoc es una herramienta para proyectos node, para que funcione correctamente h
 npm install apidoc -g
 ```
 
-La documentación necesita ser generada manualmente ejecutando la siguiente linea en la carpeta ms_auth_go :
+La documentación necesita ser generada manualmente ejecutando la siguiente linea en la carpeta authgo :
 
 ```bash
 apidoc -s src -o www
