@@ -5,6 +5,7 @@ Requisitos
 -
 
 Go 1.10  <https://golang.org/doc/install>
+Dep <https://github.com/golang/dep>
 
 Configuración inicial
 -
@@ -23,24 +24,17 @@ Para descargar el proyecto correctamente hay que ejecutar :
 go get github.com/nmarsollier/ms_auth_go
 ```
 
-Una vez descargado, tendremos el proyecto en la carpeta
+Una vez descargado, tendremos el codigo fuente del proyecto en la carpeta
 
 ```bash
-GOPATH="$HOME/go/src/github.com/nmarsollier/ms_auth_go
+cd $GOPATH/src/github.com/nmarsollier/ms_auth_go
 ```
 
 Instalar Librerías requeridas
 -
 
 ```bash
-go get github.com/gin-gonic/gin
-go get github.com/mongodb/mongo-go-driver/mongo
-go get golang.org/x/crypto/bcrypt
-go get github.com/dgrijalva/jwt-go
-go get github.com/itsjamie/gin-cors
-go get github.com/patrickmn/go-cache
-go get github.com/streadway/amqp
-go get github.com/gin-contrib/static
+dep ensure
 ```
 
 Build y ejecución
