@@ -74,7 +74,7 @@ Este archivo permite configurar authgo, ver ejemplos en config-example.json.
 authgo busca el archivo "./config.json". Podemos definir el archivo su ruta completa ejecutando
 
 ```bash
-authgo <path_to_config.json>
+authgo [path_to_config.json]
 ```
 
 Para mas detalles ver el archivo tools/env/env.go
