@@ -1,5 +1,9 @@
-Experimental : Auth Service en GO
+Auth Service en GO
 ==
+
+Este Microservicio de seguridad reemplaza al del proyecto
+
+[Microservicios Auth](https://github.com/nmarsollier/2018_microservicios)
 
 Requisitos
 -
