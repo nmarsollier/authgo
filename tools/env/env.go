@@ -25,7 +25,7 @@ var config = Configuration{
 }
 var initialized = false
 
-// Get system configuration properties
+// Get Obtiene las variables de entorno del sistema
 func Get() *Configuration {
 	if !initialized {
 		if file, err := os.Open("config.json"); err == nil {

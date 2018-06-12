@@ -131,9 +131,8 @@ func findByID(tokenID string) (*Token, error) {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.Unauthorized
-		} else {
-			return nil, err
 		}
+		return nil, err
 	}
 
 	token := newTokenFromBson(*result)
@@ -164,9 +163,8 @@ func findByUserID(tokenID string) (*Token, error) {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.Unauthorized
-		} else {
-			return nil, err
 		}
+		return nil, err
 	}
 
 	token := newTokenFromBson(*result)

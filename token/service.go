@@ -66,18 +66,72 @@ func Create(userID string) (string, error) {
  *    HTTP/1.1 401 Unauthorized
  */
 func Validate(c *gin.Context) (*Payload, error) {
-	tokenString := c.GetHeader("Authorization")
-	if strings.Index(tokenString, "bearer ") != 0 {
-		return nil, errors.Unauthorized
+	tokenString, err := getTokenHeader(c)
+	if err != nil {
+		return nil, err
 	}
-	tokenString = tokenString[7:]
 
+	// Si esta en cache, retornamos el cache
 	if found, ok := cache.Get(tokenString); ok {
 		if payload, ok := found.(Payload); ok {
 			return &payload, nil
 		}
 	}
 
+	// Sino validamos el token y lo agregamos al cache
+	payload, err := extractPayload(tokenString)
+	if err != nil {
+		return nil, err
+	}
+
+	// Buscamos el token en la db para validarlo
+	dbToken, err := findByID(payload.TokenID)
+	if err != nil || !dbToken.Enabled {
+		return nil, errors.Unauthorized
+	}
+
+	// Todo bien, se agrega al cache y se retorna
+	cache.Set(tokenString, payload, gocache.DefaultExpiration)
+
+	return payload, nil
+}
+
+// Invalidate invalida un token
+func Invalidate(c *gin.Context) error {
+	payload, err := Validate(c)
+	if err != nil {
+		return errors.Unauthorized
+	}
+
+	if err = delete(payload.TokenID); err != nil {
+		return err
+	}
+
+	go func() {
+		tokenString := c.GetHeader("Authorization")
+
+		if err = rabbit.SendLogout(tokenString); err != nil {
+			log.Output(1, "Rabbit logout no se pudo enviar")
+		}
+
+		cache.Delete(tokenString[7:])
+	}()
+
+	return nil
+}
+
+// get token from Authorization header
+func getTokenHeader(c *gin.Context) (string, error) {
+	tokenString := c.GetHeader("Authorization")
+	if strings.Index(tokenString, "bearer ") != 0 {
+		return "", errors.Unauthorized
+	}
+	tokenString = tokenString[7:]
+	return tokenString, nil
+}
+
+// extract payload from token string
+func extractPayload(tokenString string) (*Payload, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -96,49 +150,10 @@ func Validate(c *gin.Context) (*Payload, error) {
 		return nil, errors.Unauthorized
 	}
 
-	payload := Payload{
+	payload := &Payload{
 		UserID:  claims["userID"].(string),
 		TokenID: claims["tokenID"].(string),
 	}
 
-	dbToken, err := findByID(payload.TokenID)
-
-	if err != nil {
-		return nil, errors.Unauthorized
-	}
-
-	if !dbToken.Enabled {
-		return nil, errors.Unauthorized
-	}
-
-	cache.Set(tokenString, payload, gocache.DefaultExpiration)
-
-	return &payload, nil
-}
-
-// Invalidate valida un token
-func Invalidate(c *gin.Context) error {
-	payload, err := Validate(c)
-	if err != nil {
-		return errors.Unauthorized
-	}
-
-	tokenString := c.GetHeader("Authorization")
-	err = rabbit.SendLogout(tokenString)
-	if err != nil {
-		log.Output(1, "Rabbit logout no se pudo enviar")
-	}
-
-	if strings.Index(tokenString, "bearer ") != 0 {
-		return errors.Unauthorized
-	}
-	tokenString = tokenString[7:]
-	cache.Delete(tokenString)
-
-	err = delete(payload.TokenID)
-	if err != nil {
-		return errors.Unauthorized
-	}
-
-	return nil
+	return payload, nil
 }
