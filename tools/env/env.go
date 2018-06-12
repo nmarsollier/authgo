@@ -37,17 +37,19 @@ func Get() *Configuration {
 
 // Load file properties
 func Load(fileName string) bool {
-	if file, err := os.Open(fileName); err == nil {
-		err = json.NewDecoder(file).Decode(&config)
-		if err != nil {
-			log.Output(1, fmt.Sprintf("%s : %s", fileName, err.Error()))
-			return false
-		}
-		log.Output(1, fmt.Sprintf("%s cargado correctamente", fileName))
-		initialized = true
-		return true
-	} else {
+	file, err := os.Open(fileName)
+	if err != nil {
 		log.Output(1, fmt.Sprintf("%s : %s", fileName, err.Error()))
+		return false
 	}
-	return false
+
+	err = json.NewDecoder(file).Decode(&config)
+	if err != nil {
+		log.Output(1, fmt.Sprintf("%s : %s", fileName, err.Error()))
+		return false
+	}
+
+	log.Output(1, fmt.Sprintf("%s cargado correctamente", fileName))
+	initialized = true
+	return true
 }
