@@ -8,6 +8,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
+// CurrentUser is the controller to get the current logged in user
 /**
  * @api {get} /auth/currentUser Usuario Actual
  * @apiName CurrentUser
@@ -29,19 +30,18 @@ import (
  * @apiUse AuthHeader
  * @apiUse OtherErrors
  */
-// CurrentUser is the controller to get the current logged in user
 func CurrentUser(c *gin.Context) {
-	payload, err := token.ValidateToken(c)
+	payload, err := token.Validate(c)
 
 	if err != nil {
-		errors.HandleError(c, err)
+		errors.Handle(c, err)
 		return
 	}
 
 	user, err := user.CurrentUser(payload.UserID)
 
 	if err != nil {
-		errors.HandleError(c, err)
+		errors.Handle(c, err)
 		return
 	}
 

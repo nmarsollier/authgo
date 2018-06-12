@@ -6,6 +6,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
+// SignIn is the controller to sign in users
 /**
  * @api {post} /auth/signin Login
  * @apiName Log in
@@ -24,19 +25,18 @@ import (
  * @apiUse ParamValidationErrors
  * @apiUse OtherErrors
  */
-// SignIn is the controller to sign in users
 func SignIn(c *gin.Context) {
-	login := signInRequest{}
+	login := signIn{}
 
 	if err := c.ShouldBindJSON(&login); err != nil {
-		errors.HandleError(c, err)
+		errors.Handle(c, err)
 		return
 	}
 
 	tokenString, err := user.SignIn(login.Login, login.Password)
 
 	if err != nil {
-		errors.HandleError(c, err)
+		errors.Handle(c, err)
 		return
 	}
 
@@ -45,7 +45,7 @@ func SignIn(c *gin.Context) {
 	})
 }
 
-type signInRequest struct {
+type signIn struct {
 	Password string `json:"password" binding:"required"`
 	Login    string `json:"login" binding:"required"`
 }

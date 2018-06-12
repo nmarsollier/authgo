@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
-	"github.com/nmarsollier/authgo/tools/bsontools"
+	"github.com/nmarsollier/authgo/tools/lookup"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -33,19 +33,19 @@ func (e *User) ID() string {
 
 func newUserFromBson(document bson.Document) User {
 	return User{
-		_id:      bsontools.LookupObjectID(document, "_id"),
-		Login:    bsontools.LookupString(document, "login"),
-		Name:     bsontools.LookupString(document, "name"),
-		Password: bsontools.LookupString(document, "password"),
-		Enabled:  bsontools.LookupBool(document, "enable"),
-		Roles:    bsontools.LookupStringArray(document, "roles"),
+		_id:      lookup.ObjectID(document, "_id"),
+		Login:    lookup.String(document, "login"),
+		Name:     lookup.String(document, "name"),
+		Password: lookup.String(document, "password"),
+		Enabled:  lookup.Bool(document, "enable"),
+		Roles:    lookup.StringArray(document, "roles"),
 	}
 }
 
 func (e *User) setPasswordText(pwd string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost)
 	if err != nil {
-		return InvalidPasswordError
+		return ErrPassword
 	}
 
 	e.Password = string(hash)
@@ -56,7 +56,7 @@ func (e *User) validatePassword(plainPwd string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(e.Password), []byte(plainPwd))
 
 	if err != nil {
-		return InvalidPasswordError
+		return ErrPassword
 	}
 	return nil
 }

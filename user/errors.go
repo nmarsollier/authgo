@@ -2,7 +2,14 @@ package user
 
 import "github.com/nmarsollier/authgo/tools/errors"
 
-var InvalidUserIdError = errors.NewValidationErrorError("id", "Invalid")
-var InvalidLoginError = errors.NewValidationErrorError("login", "Invalid")
-var LoginAlreadyExistError = errors.NewValidationErrorError("login", "Ya existe")
-var InvalidPasswordError = errors.NewValidationErrorError("password", "Invalid")
+// ErrID el id de usuario es invalido
+var ErrID = errors.ErrValidation("id", "Invalid")
+
+// ErrLogin el login es invalido
+var ErrLogin = errors.ErrValidation("login", "Invalid")
+
+// ErrLoginExist el login ya existe
+var ErrLoginExist = errors.ErrValidation("login", "Ya existe")
+
+// ErrPassword el password es invalido
+var ErrPassword = errors.ErrValidation("password", "Invalid")

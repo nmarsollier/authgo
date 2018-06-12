@@ -13,6 +13,7 @@ type Configuration struct {
 	RabbitURL string `json:"rabbitUrl"`
 	MongoURL  string `json:"mongoUrl"`
 	WWWWPath  string `json:"wwwPath"`
+	JWTSecret string `json:"jwtSecret"`
 }
 
 var config = Configuration{
@@ -20,6 +21,7 @@ var config = Configuration{
 	RabbitURL: "amqp://localhost",
 	MongoURL:  "mongodb://localhost:27017",
 	WWWWPath:  "www",
+	JWTSecret: "ecb6d3479ac3823f1da7f314d871989b",
 }
 var initialized = false
 

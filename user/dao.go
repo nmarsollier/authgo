@@ -14,7 +14,7 @@ import (
 )
 
 // UsersCollection obtiene la colección de Usuarios
-func userCollection() (*mongo.Collection, error) {
+func collection() (*mongo.Collection, error) {
 	database, err := db.Get()
 	if err != nil {
 		return nil, err
@@ -41,12 +41,12 @@ func userCollection() (*mongo.Collection, error) {
 	return collection, nil
 }
 
-func saveUser(user User) (User, error) {
-	if err := validateUserSchema(user); err != nil {
+func save(user User) (User, error) {
+	if err := validateSchema(user); err != nil {
 		return user, err
 	}
 
-	collection, err := userCollection()
+	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
 		return user, err
@@ -82,7 +82,7 @@ func saveUser(user User) (User, error) {
 	return user, nil
 }
 
-func validateUserSchema(user User) error {
+func validateSchema(user User) error {
 	user.Login = strings.TrimSpace(user.Login)
 	user.Name = strings.TrimSpace(user.Name)
 	user.Password = strings.TrimSpace(user.Password)
@@ -124,13 +124,13 @@ func validateUserSchema(user User) error {
 }
 
 // FindByID lee un usuario desde la db
-func findUserByID(userID string) (*User, error) {
+func findByID(userID string) (*User, error) {
 	_id, err := objectid.FromHex(userID)
 	if err != nil {
-		return nil, InvalidUserIdError
+		return nil, ErrID
 	}
 
-	collection, err := userCollection()
+	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
 		return nil, err
@@ -142,7 +142,7 @@ func findUserByID(userID string) (*User, error) {
 	if err != nil {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
-			return nil, InvalidUserIdError
+			return nil, ErrID
 		} else {
 			return nil, err
 		}
@@ -154,8 +154,8 @@ func findUserByID(userID string) (*User, error) {
 }
 
 // FindByLogin lee un usuario desde la db
-func findUserByLogin(login string) (*User, error) {
-	collection, collectionError := userCollection()
+func findByLogin(login string) (*User, error) {
+	collection, collectionError := collection()
 	if collectionError != nil {
 		db.HandleError(collectionError)
 		return nil, collectionError
@@ -167,10 +167,9 @@ func findUserByLogin(login string) (*User, error) {
 	if err != nil {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
-			return nil, InvalidLoginError
-		} else {
-			return nil, err
+			return nil, ErrLogin
 		}
+		return nil, err
 	}
 
 	user := newUserFromBson(*result)
@@ -179,13 +178,13 @@ func findUserByLogin(login string) (*User, error) {
 }
 
 // Delete marca un usuario como borrado en la base de datos
-func deleteUser(userID string) error {
-	_id, err := getUserID(userID)
+func delete(userID string) error {
+	_id, err := getID(userID)
 	if err != nil {
 		return err
 	}
 
-	collection, err := userCollection()
+	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
 		return err
@@ -204,10 +203,10 @@ func deleteUser(userID string) error {
 	return nil
 }
 
-func getUserID(ID string) (*objectid.ObjectID, error) {
+func getID(ID string) (*objectid.ObjectID, error) {
 	_id, err := objectid.FromHex(ID)
 	if err != nil {
-		return nil, InvalidUserIdError
+		return nil, ErrID
 	}
 	return &_id, nil
 }

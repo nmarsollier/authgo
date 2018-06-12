@@ -65,4 +65,16 @@ La documentación necesita ser generada manualmente ejecutando la siguiente line
 apidoc -s src -o www
 ```
 
-Esto nos genera una carpeta public con la documentación, esta carpeta debe estar presente desde donde se ejecute auth, auth busca ./www para localizarlo, aunque se puede configurar desde el archivo de properties.
+Esto nos genera una carpeta public con la documentación, esta carpeta debe estar presente desde donde se ejecute authgo, authgo busca ./www para localizarlo, aunque se puede configurar desde el archivo de properties.
+
+config.json
+-
+
+Este archivo permite configurar authgo, ver ejemplos en config-example.json.
+authgo busca el archivo "./config.json". Podemos definir el archivo su ruta completa ejecutando
+
+```bash
+authgo <path_to_config.json>
+```
+
+Para mas detalles ver el archivo tools/env/env.go

@@ -48,16 +48,15 @@ import (
 var alreadyExistError = gin.H{"error": "Already exist"}
 var internalServerError = gin.H{"error": "Internal server error"}
 
-/* GinError es un error que se serializa utilizando Handle
- * Si se desea definir un error personalizado como se serializa
- * Ver unauthorizedError
- */
-type GinError interface {
+// Handled es un error que se serializa utilizando Handle
+// Si se desea definir un error personalizado como se serializa
+// Ver unauthorizedError
+type Handled interface {
 	Handle(c *gin.Context)
 }
 
-// NewValidationErrorError un error de validación para un solo field
-func NewValidationErrorError(field string, err string) error {
+// ErrValidation un error de validación para un solo field
+func ErrValidation(field string, err string) error {
 	result := make(validator.ValidationErrors)
 
 	result[field] = &validator.FieldError{
@@ -68,14 +67,14 @@ func NewValidationErrorError(field string, err string) error {
 	return result
 }
 
-// HandleError handle any error and output JSON
-func HandleError(c *gin.Context, err interface{}) {
+// Handle handle any error and output JSON
+func Handle(c *gin.Context, err interface{}) {
 	if ve, ok := err.(validator.ValidationErrors); ok {
 		handleValidationError(c, ve)
 		return
 	}
 
-	customError, ok := err.(GinError)
+	customError, ok := err.(Handled)
 	if ok {
 		customError.Handle(c)
 		return

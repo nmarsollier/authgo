@@ -11,9 +11,10 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errors"
 )
 
-func tokenCollection() (*mongo.Collection, error) {
+func collection() (*mongo.Collection, error) {
 	db, err := db.Get()
 	if err != nil {
 		return nil, err
@@ -38,12 +39,12 @@ func tokenCollection() (*mongo.Collection, error) {
 }
 
 // Save agrega un token a la base de datos
-func saveToken(token Token) (Token, error) {
-	if err := validateTokenSchema(token); err != nil {
+func save(token Token) (Token, error) {
+	if err := validateSchema(token); err != nil {
 		return token, err
 	}
 
-	collection, err := tokenCollection()
+	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
 		return token, err
@@ -77,7 +78,7 @@ func saveToken(token Token) (Token, error) {
 	return token, nil
 }
 
-func validateTokenSchema(token Token) error {
+func validateSchema(token Token) error {
 	token.UserID = strings.TrimSpace(token.UserID)
 
 	result := make(validator.ValidationErrors)
@@ -111,13 +112,13 @@ func validateTokenSchema(token Token) error {
 	return nil
 }
 
-func findTokenByID(tokenID string) (*Token, error) {
-	_id, err := getTokenID(tokenID)
+func findByID(tokenID string) (*Token, error) {
+	_id, err := getID(tokenID)
 	if err != nil {
-		return nil, UnauthorizedError
+		return nil, errors.Unauthorized
 	}
 
-	collection, err := tokenCollection()
+	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
 		return nil, err
@@ -129,7 +130,7 @@ func findTokenByID(tokenID string) (*Token, error) {
 	if err != nil {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
-			return nil, UnauthorizedError
+			return nil, errors.Unauthorized
 		} else {
 			return nil, err
 		}
@@ -140,13 +141,13 @@ func findTokenByID(tokenID string) (*Token, error) {
 	return &token, nil
 }
 
-func findTokenByUserID(tokenID string) (*Token, error) {
-	_id, err := getTokenID(tokenID)
+func findByUserID(tokenID string) (*Token, error) {
+	_id, err := getID(tokenID)
 	if err != nil {
-		return nil, UnauthorizedError
+		return nil, errors.Unauthorized
 	}
 
-	collection, err := tokenCollection()
+	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
 		return nil, err
@@ -162,7 +163,7 @@ func findTokenByUserID(tokenID string) (*Token, error) {
 	if err != nil {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
-			return nil, UnauthorizedError
+			return nil, errors.Unauthorized
 		} else {
 			return nil, err
 		}
@@ -173,15 +174,15 @@ func findTokenByUserID(tokenID string) (*Token, error) {
 	return &token, nil
 }
 
-func deleteToken(tokenID string) error {
-	token, err := findTokenByID(tokenID)
+func delete(tokenID string) error {
+	token, err := findByID(tokenID)
 	if err != nil {
 		db.HandleError(err)
 		return err
 	}
 
 	token.Enabled = false
-	_, err = saveToken(*token)
+	_, err = save(*token)
 
 	if err != nil {
 		db.HandleError(err)
@@ -191,17 +192,10 @@ func deleteToken(tokenID string) error {
 	return nil
 }
 
-func getTokenID(ID string) (*objectid.ObjectID, error) {
-	result, err := objectid.FromHex(ID)
+func getID(ID string) (*objectid.ObjectID, error) {
+	_id, err := objectid.FromHex(ID)
 	if err != nil {
-		vError := make(validator.ValidationErrors)
-
-		vError["id"] = &validator.FieldError{
-			Field: "id",
-			Tag:   "Invalid",
-		}
-
-		return nil, vError
+		return nil, ErrID
 	}
-	return &result, nil
+	return &_id, nil
 }

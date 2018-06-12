@@ -6,21 +6,26 @@ import (
 	"strings"
 	"time"
 
+	"github.com/nmarsollier/authgo/tools/env"
+	"github.com/nmarsollier/authgo/tools/errors"
+
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/rabbit"
-	cache "github.com/patrickmn/go-cache"
+	gocache "github.com/patrickmn/go-cache"
 )
 
-var tokenCache = cache.New(60*time.Minute, 10*time.Minute)
+var cache = gocache.New(60*time.Minute, 10*time.Minute)
 
-var jwtSecret = []byte("ecb6d3479ac3823f1da7f314d871989b")
+var jwtSecret = []byte(env.Get().JWTSecret)
 
+// Payload es la información cifrada que se guarda en el token
 type Payload struct {
 	TokenID string
 	UserID  string
 }
 
+// Create crea un token
 /**
  * @apiDefine TokenResponse
  *
@@ -30,12 +35,11 @@ type Payload struct {
  *       "token": "{Token de autorización}"
  *     }
  */
-// CreateToken crea un token
-func CreateToken(userID string) (string, error) {
+func Create(userID string) (string, error) {
 	token := newToken()
 	token.UserID = userID
 
-	token, err := saveToken(token)
+	token, err := save(token)
 	if err != nil {
 		return "", err
 	}
@@ -51,6 +55,7 @@ func CreateToken(userID string) (string, error) {
 	return tokenString, err
 }
 
+// Validate valida un token
 /**
  * @apiDefine AuthHeader
  *
@@ -60,15 +65,14 @@ func CreateToken(userID string) (string, error) {
  * @apiSuccessExample 401 Unauthorized
  *    HTTP/1.1 401 Unauthorized
  */
-// ValidateToken valida un token
-func ValidateToken(c *gin.Context) (*Payload, error) {
+func Validate(c *gin.Context) (*Payload, error) {
 	tokenString := c.GetHeader("Authorization")
 	if strings.Index(tokenString, "bearer ") != 0 {
-		return nil, UnauthorizedError
+		return nil, errors.Unauthorized
 	}
 	tokenString = tokenString[7:]
 
-	if found, ok := tokenCache.Get(tokenString); ok {
+	if found, ok := cache.Get(tokenString); ok {
 		if payload, ok := found.(Payload); ok {
 			return &payload, nil
 		}
@@ -83,13 +87,13 @@ func ValidateToken(c *gin.Context) (*Payload, error) {
 	})
 
 	if err != nil || !token.Valid {
-		return nil, UnauthorizedError
+		return nil, errors.Unauthorized
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if !ok {
-		return nil, UnauthorizedError
+		return nil, errors.Unauthorized
 	}
 
 	payload := Payload{
@@ -97,26 +101,26 @@ func ValidateToken(c *gin.Context) (*Payload, error) {
 		TokenID: claims["tokenID"].(string),
 	}
 
-	dbToken, err := findTokenByID(payload.TokenID)
+	dbToken, err := findByID(payload.TokenID)
 
 	if err != nil {
-		return nil, UnauthorizedError
+		return nil, errors.Unauthorized
 	}
 
 	if !dbToken.Enabled {
-		return nil, UnauthorizedError
+		return nil, errors.Unauthorized
 	}
 
-	tokenCache.Set(tokenString, payload, cache.DefaultExpiration)
+	cache.Set(tokenString, payload, gocache.DefaultExpiration)
 
 	return &payload, nil
 }
 
-// InvalidateToken valida un token
-func InvalidateToken(c *gin.Context) error {
-	payload, err := ValidateToken(c)
+// Invalidate valida un token
+func Invalidate(c *gin.Context) error {
+	payload, err := Validate(c)
 	if err != nil {
-		return UnauthorizedError
+		return errors.Unauthorized
 	}
 
 	tokenString := c.GetHeader("Authorization")
@@ -126,14 +130,14 @@ func InvalidateToken(c *gin.Context) error {
 	}
 
 	if strings.Index(tokenString, "bearer ") != 0 {
-		return UnauthorizedError
+		return errors.Unauthorized
 	}
 	tokenString = tokenString[7:]
-	tokenCache.Delete(tokenString)
+	cache.Delete(tokenString)
 
-	err = deleteToken(payload.TokenID)
+	err = delete(payload.TokenID)
 	if err != nil {
-		return UnauthorizedError
+		return errors.Unauthorized
 	}
 
 	return nil

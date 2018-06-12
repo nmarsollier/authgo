@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// SignUp registra usuarios nuevos
 /**
  * @api {post} /auth/signup Registrar Usuario
  * @apiName signup
@@ -26,19 +27,18 @@ import (
  * @apiUse ParamValidationErrors
  * @apiUse OtherErrors
  */
-// SignUp is the controller to signup new users
 func SignUp(c *gin.Context) {
-	userRequest := user.NewUserRequest{}
+	newUser := user.NewUser{}
 
-	if err := c.ShouldBindJSON(&userRequest); err != nil {
-		errors.HandleError(c, err)
+	if err := c.ShouldBindJSON(&newUser); err != nil {
+		errors.Handle(c, err)
 		return
 	}
 
-	token, err := user.SignUp(userRequest)
+	token, err := user.SignUp(&newUser)
 
 	if err != nil {
-		errors.HandleError(c, err)
+		errors.Handle(c, err)
 		return
 	}
 

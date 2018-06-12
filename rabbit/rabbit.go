@@ -19,7 +19,7 @@ type message struct {
 	Message string `json:"message"`
 }
 
-func get() (*amqp.Channel, error) {
+func getChannel() (*amqp.Channel, error) {
 	if channel == nil {
 		conn, err := amqp.Dial(env.Get().RabbitURL)
 		if err != nil {
@@ -56,7 +56,7 @@ func SendLogout(token string) error {
 		Message: token,
 	}
 
-	chanel, err := get()
+	chanel, err := getChannel()
 	if err != nil {
 		channel = nil
 		return err

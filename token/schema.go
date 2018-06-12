@@ -3,7 +3,7 @@ package token
 import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
-	"github.com/nmarsollier/authgo/tools/bsontools"
+	"github.com/nmarsollier/authgo/tools/lookup"
 )
 
 // Token data structure
@@ -31,8 +31,8 @@ func (e *Token) ID() string {
 // NewFromBson creates new User form bson.Document
 func newTokenFromBson(document bson.Document) Token {
 	return Token{
-		_id:     bsontools.LookupObjectID(document, "_id"),
-		UserID:  bsontools.LookupString(document, "userId"),
-		Enabled: bsontools.LookupBool(document, "enabled"),
+		_id:     lookup.ObjectID(document, "_id"),
+		UserID:  lookup.String(document, "userId"),
+		Enabled: lookup.Bool(document, "enabled"),
 	}
 }

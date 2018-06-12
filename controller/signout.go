@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// SignOut is the sign out controller
 /**
  * @api {get} /auth/signout Logout
  * @apiName SignOut
@@ -20,12 +21,11 @@ import (
  * @apiUse AuthHeader
  * @apiUse OtherErrors
  */
-// SignOut is the sign out controller
 func SignOut(c *gin.Context) {
-	err := token.InvalidateToken(c)
+	err := token.Invalidate(c)
 
 	if err != nil {
-		errors.HandleError(c, err)
+		errors.Handle(c, err)
 		return
 	}
 

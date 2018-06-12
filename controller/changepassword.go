@@ -7,6 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
+// ChangePassword Change Password Controller
 /**
  * @api {post} /auth/password Cambiar Password
  * @apiName ChangePassword
@@ -28,32 +29,31 @@ import (
  * @apiUse ParamValidationErrors
  * @apiUse OtherErrors
  */
-// ChangePassword Change Password Controller
 func ChangePassword(c *gin.Context) {
-	payload, err := token.ValidateToken(c)
+	payload, err := token.Validate(c)
 
 	if err != nil {
-		errors.HandleError(c, err)
+		errors.Handle(c, err)
 		return
 	}
 
-	body := changePasswordRequest{}
+	body := changePassword{}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
-		errors.HandleError(c, err)
+		errors.Handle(c, err)
 		return
 	}
 
-	err = user.ChangePassword(payload.UserID, body.CurrentPassword, body.NewPassword)
+	err = user.ChangePassword(payload.UserID, body.Current, body.New)
 	if err != nil {
-		errors.HandleError(c, err)
+		errors.Handle(c, err)
 		return
 	}
 
 	c.Done()
 }
 
-type changePasswordRequest struct {
-	CurrentPassword string `json:"currentPassword" binding:"required"`
-	NewPassword     string `json:"newPassword" binding:"required"`
+type changePassword struct {
+	Current string `json:"currentPassword" binding:"required"`
+	New     string `json:"newPassword" binding:"required"`
 }
