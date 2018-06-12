@@ -28,17 +28,26 @@ var initialized = false
 // Get Obtiene las variables de entorno del sistema
 func Get() *Configuration {
 	if !initialized {
-		if file, err := os.Open("config.json"); err == nil {
-			err = json.NewDecoder(file).Decode(&config)
-			if err != nil {
-				log.Output(1, fmt.Sprintf("Error al leer archivo config.xml : %s", err.Error()))
-			}
-		} else {
-			log.Output(1, "No se encontró el archivo de configuraion config.json")
-		}
-
+		Load("config.json")
 		initialized = true
 	}
 
 	return &config
+}
+
+// Load file properties
+func Load(fileName string) bool {
+	if file, err := os.Open(fileName); err == nil {
+		err = json.NewDecoder(file).Decode(&config)
+		if err != nil {
+			log.Output(1, fmt.Sprintf("%s : %s", fileName, err.Error()))
+			return false
+		}
+		log.Output(1, fmt.Sprintf("%s cargado correctamente", fileName))
+		initialized = true
+		return true
+	} else {
+		log.Output(1, fmt.Sprintf("%s : %s", fileName, err.Error()))
+	}
+	return false
 }

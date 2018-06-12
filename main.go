@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/static"
@@ -13,6 +14,10 @@ import (
 )
 
 func main() {
+	if len(os.Args) > 1 {
+		env.Load(os.Args[1])
+	}
+
 	r := gin.Default()
 
 	r.Use(cors.Middleware(cors.Config{

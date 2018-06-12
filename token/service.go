@@ -17,8 +17,6 @@ import (
 
 var cache = gocache.New(60*time.Minute, 10*time.Minute)
 
-var jwtSecret = []byte(env.Get().JWTSecret)
-
 // Payload es la información cifrada que se guarda en el token
 type Payload struct {
 	TokenID string
@@ -50,7 +48,7 @@ func Create(userID string) (string, error) {
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
-	tokenString, err := jwtToken.SignedString(jwtSecret)
+	tokenString, err := jwtToken.SignedString([]byte(env.Get().JWTSecret))
 
 	return tokenString, err
 }
@@ -137,7 +135,7 @@ func extractPayload(tokenString string) (*Payload, error) {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return jwtSecret, nil
+		return []byte(env.Get().JWTSecret), nil
 	})
 
 	if err != nil || !token.Valid {
