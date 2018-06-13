@@ -2,7 +2,7 @@ package token
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
@@ -29,7 +29,7 @@ func collection() (*mongo.Collection, error) {
 		},
 	)
 	if err != nil {
-		fmt.Print(err.Error())
+		log.Output(1, err.Error())
 	}
 
 	return db.Collection("tokens"), nil

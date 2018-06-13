@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
@@ -19,6 +20,8 @@ func main() {
 	}
 
 	r := gin.Default()
+
+	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	r.Use(cors.Middleware(cors.Config{
 		Origins:         "*",

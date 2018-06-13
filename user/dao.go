@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -36,7 +36,7 @@ func collection() (*mongo.Collection, error) {
 	)
 	if err != nil {
 		db.HandleError(err)
-		fmt.Print(err.Error())
+		log.Output(1, err.Error())
 	}
 
 	return collection, nil
