@@ -53,13 +53,11 @@ func insert(user *User) (*User, error) {
 		return nil, err
 	}
 
-	res, err := collection.InsertOne(context.Background(), user)
+	_, err = collection.InsertOne(context.Background(), user)
 	if err != nil {
 		db.HandleError(err)
 		return nil, err
 	}
-
-	user.setID(res.InsertedID.(objectid.ObjectID))
 
 	return user, nil
 }
@@ -75,11 +73,6 @@ func update(user *User) (*User, error) {
 		return nil, err
 	}
 
-	_id, err := objectid.FromHex(user.ID())
-	if err != nil {
-		return nil, err
-	}
-
 	user.Updated = time.Now()
 
 	doc, err := bson.NewDocumentEncoder().EncodeDocument(user)
@@ -89,7 +82,7 @@ func update(user *User) (*User, error) {
 	}
 
 	_, err = collection.UpdateOne(context.Background(),
-		bson.NewDocument(bson.EC.ObjectID("_id", _id)),
+		bson.NewDocument(bson.EC.ObjectID("_id", user.ID)),
 		bson.NewDocument(
 			bson.EC.SubDocumentFromElements("$set",
 				doc.LookupElement("password"),
@@ -107,13 +100,6 @@ func update(user *User) (*User, error) {
 	return user, nil
 }
 
-func save(user *User) (*User, error) {
-	if len(user.ID()) > 0 {
-		return update(user)
-	}
-	return insert(user)
-}
-
 func validateSchema(user *User) error {
 	user.Login = strings.TrimSpace(user.Login)
 	user.Name = strings.TrimSpace(user.Name)
@@ -121,14 +107,6 @@ func validateSchema(user *User) error {
 
 	result := make(validator.ValidationErrors)
 
-	if len(user.ID()) > 0 {
-		if _, err := objectid.FromHex(user.ID()); err != nil {
-			result["id"] = &validator.FieldError{
-				Field: "id",
-				Tag:   "Invalid",
-			}
-		}
-	}
 	if len(user.Name) == 0 {
 		result["name"] = &validator.FieldError{
 			Field: "name",
@@ -168,9 +146,10 @@ func findByID(userID string) (*User, error) {
 		return nil, err
 	}
 
-	result := bson.NewDocument()
 	filter := bson.NewDocument(bson.EC.ObjectID("_id", _id))
-	err = collection.FindOne(context.Background(), filter).Decode(result)
+
+	user := &User{}
+	err = collection.FindOne(context.Background(), filter).Decode(user)
 	if err != nil {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
@@ -178,8 +157,6 @@ func findByID(userID string) (*User, error) {
 		}
 		return nil, err
 	}
-
-	user := newUserFromBson(*result)
 
 	return user, nil
 }
@@ -192,9 +169,9 @@ func findByLogin(login string) (*User, error) {
 		return nil, collectionError
 	}
 
-	result := bson.NewDocument()
+	user := &User{}
 	filter := bson.NewDocument(bson.EC.String("login", login))
-	err := collection.FindOne(context.Background(), filter).Decode(result)
+	err := collection.FindOne(context.Background(), filter).Decode(user)
 	if err != nil {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
@@ -202,8 +179,6 @@ func findByLogin(login string) (*User, error) {
 		}
 		return nil, err
 	}
-
-	user := newUserFromBson(*result)
 
 	return user, nil
 }

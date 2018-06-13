@@ -20,7 +20,7 @@ func SignUp(user *NewUser) (string, error) {
 	newUser.Roles = []string{"user"}
 	newUser.setPasswordText(user.Password)
 
-	newUser, err := save(newUser)
+	newUser, err := insert(newUser)
 	if err != nil {
 		if errors.IsUniqueKeyError(err) {
 			return "", ErrLoginExist
@@ -28,7 +28,7 @@ func SignUp(user *NewUser) (string, error) {
 		return "", err
 	}
 
-	tokenString, err := token.Create(newUser.ID())
+	tokenString, err := token.Create(newUser.ID)
 	if err != nil {
 		return "", err
 	}
@@ -52,7 +52,7 @@ func SignIn(login string, password string) (string, error) {
 		return "", err
 	}
 
-	tokenString, err := token.Create(user.ID())
+	tokenString, err := token.Create(user.ID)
 	if err != nil {
 		return "", err
 	}
@@ -82,7 +82,7 @@ func ChangePassword(userID string, current string, newPassword string) error {
 		return err
 	}
 
-	_, err = save(user)
+	_, err = update(user)
 	if err != nil {
 		return err
 	}

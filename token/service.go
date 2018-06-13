@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mongodb/mongo-go-driver/bson/objectid"
+
 	"github.com/nmarsollier/authgo/tools/env"
 	"github.com/nmarsollier/authgo/tools/errors"
 
@@ -33,18 +35,18 @@ type Payload struct {
  *       "token": "{Token de autorización}"
  *     }
  */
-func Create(userID string) (string, error) {
+func Create(userID objectid.ObjectID) (string, error) {
 	token := newToken()
 	token.UserID = userID
 
-	token, err := save(token)
+	token, err := insert(token)
 	if err != nil {
 		return "", err
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"tokenID": token.id(),
-		"userID":  token.UserID,
+		"tokenID": token.ID.Hex(),
+		"userID":  token.UserID.Hex(),
 	})
 
 	// Sign and get the complete encoded token as a string using the secret

@@ -3,9 +3,6 @@ package token
 import (
 	"context"
 	"fmt"
-	"strings"
-
-	validator "gopkg.in/go-playground/validator.v8"
 
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
@@ -40,41 +37,26 @@ func collection() (*mongo.Collection, error) {
 
 // Save agrega un token a la base de datos
 func insert(token *Token) (*Token, error) {
-	if err := validateSchema(token); err != nil {
-		return nil, err
-	}
-
 	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
 		return nil, err
 	}
 
-	res, err := collection.InsertOne(context.Background(), token)
+	_, err = collection.InsertOne(context.Background(), token)
 	if err != nil {
 		db.HandleError(err)
 		return nil, err
 	}
-
-	token.setID(res.InsertedID.(objectid.ObjectID))
 
 	return token, nil
 }
 
 // Save agrega un token a la base de datos
 func update(token *Token) (*Token, error) {
-	if err := validateSchema(token); err != nil {
-		return nil, err
-	}
-
 	collection, err := collection()
 	if err != nil {
 		db.HandleError(err)
-		return nil, err
-	}
-
-	_id, err := objectid.FromHex(token.id())
-	if err != nil {
 		return nil, err
 	}
 
@@ -85,7 +67,7 @@ func update(token *Token) (*Token, error) {
 	}
 
 	_, err = collection.UpdateOne(context.Background(),
-		bson.NewDocument(bson.EC.ObjectID("_id", _id)),
+		bson.NewDocument(bson.EC.ObjectID("_id", token.ID)),
 		bson.NewDocument(
 			bson.EC.SubDocumentFromElements("$set",
 				doc.LookupElement("enabled"),
@@ -100,48 +82,6 @@ func update(token *Token) (*Token, error) {
 	return token, nil
 }
 
-// Save agrega un token a la base de datos
-func save(token *Token) (*Token, error) {
-	if len(token.id()) > 0 {
-		return update(token)
-	}
-	return insert(token)
-}
-
-func validateSchema(token *Token) error {
-	token.UserID = strings.TrimSpace(token.UserID)
-
-	result := make(validator.ValidationErrors)
-
-	if len(token.id()) > 0 {
-		if _, err := objectid.FromHex(token.id()); err != nil {
-			result["id"] = &validator.FieldError{
-				Field: "id",
-				Tag:   "Invalid",
-			}
-		}
-	}
-	if len(token.UserID) == 0 {
-		result["userId"] = &validator.FieldError{
-			Field: "userId",
-			Tag:   "Requerido",
-		}
-	} else {
-		if _, err := objectid.FromHex(token.UserID); err != nil {
-			result["userId"] = &validator.FieldError{
-				Field: "userId",
-				Tag:   "Invalid",
-			}
-		}
-	}
-
-	if len(result) > 0 {
-		return result
-	}
-
-	return nil
-}
-
 func findByID(tokenID string) (*Token, error) {
 	_id, err := getID(tokenID)
 	if err != nil {
@@ -154,9 +94,9 @@ func findByID(tokenID string) (*Token, error) {
 		return nil, err
 	}
 
-	result := bson.NewDocument()
+	token := &Token{}
 	filter := bson.NewDocument(bson.EC.ObjectID("_id", *_id))
-	err = collection.FindOne(context.Background(), filter).Decode(result)
+	err = collection.FindOne(context.Background(), filter).Decode(token)
 	if err != nil {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
@@ -164,8 +104,6 @@ func findByID(tokenID string) (*Token, error) {
 		}
 		return nil, err
 	}
-
-	token := newTokenFromBson(*result)
 
 	return token, nil
 }
@@ -182,13 +120,13 @@ func findByUserID(tokenID string) (*Token, error) {
 		return nil, err
 	}
 
-	result := bson.NewDocument()
+	token := &Token{}
 
 	filter := bson.NewDocument(
 		bson.EC.String("userId", _id.Hex()),
 		bson.EC.Boolean("enabled", true),
 	)
-	err = collection.FindOne(context.Background(), filter).Decode(result)
+	err = collection.FindOne(context.Background(), filter).Decode(token)
 	if err != nil {
 		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
@@ -196,8 +134,6 @@ func findByUserID(tokenID string) (*Token, error) {
 		}
 		return nil, err
 	}
-
-	token := newTokenFromBson(*result)
 
 	return token, nil
 }
@@ -210,7 +146,7 @@ func delete(tokenID string) error {
 	}
 
 	token.Enabled = false
-	_, err = save(token)
+	_, err = update(token)
 
 	if err != nil {
 		db.HandleError(err)

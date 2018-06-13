@@ -46,7 +46,7 @@ func CurrentUser(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"id":    user.ID(),
+		"id":    user.ID.Hex(),
 		"name":  user.Name,
 		"roles": user.Roles,
 		"login": user.Login,
