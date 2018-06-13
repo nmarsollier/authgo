@@ -35,7 +35,6 @@ func collection() (*mongo.Collection, error) {
 		},
 	)
 	if err != nil {
-		db.HandleError(err)
 		log.Output(1, err.Error())
 	}
 
@@ -49,13 +48,11 @@ func insert(user *User) (*User, error) {
 
 	collection, err := collection()
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
 	_, err = collection.InsertOne(context.Background(), user)
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
@@ -69,7 +66,6 @@ func update(user *User) (*User, error) {
 
 	collection, err := collection()
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
@@ -77,12 +73,11 @@ func update(user *User) (*User, error) {
 
 	doc, err := bson.NewDocumentEncoder().EncodeDocument(user)
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
 	_, err = collection.UpdateOne(context.Background(),
-		bson.NewDocument(bson.EC.ObjectID("_id", user.ID)),
+		bson.NewDocument(doc.LookupElement("_id")),
 		bson.NewDocument(
 			bson.EC.SubDocumentFromElements("$set",
 				doc.LookupElement("password"),
@@ -93,7 +88,6 @@ func update(user *User) (*User, error) {
 		))
 
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
@@ -142,7 +136,6 @@ func findByID(userID string) (*User, error) {
 
 	collection, err := collection()
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
@@ -151,7 +144,6 @@ func findByID(userID string) (*User, error) {
 	user := &User{}
 	err = collection.FindOne(context.Background(), filter).Decode(user)
 	if err != nil {
-		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, ErrID
 		}
@@ -165,7 +157,6 @@ func findByID(userID string) (*User, error) {
 func findByLogin(login string) (*User, error) {
 	collection, collectionError := collection()
 	if collectionError != nil {
-		db.HandleError(collectionError)
 		return nil, collectionError
 	}
 
@@ -173,7 +164,6 @@ func findByLogin(login string) (*User, error) {
 	filter := bson.NewDocument(bson.EC.String("login", login))
 	err := collection.FindOne(context.Background(), filter).Decode(user)
 	if err != nil {
-		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, ErrLogin
 		}
@@ -192,7 +182,6 @@ func delete(userID string) error {
 
 	collection, err := collection()
 	if err != nil {
-		db.HandleError(err)
 		return err
 	}
 
@@ -202,7 +191,6 @@ func delete(userID string) error {
 
 	_, err = collection.UpdateOne(context.Background(), filter, user)
 	if err != nil {
-		db.HandleError(err)
 		return err
 	}
 

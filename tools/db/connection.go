@@ -34,8 +34,8 @@ func Get() (*mongo.Database, error) {
 	return database, nil
 }
 
-// HandleError función a llamar cuando se produce un error de db
-func HandleError(err error) {
+// CheckError función a llamar cuando se produce un error de db
+func CheckError(err interface{}) {
 	if err == topology.ErrServerSelectionTimeout {
 		database = nil
 	}

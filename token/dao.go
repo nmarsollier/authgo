@@ -39,13 +39,11 @@ func collection() (*mongo.Collection, error) {
 func insert(token *Token) (*Token, error) {
 	collection, err := collection()
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
 	_, err = collection.InsertOne(context.Background(), token)
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
@@ -56,13 +54,11 @@ func insert(token *Token) (*Token, error) {
 func update(token *Token) (*Token, error) {
 	collection, err := collection()
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
 	doc, err := bson.NewDocumentEncoder().EncodeDocument(token)
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
@@ -75,7 +71,6 @@ func update(token *Token) (*Token, error) {
 		))
 
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
@@ -90,7 +85,6 @@ func findByID(tokenID string) (*Token, error) {
 
 	collection, err := collection()
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
@@ -98,7 +92,6 @@ func findByID(tokenID string) (*Token, error) {
 	filter := bson.NewDocument(bson.EC.ObjectID("_id", *_id))
 	err = collection.FindOne(context.Background(), filter).Decode(token)
 	if err != nil {
-		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.Unauthorized
 		}
@@ -116,7 +109,6 @@ func findByUserID(tokenID string) (*Token, error) {
 
 	collection, err := collection()
 	if err != nil {
-		db.HandleError(err)
 		return nil, err
 	}
 
@@ -128,7 +120,6 @@ func findByUserID(tokenID string) (*Token, error) {
 	)
 	err = collection.FindOne(context.Background(), filter).Decode(token)
 	if err != nil {
-		db.HandleError(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.Unauthorized
 		}
@@ -141,7 +132,6 @@ func findByUserID(tokenID string) (*Token, error) {
 func delete(tokenID string) error {
 	token, err := findByID(tokenID)
 	if err != nil {
-		db.HandleError(err)
 		return err
 	}
 
@@ -149,7 +139,6 @@ func delete(tokenID string) error {
 	_, err = update(token)
 
 	if err != nil {
-		db.HandleError(err)
 		return err
 	}
 
