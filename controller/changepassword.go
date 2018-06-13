@@ -18,7 +18,6 @@ import (
  * @apiParamExample {json} Body
  *    {
  *      "currentPassword" : "{Contraseña actual}",
- *      "verifyPassword" : "{Contraseña actual}"
  *      "newPassword" : "{Nueva Contraseña}",
  *    }
  *

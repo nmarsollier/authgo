@@ -43,6 +43,10 @@ func SignIn(login string, password string) (string, error) {
 		return "", err
 	}
 
+	if !user.Enabled {
+		return "", errors.Unauthorized
+	}
+
 	err = user.validatePassword(password)
 	if err != nil {
 		return "", err
