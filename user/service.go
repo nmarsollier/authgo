@@ -5,19 +5,18 @@ import (
 	"github.com/nmarsollier/authgo/tools/errors"
 )
 
-// NewUser es un nuevo usuario
-type NewUser struct {
+// SignUpRequest es un nuevo usuario
+type SignUpRequest struct {
 	Name     string `json:"name" binding:"required"`
 	Password string `json:"password" binding:"required"`
 	Login    string `json:"login" binding:"required"`
 }
 
 // SignUp is the controller to signup new users
-func SignUp(user *NewUser) (string, error) {
+func SignUp(user *SignUpRequest) (string, error) {
 	newUser := newUser()
 	newUser.Login = user.Login
 	newUser.Name = user.Name
-	newUser.Roles = []string{"user"}
 	newUser.setPasswordText(user.Password)
 
 	newUser, err := insert(newUser)
@@ -47,8 +46,7 @@ func SignIn(login string, password string) (string, error) {
 		return "", errors.Unauthorized
 	}
 
-	err = user.validatePassword(password)
-	if err != nil {
+	if err = user.validatePassword(password); err != nil {
 		return "", err
 	}
 
@@ -65,25 +63,22 @@ func CurrentUser(userID string) (*User, error) {
 	return findByID(userID)
 }
 
-// ChangePassword Change Password Controller
+// ChangePassword Permite cambiar contraseña
 func ChangePassword(userID string, current string, newPassword string) error {
 	user, err := findByID(userID)
 	if err != nil {
 		return err
 	}
 
-	err = user.validatePassword(current)
-	if err != nil {
+	if err = user.validatePassword(current); err != nil {
 		return err
 	}
 
-	err = user.setPasswordText(newPassword)
-	if err != nil {
+	if err = user.setPasswordText(newPassword); err != nil {
 		return err
 	}
 
-	_, err = update(user)
-	if err != nil {
+	if _, err = update(user); err != nil {
 		return err
 	}
 

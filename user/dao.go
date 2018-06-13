@@ -51,8 +51,7 @@ func insert(user *User) (*User, error) {
 		return nil, err
 	}
 
-	_, err = collection.InsertOne(context.Background(), user)
-	if err != nil {
+	if _, err = collection.InsertOne(context.Background(), user); err != nil {
 		return nil, err
 	}
 
@@ -144,9 +143,6 @@ func findByID(userID string) (*User, error) {
 	user := &User{}
 	err = collection.FindOne(context.Background(), filter).Decode(user)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil, ErrID
-		}
 		return nil, err
 	}
 
@@ -186,10 +182,24 @@ func delete(userID string) error {
 	}
 
 	user := newUser()
+	user.ID = *_id
 	user.Enabled = false
-	filter := bson.NewDocument(bson.EC.ObjectID("_id", *_id))
+	user.Updated = time.Now()
 
-	_, err = collection.UpdateOne(context.Background(), filter, user)
+	doc, err := bson.NewDocumentEncoder().EncodeDocument(user)
+	if err != nil {
+		return err
+	}
+
+	_, err = collection.UpdateOne(context.Background(),
+		bson.NewDocument(doc.LookupElement("_id")),
+		bson.NewDocument(
+			bson.EC.SubDocumentFromElements("$set",
+				doc.LookupElement("enabled"),
+				doc.LookupElement("updated"),
+			),
+		))
+
 	if err != nil {
 		return err
 	}

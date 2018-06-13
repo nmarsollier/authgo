@@ -25,6 +25,7 @@ func newUser() *User {
 		Enabled: true,
 		Created: time.Now(),
 		Updated: time.Now(),
+		Roles:   []string{"user"},
 	}
 }
 

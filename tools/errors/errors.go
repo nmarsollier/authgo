@@ -60,6 +60,11 @@ func Handle(c *gin.Context, err interface{}) {
 		db.CheckError(err)
 		c.JSON(500, internalServerError)
 		return
+	case mongo.ErrNoDocuments:
+		c.JSON(400, gin.H{
+			"error": "Document not found",
+		})
+		return
 	}
 
 	// Compruebo tipos de errores conocidos

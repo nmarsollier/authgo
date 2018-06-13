@@ -28,14 +28,14 @@ import (
  * @apiUse OtherErrors
  */
 func SignUp(c *gin.Context) {
-	newUser := user.NewUser{}
+	body := user.SignUpRequest{}
 
-	if err := c.ShouldBindJSON(&newUser); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	token, err := user.SignUp(&newUser)
+	token, err := user.SignUp(&body)
 
 	if err != nil {
 		errors.Handle(c, err)
