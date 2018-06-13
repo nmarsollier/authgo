@@ -62,8 +62,11 @@ func Create(userID objectid.ObjectID) (string, error) {
  * @apiParamExample {String} Header Autorización
  *    Authorization=bearer {token}
  *
- * @apiSuccessExample 401 Unauthorized
- *    HTTP/1.1 401 Unauthorized
+ * @apiSuccessExample {json} 401 Unauthorized
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *        "error" : "Unauthorized"
+ *     }
  */
 func Validate(c *gin.Context) (*Payload, error) {
 	tokenString, err := getTokenHeader(c)

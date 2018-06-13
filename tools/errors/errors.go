@@ -12,49 +12,12 @@ import (
 	validator "gopkg.in/go-playground/validator.v8"
 )
 
-/**
- * @apiDefine ParamValidationErrors
- *
- * @apiSuccessExample {json} 400 Bad Request
- *     HTTP/1.1 400 Bad Request
- *     HTTP/1.1 Header X-Status-Reason: {Message}
- *     {
- *        "messages" : [
- *          {
- *            "path" : "{Nombre de la propiedad}",
- *            "message" : "{Motivo del error}"
- *          },
- *          ...
- *       ]
- *     }
- */
-
-/**
- * @apiDefine OtherErrors
- *
- * @apiSuccessExample {json} 404 Not Found
- *     HTTP/1.1 404 Not Found
- *     HTTP/1.1 Header X-Status-Reason: {Message}
- *     {
- *        "url" : "{Url no encontrada}",
- *        "error" : "Not Found"
- *     }
- *
- * @apiSuccessExample {json} 500 Server Error
- *     HTTP/1.1 500 Internal Server Error
- *     HTTP/1.1 Header X-Status-Reason: {Message}
- *     {
- *        "error" : "Not Found"
- *     }
- *
- */
-
 var alreadyExistError = gin.H{"error": "Already exist"}
 var internalServerError = gin.H{"error": "Internal server error"}
 
 // Handled es un error que se serializa utilizando Handle
 // Si se desea definir un error personalizado como se serializa
-// Ver unauthorizedError
+// Ver unauthorized
 type Handled interface {
 	Handle(c *gin.Context)
 }
@@ -71,7 +34,24 @@ func ErrInvalidField(field string, err string) error {
 	return result
 }
 
-// Handle handle any error and output JSON
+// Handle maneja cualquier error para serializarlo como JSON al cliente
+/**
+ * @apiDefine OtherErrors
+ *
+ * @apiSuccessExample {json} 404 Not Found
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *        "url" : "{Url no encontrada}",
+ *        "error" : "Not Found"
+ *     }
+ *
+ * @apiSuccessExample {json} 500 Server Error
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *        "error" : "Not Found"
+ *     }
+ *
+ */
 func Handle(c *gin.Context, err interface{}) {
 	// Compruebo errores bien conocidos
 	switch err {
@@ -116,6 +96,21 @@ func IsUniqueKeyError(err error) bool {
 	return false
 }
 
+/**
+ * @apiDefine ParamValidationErrors
+ *
+ * @apiSuccessExample {json} 400 Bad Request
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *        "messages" : [
+ *          {
+ *            "path" : "{Nombre de la propiedad}",
+ *            "message" : "{Motivo del error}"
+ *          },
+ *          ...
+ *       ]
+ *     }
+ */
 func handleValidationError(c *gin.Context, validationErrors validator.ValidationErrors) {
 	var result []gin.H
 
