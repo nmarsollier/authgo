@@ -16,7 +16,7 @@ func (e *unauthorized) Error() string {
 	return fmt.Sprintf("Unauthorized")
 }
 
-// Handle es un error que se serializa como Json
+// Handle define como se serializa el error como Json
 func (e *unauthorized) Handle(c *gin.Context) {
 	c.JSON(401, gin.H{
 		"error": "Unauthorized",

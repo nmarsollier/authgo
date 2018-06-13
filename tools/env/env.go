@@ -16,23 +16,27 @@ type Configuration struct {
 	JWTSecret string `json:"jwtSecret"`
 }
 
-var config = Configuration{
-	Port:      3000,
-	RabbitURL: "amqp://localhost",
-	MongoURL:  "mongodb://localhost:27017",
-	WWWWPath:  "www",
-	JWTSecret: "ecb6d3479ac3823f1da7f314d871989b",
+var config *Configuration
+
+func new() *Configuration {
+	return &Configuration{
+		Port:      3000,
+		RabbitURL: "amqp://localhost",
+		MongoURL:  "mongodb://localhost:27017",
+		WWWWPath:  "www",
+		JWTSecret: "ecb6d3479ac3823f1da7f314d871989b",
+	}
 }
-var initialized = false
 
 // Get Obtiene las variables de entorno del sistema
 func Get() *Configuration {
-	if !initialized {
-		Load("config.json")
-		initialized = true
+	if config == nil {
+		if ok := Load("config.json"); !ok {
+			config = new()
+		}
 	}
 
-	return &config
+	return config
 }
 
 // Load file properties
@@ -43,13 +47,14 @@ func Load(fileName string) bool {
 		return false
 	}
 
-	err = json.NewDecoder(file).Decode(&config)
+	loaded := new()
+	err = json.NewDecoder(file).Decode(&loaded)
 	if err != nil {
 		log.Output(1, fmt.Sprintf("%s : %s", fileName, err.Error()))
 		return false
 	}
 
+	config = loaded
 	log.Output(1, fmt.Sprintf("%s cargado correctamente", fileName))
-	initialized = true
 	return true
 }
