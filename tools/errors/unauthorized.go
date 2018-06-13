@@ -6,10 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Unauthorized an argument is invalid
 type unauthorized struct {
 }
 
+// Unauthorized an argument is invalid
 var Unauthorized = &unauthorized{}
 
 func (e *unauthorized) Error() string {

@@ -1,6 +1,8 @@
 package lookup
 
 import (
+	"time"
+
 	"github.com/mongodb/mongo-go-driver/bson"
 )
 
@@ -74,4 +76,14 @@ func ObjectIDDefault(d bson.Document, key string, def string) string {
 // ObjectID will return key value or default value if missing.
 func ObjectID(d bson.Document, key string) string {
 	return ObjectIDDefault(d, key, "")
+}
+
+// Time will return key value or default value if missing.
+func Time(d bson.Document, key string) time.Time {
+	elem, err := d.LookupErr(key)
+	if err != nil {
+		return time.Now()
+	}
+
+	return elem.DateTime()
 }

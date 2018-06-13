@@ -18,17 +18,15 @@ func newToken() *Token {
 	return &Token{Enabled: true}
 }
 
-// SetID sets the user id based on ObjectID
-func (e *Token) SetID(ID objectid.ObjectID) {
+func (e *Token) setID(ID objectid.ObjectID) {
 	e._id = ID.Hex()
 }
 
 // ID get the token ID
-func (e *Token) ID() string {
+func (e *Token) id() string {
 	return e._id
 }
 
-// NewFromBson creates new User form bson.Document
 func newTokenFromBson(document bson.Document) *Token {
 	return &Token{
 		_id:     lookup.ObjectID(document, "_id"),

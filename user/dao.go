@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	validator "gopkg.in/go-playground/validator.v8"
 
@@ -58,7 +59,7 @@ func insert(user *User) (*User, error) {
 		return nil, err
 	}
 
-	user.SetID(res.InsertedID.(objectid.ObjectID))
+	user.setID(res.InsertedID.(objectid.ObjectID))
 
 	return user, nil
 }
@@ -79,13 +80,22 @@ func update(user *User) (*User, error) {
 		return nil, err
 	}
 
+	user.Updated = time.Now()
+
+	doc, err := bson.NewDocumentEncoder().EncodeDocument(user)
+	if err != nil {
+		db.HandleError(err)
+		return nil, err
+	}
+
 	_, err = collection.UpdateOne(context.Background(),
 		bson.NewDocument(bson.EC.ObjectID("_id", _id)),
 		bson.NewDocument(
 			bson.EC.SubDocumentFromElements("$set",
-				bson.EC.String("password", user.Password),
-				bson.EC.String("name", user.Name),
-				bson.EC.Boolean("enabled", user.Enabled),
+				doc.LookupElement("password"),
+				doc.LookupElement("name"),
+				doc.LookupElement("enabled"),
+				doc.LookupElement("updated"),
 			),
 		))
 

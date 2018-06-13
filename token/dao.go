@@ -56,7 +56,7 @@ func insert(token *Token) (*Token, error) {
 		return nil, err
 	}
 
-	token.SetID(res.InsertedID.(objectid.ObjectID))
+	token.setID(res.InsertedID.(objectid.ObjectID))
 
 	return token, nil
 }
@@ -73,8 +73,14 @@ func update(token *Token) (*Token, error) {
 		return nil, err
 	}
 
-	_id, err := objectid.FromHex(token.ID())
+	_id, err := objectid.FromHex(token.id())
 	if err != nil {
+		return nil, err
+	}
+
+	doc, err := bson.NewDocumentEncoder().EncodeDocument(token)
+	if err != nil {
+		db.HandleError(err)
 		return nil, err
 	}
 
@@ -82,7 +88,7 @@ func update(token *Token) (*Token, error) {
 		bson.NewDocument(bson.EC.ObjectID("_id", _id)),
 		bson.NewDocument(
 			bson.EC.SubDocumentFromElements("$set",
-				bson.EC.Boolean("enabled", token.Enabled),
+				doc.LookupElement("enabled"),
 			),
 		))
 
@@ -96,7 +102,7 @@ func update(token *Token) (*Token, error) {
 
 // Save agrega un token a la base de datos
 func save(token *Token) (*Token, error) {
-	if len(token.ID()) > 0 {
+	if len(token.id()) > 0 {
 		return update(token)
 	}
 	return insert(token)
@@ -107,8 +113,8 @@ func validateSchema(token *Token) error {
 
 	result := make(validator.ValidationErrors)
 
-	if len(token.ID()) > 0 {
-		if _, err := objectid.FromHex(token.ID()); err != nil {
+	if len(token.id()) > 0 {
+		if _, err := objectid.FromHex(token.id()); err != nil {
 			result["id"] = &validator.FieldError{
 				Field: "id",
 				Tag:   "Invalid",

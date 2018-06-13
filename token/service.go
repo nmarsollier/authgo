@@ -43,7 +43,7 @@ func Create(userID string) (string, error) {
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"tokenID": token.ID(),
+		"tokenID": token.id(),
 		"userID":  token.UserID,
 	})
 

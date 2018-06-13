@@ -101,7 +101,7 @@ func Handle(c *gin.Context, err interface{}) {
 	c.JSON(500, internalServerError)
 }
 
-// IsDuplicateKeyError retorna true si el error es de indice unico
+// IsUniqueKeyError retorna true si el error es de indice único
 func IsUniqueKeyError(err error) bool {
 	return strings.Contains(err.Error(), "duplicate key error")
 }
@@ -110,10 +110,11 @@ func handleValidationError(c *gin.Context, validationErrors validator.Validation
 	var result []pathMessage
 
 	for _, err := range validationErrors {
-		result = append(result, pathMessage{
-			Path:    strings.ToLower(err.Field),
-			Message: err.Tag,
-		})
+		result = append(result,
+			pathMessage{
+				Path:    strings.ToLower(err.Field),
+				Message: err.Tag,
+			})
 	}
 
 	c.JSON(400, gin.H{
