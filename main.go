@@ -40,6 +40,10 @@ func main() {
 	r.GET("/auth/signout", controller.SignOut)
 	r.POST("/auth/signup", controller.SignUp)
 	r.GET("/auth/currentUser", controller.CurrentUser)
+	r.POST("/users/:userID/grant", controller.GrantPermission)
+	r.POST("/users/:userID/revoke", controller.RevokePermission)
+	r.POST("/users/:userID/enable", controller.Enable)
+	r.POST("/users/:userID/disable", controller.Disable)
 	r.Run(fmt.Sprintf(":%d", env.Get().Port))
 }
 

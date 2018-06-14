@@ -84,3 +84,88 @@ func ChangePassword(userID string, current string, newPassword string) error {
 
 	return nil
 }
+
+// Grant Le habilita los permisos enviados por parametros
+func Grant(userID string, permissions []string) error {
+	user, err := findByID(userID)
+	if err != nil {
+		return err
+	}
+
+	for _, value := range permissions {
+		user.Grant(value)
+	}
+
+	if _, err = update(user); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Revoke Le revoca los permisos enviados por parametros
+func Revoke(userID string, permissions []string) error {
+	user, err := findByID(userID)
+	if err != nil {
+		return err
+	}
+
+	for _, value := range permissions {
+		user.Revoke(value)
+	}
+
+	if _, err = update(user); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//Granted verifica si el usuario tiene el permiso
+func Granted(userID string, permission string) bool {
+
+	usr, err := findByID(userID)
+	if err != nil {
+		return false
+	}
+
+	if !usr.Granted(permission) {
+		return false
+	}
+
+	return true
+}
+
+//Disable deshabilita un usuario
+func Disable(userID string) error {
+
+	usr, err := findByID(userID)
+	if err != nil {
+		return err
+	}
+
+	usr.Enabled = false
+
+	if _, err = update(usr); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//Enable habilita un usuario
+func Enable(userID string) error {
+
+	usr, err := findByID(userID)
+	if err != nil {
+		return err
+	}
+
+	usr.Enabled = true
+
+	if _, err = update(usr); err != nil {
+		return err
+	}
+
+	return nil
+}

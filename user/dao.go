@@ -83,6 +83,7 @@ func update(user *User) (*User, error) {
 				doc.LookupElement("name"),
 				doc.LookupElement("enabled"),
 				doc.LookupElement("updated"),
+				doc.LookupElement("permissions"),
 			),
 		))
 
@@ -121,9 +122,9 @@ func validateSchema(user *User) error {
 
 	if len(result) > 0 {
 		return result
-	} else {
-		return nil
 	}
+
+	return nil
 }
 
 // FindByID lee un usuario desde la db

@@ -9,23 +9,23 @@ import (
 
 // User data structure
 type User struct {
-	ID       objectid.ObjectID `bson:"_id"`
-	Name     string            `bson:"name"`
-	Login    string            `bson:"login"`
-	Password string            `bson:"password"`
-	Roles    []string          `bson:"roles"`
-	Enabled  bool              `bson:"enabled"`
-	Created  time.Time         `bson:"created"`
-	Updated  time.Time         `bson:"updated"`
+	ID          objectid.ObjectID `bson:"_id"`
+	Name        string            `bson:"name"`
+	Login       string            `bson:"login"`
+	Password    string            `bson:"password"`
+	Permissions []string          `bson:"permissions"`
+	Enabled     bool              `bson:"enabled"`
+	Created     time.Time         `bson:"created"`
+	Updated     time.Time         `bson:"updated"`
 }
 
 func newUser() *User {
 	return &User{
-		ID:      objectid.New(),
-		Enabled: true,
-		Created: time.Now(),
-		Updated: time.Now(),
-		Roles:   []string{"user"},
+		ID:          objectid.New(),
+		Enabled:     true,
+		Created:     time.Now(),
+		Updated:     time.Now(),
+		Permissions: []string{"user"},
 	}
 }
 
@@ -51,4 +51,34 @@ func (e *User) validatePassword(plainPwd string) error {
 		return ErrPassword
 	}
 	return nil
+}
+
+// Granted verifica si el usuario tiene el permiso indicado
+func (e *User) Granted(permission string) bool {
+	for _, p := range e.Permissions {
+		if p == permission {
+			return true
+		}
+	}
+	return false
+}
+
+// Grant le otorga el permiso indicado al usuario
+func (e *User) Grant(permission string) {
+	if !e.Granted(permission) {
+		e.Permissions = append(e.Permissions, permission)
+	}
+}
+
+// Revoke le revoca el permiso indicado al usuario
+func (e *User) Revoke(permission string) {
+	if e.Granted(permission) {
+		var newPermissions []string
+		for _, p := range e.Permissions {
+			if p != permission {
+				newPermissions = append(newPermissions, p)
+			}
+		}
+		e.Permissions = newPermissions
+	}
 }
