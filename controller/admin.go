@@ -1,5 +1,7 @@
 package controller
 
+// Son controlles que utiliza al administrador de sistema
+
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/token"
@@ -9,8 +11,8 @@ import (
 
 // GrantPermission  Otorga Permisos
 /**
- * @api {post} /auth/:userId/grant Otorga Permisos
- * @apiName Grant
+ * @api {post} /users/:userId/grant Otorga Permisos
+ * @apiName Otorga Permisos
  * @apiGroup Seguridad
  *
  * @apiDescription Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
@@ -58,8 +60,8 @@ func GrantPermission(c *gin.Context) {
 
 // RevokePermission  Revoca Permisos
 /**
- * @api {post} /auth/:userId/revoke Revoca Permisos
- * @apiName Revoke
+ * @api {post} /users/:userId/revoke Revoca Permisos
+ * @apiName Revoca Permisos
  * @apiGroup Seguridad
  *
  * @apiDescription Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
@@ -107,8 +109,8 @@ func RevokePermission(c *gin.Context) {
 
 // Disable  Deshabilita un usuario
 /**
- * @api {post} /auth/:userId/disable Deshabilitar Usuario.
- * @apiName Disable
+ * @api {post} /users/:userId/disable Deshabilitar Usuario
+ * @apiName Deshabilitar Usuario
  * @apiGroup Seguridad
  *
  * @apiDescription Deshabilita un usuario en el sistema.   El usuario logueado debe tener permisos "admin".
@@ -144,8 +146,8 @@ func Disable(c *gin.Context) {
 
 // Enable  Habilita un usuario
 /**
- * @api {post} /auth/:userId/enable Habilitar Usuario
- * @apiName Enable
+ * @api {post} /users/:userId/enable Habilitar Usuario
+ * @apiName Habilitar Usuario
  * @apiGroup Seguridad
  *
  * @apiDescription Habilita un usuario en el sistema. El usuario logueado debe tener permisos "admin".

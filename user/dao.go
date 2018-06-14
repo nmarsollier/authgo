@@ -139,11 +139,9 @@ func findByID(userID string) (*User, error) {
 		return nil, err
 	}
 
-	filter := bson.NewDocument(bson.EC.ObjectID("_id", _id))
-
 	user := &User{}
-	err = collection.FindOne(context.Background(), filter).Decode(user)
-	if err != nil {
+	filter := bson.NewDocument(bson.EC.ObjectID("_id", _id))
+	if err = collection.FindOne(context.Background(), filter).Decode(user); err != nil {
 		return nil, err
 	}
 
@@ -201,11 +199,7 @@ func delete(userID string) error {
 			),
 		))
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func getID(ID string) (*objectid.ObjectID, error) {

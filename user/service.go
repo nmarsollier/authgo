@@ -27,12 +27,7 @@ func SignUp(user *SignUpRequest) (string, error) {
 		return "", err
 	}
 
-	tokenString, err := token.Create(newUser.ID)
-	if err != nil {
-		return "", err
-	}
-
-	return tokenString, nil
+	return token.Create(newUser.ID)
 }
 
 // SignIn is the controller to sign in users
@@ -50,20 +45,15 @@ func SignIn(login string, password string) (string, error) {
 		return "", err
 	}
 
-	tokenString, err := token.Create(user.ID)
-	if err != nil {
-		return "", err
-	}
-
-	return tokenString, nil
+	return token.Create(user.ID)
 }
 
-// CurrentUser is the controller to get the current logged in user
-func CurrentUser(userID string) (*User, error) {
+// GetUser wrapper para obtener un usuario
+func GetUser(userID string) (*User, error) {
 	return findByID(userID)
 }
 
-// ChangePassword Permite cambiar contraseña
+// ChangePassword cambiar la contraseña del usuario indicado
 func ChangePassword(userID string, current string, newPassword string) error {
 	user, err := findByID(userID)
 	if err != nil {
@@ -78,11 +68,9 @@ func ChangePassword(userID string, current string, newPassword string) error {
 		return err
 	}
 
-	if _, err = update(user); err != nil {
-		return err
-	}
+	_, err = update(user)
 
-	return nil
+	return err
 }
 
 // Grant Le habilita los permisos enviados por parametros
@@ -95,12 +83,9 @@ func Grant(userID string, permissions []string) error {
 	for _, value := range permissions {
 		user.Grant(value)
 	}
+	_, err = update(user)
 
-	if _, err = update(user); err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // Revoke Le revoca los permisos enviados por parametros
@@ -113,32 +98,23 @@ func Revoke(userID string, permissions []string) error {
 	for _, value := range permissions {
 		user.Revoke(value)
 	}
+	_, err = update(user)
 
-	if _, err = update(user); err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 //Granted verifica si el usuario tiene el permiso
 func Granted(userID string, permission string) bool {
-
 	usr, err := findByID(userID)
 	if err != nil {
 		return false
 	}
 
-	if !usr.Granted(permission) {
-		return false
-	}
-
-	return true
+	return usr.Granted(permission)
 }
 
 //Disable deshabilita un usuario
 func Disable(userID string) error {
-
 	usr, err := findByID(userID)
 	if err != nil {
 		return err
@@ -146,26 +122,20 @@ func Disable(userID string) error {
 
 	usr.Enabled = false
 
-	if _, err = update(usr); err != nil {
-		return err
-	}
+	_, err = update(usr)
 
-	return nil
+	return err
 }
 
 //Enable habilita un usuario
 func Enable(userID string) error {
-
 	usr, err := findByID(userID)
 	if err != nil {
 		return err
 	}
 
 	usr.Enabled = true
+	_, err = update(usr)
 
-	if _, err = update(usr); err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }

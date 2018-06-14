@@ -35,11 +35,11 @@ func main() {
 
 	r.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, true)))
 
-	r.POST("/auth/password", controller.ChangePassword)
-	r.POST("/auth/signin", controller.SignIn)
-	r.GET("/auth/signout", controller.SignOut)
-	r.POST("/auth/signup", controller.SignUp)
-	r.GET("/auth/currentUser", controller.CurrentUser)
+	r.POST("/user/password", controller.ChangePassword)
+	r.POST("/user/signin", controller.SignIn)
+	r.GET("/user/signout", controller.SignOut)
+	r.POST("/user", controller.SignUp)
+	r.GET("/users/current", controller.CurrentUser)
 	r.POST("/users/:userID/grant", controller.GrantPermission)
 	r.POST("/users/:userID/revoke", controller.RevokePermission)
 	r.POST("/users/:userID/enable", controller.Enable)

@@ -90,8 +90,8 @@ func findByID(tokenID string) (*Token, error) {
 
 	token := &Token{}
 	filter := bson.NewDocument(bson.EC.ObjectID("_id", *_id))
-	err = collection.FindOne(context.Background(), filter).Decode(token)
-	if err != nil {
+
+	if err = collection.FindOne(context.Background(), filter).Decode(token); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.Unauthorized
 		}
@@ -118,8 +118,8 @@ func findByUserID(tokenID string) (*Token, error) {
 		bson.EC.String("userId", _id.Hex()),
 		bson.EC.Boolean("enabled", true),
 	)
-	err = collection.FindOne(context.Background(), filter).Decode(token)
-	if err != nil {
+
+	if err = collection.FindOne(context.Background(), filter).Decode(token); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.Unauthorized
 		}
@@ -138,11 +138,7 @@ func delete(tokenID string) error {
 	token.Enabled = false
 	_, err = update(token)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func getID(ID string) (*objectid.ObjectID, error) {

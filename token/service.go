@@ -50,9 +50,7 @@ func Create(userID objectid.ObjectID) (string, error) {
 	})
 
 	// Sign and get the complete encoded token as a string using the secret
-	tokenString, err := jwtToken.SignedString([]byte(env.Get().JWTSecret))
-
-	return tokenString, err
+	return jwtToken.SignedString([]byte(env.Get().JWTSecret))
 }
 
 // Validate valida un token
@@ -129,8 +127,7 @@ func getTokenHeader(c *gin.Context) (string, error) {
 	if strings.Index(tokenString, "bearer ") != 0 {
 		return "", errors.Unauthorized
 	}
-	tokenString = tokenString[7:]
-	return tokenString, nil
+	return tokenString[7:], nil
 }
 
 // extract payload from token string

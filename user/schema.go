@@ -45,9 +45,7 @@ func (e *User) setPasswordText(pwd string) error {
 }
 
 func (e *User) validatePassword(plainPwd string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(e.Password), []byte(plainPwd))
-
-	if err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(e.Password), []byte(plainPwd)); err != nil {
 		return ErrPassword
 	}
 	return nil
