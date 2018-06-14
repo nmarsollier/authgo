@@ -33,7 +33,7 @@ func main() {
 		ValidateHeaders: false,
 	}))
 
-	r.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, false)))
+	r.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, true)))
 
 	r.POST("/auth/password", controller.ChangePassword)
 	r.POST("/auth/signin", controller.SignIn)
