@@ -107,11 +107,11 @@ func RevokePermission(c *gin.Context) {
 
 // Disable  Deshabilita un usuario
 /**
- * @api {post} /auth/:userId/disable Deshabilita un usuario.  El usuario logueado debe tener permisos "admin".
+ * @api {post} /auth/:userId/disable Deshabilitar Usuario.
  * @apiName Disable
  * @apiGroup Seguridad
  *
- * @apiDescription Deshabilita un usuario en el sistema.
+ * @apiDescription Deshabilita un usuario en el sistema.   El usuario logueado debe tener permisos "admin".
  *
  * @apiSuccessExample {json} Respuesta
  *     HTTP/1.1 200 OK
@@ -142,9 +142,9 @@ func Disable(c *gin.Context) {
 	c.Done()
 }
 
-// Enable  Deshabilita un usuario
+// Enable  Habilita un usuario
 /**
- * @api {post} /auth/:userId/enable Habilita un usuario
+ * @api {post} /auth/:userId/enable Habilitar Usuario
  * @apiName Enable
  * @apiGroup Seguridad
  *

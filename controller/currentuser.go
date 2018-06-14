@@ -22,7 +22,7 @@ import (
  *        "id": "{Id usuario}",
  *        "name": "{Nombre del usuario}",
  *        "login": "{Login de usuario}",
- *        "roles": [
+ *        "permissions": [
  *            "{Rol}"
  *        ]
  *     }
