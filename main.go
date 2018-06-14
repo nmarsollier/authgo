@@ -35,15 +35,15 @@ func main() {
 
 	r.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, true)))
 
-	r.POST("/user/password", controller.ChangePassword)
-	r.POST("/user/signin", controller.SignIn)
-	r.GET("/user/signout", controller.SignOut)
-	r.POST("/user", controller.SignUp)
-	r.GET("/users/current", controller.CurrentUser)
-	r.POST("/users/:userID/grant", controller.GrantPermission)
-	r.POST("/users/:userID/revoke", controller.RevokePermission)
-	r.POST("/users/:userID/enable", controller.Enable)
-	r.POST("/users/:userID/disable", controller.Disable)
+	r.POST("/v1/user/password", controller.ChangePassword)
+	r.POST("/v1/user/signin", controller.SignIn)
+	r.GET("/v1/user/signout", controller.SignOut)
+	r.POST("/v1/user", controller.SignUp)
+	r.GET("/v1/users/current", controller.CurrentUser)
+	r.POST("/v1/users/:userID/grant", controller.GrantPermission)
+	r.POST("/v1/users/:userID/revoke", controller.RevokePermission)
+	r.POST("/v1/users/:userID/enable", controller.Enable)
+	r.POST("/v1/users/:userID/disable", controller.Disable)
 	r.Run(fmt.Sprintf(":%d", env.Get().Port))
 }
 
