@@ -2,28 +2,34 @@ package errors
 
 import (
 	"fmt"
-	"log"
-	"strings"
 
-	"github.com/gin-gonic/gin"
-	"github.com/mongodb/mongo-go-driver/core/topology"
-	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/nmarsollier/authgo/tools/db"
 	validator "gopkg.in/go-playground/validator.v8"
 )
 
-var alreadyExistError = gin.H{"error": "Already exist"}
-var internalServerError = gin.H{"error": "Internal server error"}
+// - Algunos errors comunes en el sistema -
 
-// Handled es un error que se serializa utilizando Handle
-// Si se desea definir un error personalizado como se serializa
-// Ver unauthorized
-type Handled interface {
-	Handle(c *gin.Context)
-}
+// ErrID el id de usuario es invalido
+var ErrID = NewInvalidField("id", "Invalid")
 
-// ErrInvalidField crea un error de validación para un solo campo
-func ErrInvalidField(field string, err string) error {
+// Unauthorized el usuario no esta autorizado al recurso
+var Unauthorized = NewCustom(401, "Unauthorized")
+
+// AccessLevel es el error de seguridad, el usuario no esta autorizado para acceder al recurso
+var AccessLevel = NewCustom(401, "Accesos Insuficientes")
+
+// NotFound cuando un registro no se encuentra en la db
+var NotFound = NewCustom(400, "Document not found")
+
+// AlreadyExist cuando no se puede ingresar un registro a la db
+var AlreadyExist = NewCustom(400, "Already exist")
+
+// Internal esta aplicación no sabe como manejar el error
+var Internal = NewCustom(500, "Internal server error")
+
+// - Creación de errors -
+
+// NewInvalidField crea un error de validación para un solo campo
+func NewInvalidField(field string, err string) error {
 	result := make(validator.ValidationErrors)
 
 	result[field] = &validator.FieldError{
@@ -34,99 +40,38 @@ func ErrInvalidField(field string, err string) error {
 	return result
 }
 
-// Handle maneja cualquier error para serializarlo como JSON al cliente
-/**
- * @apiDefine OtherErrors
- *
- * @apiSuccessExample {json} 404 Not Found
- *     HTTP/1.1 404 Not Found
- *     {
- *        "url" : "{Url no encontrada}",
- *        "error" : "Not Found"
- *     }
- *
- * @apiSuccessExample {json} 500 Server Error
- *     HTTP/1.1 500 Internal Server Error
- *     {
- *        "error" : "Not Found"
- *     }
- *
- */
-func Handle(c *gin.Context, err interface{}) {
-	// Compruebo errores bien conocidos
-	switch err {
-	case topology.ErrServerSelectionTimeout, topology.ErrTopologyClosed:
-		// Errores de conexión con MongoDB
-		db.CheckError(err)
-		c.JSON(500, internalServerError)
-		return
-	case mongo.ErrNoDocuments:
-		c.JSON(400, gin.H{
-			"error": "Document not found",
-		})
-		return
-	}
-
-	// Compruebo tipos de errores conocidos
-	switch value := err.(type) {
-	case validator.ValidationErrors:
-		handleValidationError(c, value)
-	case Handled:
-		value.Handle(c)
-	case mongo.WriteErrors:
-		if IsUniqueKeyError(value) {
-			c.JSON(400, alreadyExistError)
-		} else {
-			log.Output(1, fmt.Sprintf("Error DB : %s", value.Error()))
-			c.JSON(500, internalServerError)
-		}
-	case error:
-		c.JSON(500, gin.H{
-			"error": value.Error(),
-		})
-	default:
-		c.JSON(500, internalServerError)
+// NewCustom creates a new errCustom
+func NewCustom(status int, message string) *ErrCustom {
+	return &ErrCustom{
+		status:  status,
+		message: message,
 	}
 }
 
-// IsUniqueKeyError retorna true si el error es de indice único
-func IsUniqueKeyError(err error) bool {
-	if wErr, ok := err.(mongo.WriteErrors); ok {
-		for i := 0; i < len(wErr); i++ {
-			if wErr[i].Code == 11000 {
-				return true
-			}
-		}
-	}
-	return false
+//  - Algunas definiciones necesarias -
+
+// Custom es una interfaz para definir errores custom
+type Custom interface {
+	Status() int
+	Message() string
 }
 
-/**
- * @apiDefine ParamValidationErrors
- *
- * @apiSuccessExample {json} 400 Bad Request
- *     HTTP/1.1 400 Bad Request
- *     {
- *        "messages" : [
- *          {
- *            "path" : "{Nombre de la propiedad}",
- *            "message" : "{Motivo del error}"
- *          },
- *          ...
- *       ]
- *     }
- */
-func handleValidationError(c *gin.Context, validationErrors validator.ValidationErrors) {
-	var result []gin.H
+// ErrCustom es un error personalizado para http
+type ErrCustom struct {
+	status  int
+	message string
+}
 
-	for _, err := range validationErrors {
-		result = append(result, gin.H{
-			"path":    strings.ToLower(err.Field),
-			"message": err.Tag,
-		})
-	}
+func (e *ErrCustom) Error() string {
+	return fmt.Sprintf(e.message)
+}
 
-	c.JSON(400, gin.H{
-		"messages": result,
-	})
+// Status http status code
+func (e *ErrCustom) Status() int {
+	return e.status
+}
+
+// Message mensage de error
+func (e *ErrCustom) Message() string {
+	return e.message
 }

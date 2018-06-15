@@ -1,19 +1,17 @@
-Auth Service en GO
-==
+# Auth Service en GO
+
 
 Este Microservicio de seguridad reemplaza al del proyecto
 
 [Microservicios Auth](https://github.com/nmarsollier/ecommerce)
 
-Requisitos
--
+## Requisitos
 
 Go 1.10  <https://golang.org/doc/install>
 
 Dep <https://github.com/golang/dep>
 
-Configuración inicial
--
+## Configuración inicial
 
 establecer variables de entorno (consultar documentación de la version instalada)
 
@@ -35,8 +33,8 @@ Una vez descargado, tendremos el codigo fuente del proyecto en la carpeta
 cd $GOPATH/src/github.com/nmarsollier/authgo
 ```
 
-Instalar Librerías requeridas
--
+## Instalar Librerías requeridas
+
 
 ```bash
 dep ensure
@@ -50,8 +48,7 @@ go install github.com/nmarsollier/authgo
 authgo
 ```
 
-Apidoc
--
+## Apidoc
 
 Apidoc es una herramienta para proyectos node, para que funcione correctamente hay que instalarla globalmente con
 
@@ -67,8 +64,7 @@ apidoc -s src -o www
 
 Esto nos genera una carpeta public con la documentación, esta carpeta debe estar presente desde donde se ejecute authgo, authgo busca ./www para localizarlo, aunque se puede configurar desde el archivo de properties.
 
-config.json
--
+## Archivo config.json
 
 Este archivo permite configurar authgo, ver ejemplos en config-example.json.
 authgo busca el archivo "./config.json". Podemos definir el archivo su ruta completa ejecutando

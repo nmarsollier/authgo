@@ -3,7 +3,6 @@ package token
 import (
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
@@ -12,7 +11,6 @@ import (
 	"github.com/nmarsollier/authgo/tools/errors"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/rabbit"
 	gocache "github.com/patrickmn/go-cache"
 )
@@ -66,21 +64,16 @@ func Create(userID objectid.ObjectID) (string, error) {
  *        "error" : "Unauthorized"
  *     }
  */
-func Validate(c *gin.Context) (*Payload, error) {
-	tokenString, err := getTokenHeader(c)
-	if err != nil {
-		return nil, err
-	}
-
+func Validate(token string) (*Payload, error) {
 	// Si esta en cache, retornamos el cache
-	if found, ok := cache.Get(tokenString); ok {
+	if found, ok := cache.Get(token); ok {
 		if payload, ok := found.(Payload); ok {
 			return &payload, nil
 		}
 	}
 
 	// Sino validamos el token y lo agregamos al cache
-	payload, err := extractPayload(tokenString)
+	payload, err := extractPayload(token)
 	if err != nil {
 		return nil, err
 	}
@@ -92,14 +85,14 @@ func Validate(c *gin.Context) (*Payload, error) {
 	}
 
 	// Todo bien, se agrega al cache y se retorna
-	cache.Set(tokenString, payload, gocache.DefaultExpiration)
+	cache.Set(token, payload, gocache.DefaultExpiration)
 
 	return payload, nil
 }
 
 // Invalidate invalida un token
-func Invalidate(c *gin.Context) error {
-	payload, err := Validate(c)
+func Invalidate(token string) error {
+	payload, err := Validate(token)
 	if err != nil {
 		return errors.Unauthorized
 	}
@@ -109,25 +102,14 @@ func Invalidate(c *gin.Context) error {
 	}
 
 	go func() {
-		tokenString := c.GetHeader("Authorization")
-
-		if err = rabbit.SendLogout(tokenString); err != nil {
+		if err = rabbit.SendLogout("bearer " + token); err != nil {
 			log.Output(1, "Rabbit logout no se pudo enviar")
 		}
 
-		cache.Delete(tokenString[7:])
+		cache.Delete(token)
 	}()
 
 	return nil
-}
-
-// get token from Authorization header
-func getTokenHeader(c *gin.Context) (string, error) {
-	tokenString := c.GetHeader("Authorization")
-	if strings.Index(tokenString, "bearer ") != 0 {
-		return "", errors.Unauthorized
-	}
-	return tokenString[7:], nil
 }
 
 // extract payload from token string

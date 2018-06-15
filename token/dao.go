@@ -144,7 +144,7 @@ func delete(tokenID string) error {
 func getID(ID string) (*objectid.ObjectID, error) {
 	_id, err := objectid.FromHex(ID)
 	if err != nil {
-		return nil, ErrID
+		return nil, errors.ErrID
 	}
 	return &_id, nil
 }

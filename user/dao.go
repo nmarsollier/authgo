@@ -12,6 +12,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errors"
 )
 
 // UsersCollection obtiene la colección de Usuarios
@@ -131,7 +132,7 @@ func validateSchema(user *User) error {
 func findByID(userID string) (*User, error) {
 	_id, err := objectid.FromHex(userID)
 	if err != nil {
-		return nil, ErrID
+		return nil, errors.ErrID
 	}
 
 	collection, err := collection()
@@ -205,7 +206,7 @@ func delete(userID string) error {
 func getID(ID string) (*objectid.ObjectID, error) {
 	_id, err := objectid.FromHex(ID)
 	if err != nil {
-		return nil, ErrID
+		return nil, errors.ErrID
 	}
 	return &_id, nil
 }
