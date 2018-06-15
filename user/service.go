@@ -82,7 +82,7 @@ func Grant(userID string, permissions []string) error {
 	}
 
 	for _, value := range permissions {
-		user.Grant(value)
+		user.grant(value)
 	}
 	_, err = update(user)
 
@@ -97,7 +97,7 @@ func Revoke(userID string, permissions []string) error {
 	}
 
 	for _, value := range permissions {
-		user.Revoke(value)
+		user.revoke(value)
 	}
 	_, err = update(user)
 
@@ -111,7 +111,7 @@ func Granted(userID string, permission string) bool {
 		return false
 	}
 
-	return usr.Granted(permission)
+	return usr.granted(permission)
 }
 
 //Disable deshabilita un usuario

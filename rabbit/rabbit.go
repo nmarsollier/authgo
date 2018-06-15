@@ -2,15 +2,15 @@ package rabbit
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 
 	"github.com/nmarsollier/authgo/tools/env"
+	"github.com/nmarsollier/authgo/tools/errors"
 	"github.com/streadway/amqp"
 )
 
 // ErrChannelNotInitialized Rabbit channel could not be initialized
-var ErrChannelNotInitialized = errors.New("Channel not initialized")
+var ErrChannelNotInitialized = errors.NewCustom(400, "Channel not initialized")
 
 var channel *amqp.Channel
 
@@ -38,6 +38,7 @@ func getChannel() (*amqp.Channel, error) {
 	return channel, nil
 }
 
+// SendLogout envía un broadcast a rabbit con logout
 /**
  * @api {fanout} auth/fanout Invalidar Token
  * @apiGroup RabbitMQ POST

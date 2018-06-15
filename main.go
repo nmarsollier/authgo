@@ -17,11 +17,11 @@ func main() {
 		env.Load(os.Args[1])
 	}
 
-	r := gin.Default()
+	server := gin.Default()
 
-	r.Use(gzip.Gzip(gzip.DefaultCompression))
+	server.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	r.Use(cors.Middleware(cors.Config{
+	server.Use(cors.Middleware(cors.Config{
 		Origins:         "*",
 		Methods:         "GET, PUT, POST, DELETE",
 		RequestHeaders:  "Origin, Authorization, Content-Type",
@@ -31,16 +31,17 @@ func main() {
 		ValidateHeaders: false,
 	}))
 
-	r.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, true)))
+	server.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, true)))
 
-	r.POST("/v1/user/password", ChangePassword)
-	r.POST("/v1/user/signin", SignIn)
-	r.GET("/v1/user/signout", SignOut)
-	r.POST("/v1/user", SignUp)
-	r.GET("/v1/users/current", CurrentUser)
-	r.POST("/v1/users/:userID/grant", GrantPermission)
-	r.POST("/v1/users/:userID/revoke", RevokePermission)
-	r.POST("/v1/users/:userID/enable", Enable)
-	r.POST("/v1/users/:userID/disable", Disable)
-	r.Run(fmt.Sprintf(":%d", env.Get().Port))
+	server.POST("/v1/user/password", ChangePassword)
+	server.POST("/v1/user/signin", SignIn)
+	server.GET("/v1/user/signout", SignOut)
+	server.POST("/v1/user", SignUp)
+	server.GET("/v1/users/current", CurrentUser)
+	server.POST("/v1/users/:userID/grant", GrantPermission)
+	server.POST("/v1/users/:userID/revoke", RevokePermission)
+	server.POST("/v1/users/:userID/enable", Enable)
+	server.POST("/v1/users/:userID/disable", Disable)
+
+	server.Run(fmt.Sprintf(":%d", env.Get().Port))
 }

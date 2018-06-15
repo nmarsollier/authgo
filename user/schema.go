@@ -29,11 +29,6 @@ func newUser() *User {
 	}
 }
 
-// StringID obtiene el id de usuario en string
-func (e *User) StringID() string {
-	return e.ID.Hex()
-}
-
 func (e *User) setPasswordText(pwd string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost)
 	if err != nil {
@@ -52,7 +47,7 @@ func (e *User) validatePassword(plainPwd string) error {
 }
 
 // Granted verifica si el usuario tiene el permiso indicado
-func (e *User) Granted(permission string) bool {
+func (e *User) granted(permission string) bool {
 	for _, p := range e.Permissions {
 		if p == permission {
 			return true
@@ -62,15 +57,15 @@ func (e *User) Granted(permission string) bool {
 }
 
 // Grant le otorga el permiso indicado al usuario
-func (e *User) Grant(permission string) {
-	if !e.Granted(permission) {
+func (e *User) grant(permission string) {
+	if !e.granted(permission) {
 		e.Permissions = append(e.Permissions, permission)
 	}
 }
 
 // Revoke le revoca el permiso indicado al usuario
-func (e *User) Revoke(permission string) {
-	if e.Granted(permission) {
+func (e *User) revoke(permission string) {
+	if e.granted(permission) {
 		var newPermissions []string
 		for _, p := range e.Permissions {
 			if p != permission {

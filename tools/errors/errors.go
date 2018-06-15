@@ -1,15 +1,14 @@
 package errors
 
 import (
+	"encoding/json"
 	"fmt"
-
-	validator "gopkg.in/go-playground/validator.v8"
 )
 
 // - Algunos errors comunes en el sistema -
 
-// ErrID el id de usuario es invalido
-var ErrID = NewInvalidField("id", "Invalid")
+// ErrID el id del documento es invalido
+var ErrID = NewValidationField("id", "Invalid")
 
 // Unauthorized el usuario no esta autorizado al recurso
 var Unauthorized = NewCustom(401, "Unauthorized")
@@ -28,23 +27,30 @@ var Internal = NewCustom(500, "Internal server error")
 
 // - Creación de errors -
 
-// NewInvalidField crea un error de validación para un solo campo
-func NewInvalidField(field string, err string) error {
-	result := make(validator.ValidationErrors)
-
-	result[field] = &validator.FieldError{
-		Field: field,
-		Tag:   err,
+// NewValidationField crea un error de validación para un solo campo
+func NewValidationField(field string, err string) Validation {
+	return &ErrValidation{
+		Messages: []ErrField{
+			ErrField{
+				Path:    field,
+				Message: err,
+			},
+		},
 	}
+}
 
-	return result
+// NewValidation crea un error de validación para un solo campo
+func NewValidation() Validation {
+	return &ErrValidation{
+		Messages: []ErrField{},
+	}
 }
 
 // NewCustom creates a new errCustom
 func NewCustom(status int, message string) *ErrCustom {
 	return &ErrCustom{
 		status:  status,
-		message: message,
+		Message: message,
 	}
 }
 
@@ -53,17 +59,17 @@ func NewCustom(status int, message string) *ErrCustom {
 // Custom es una interfaz para definir errores custom
 type Custom interface {
 	Status() int
-	Message() string
+	Error() string
 }
 
 // ErrCustom es un error personalizado para http
 type ErrCustom struct {
 	status  int
-	message string
+	Message string `json:"error"`
 }
 
 func (e *ErrCustom) Error() string {
-	return fmt.Sprintf(e.message)
+	return fmt.Sprintf(e.Message)
 }
 
 // Status http status code
@@ -71,7 +77,38 @@ func (e *ErrCustom) Status() int {
 	return e.status
 }
 
-// Message mensage de error
-func (e *ErrCustom) Message() string {
-	return e.message
+// Validation es una interfaz para definir errores custom
+// Validation es un error de validaciones de parameteros o de campos
+type Validation interface {
+	Add(path string, message string) ErrValidation
+	Error() string
+}
+
+// ErrField define un campo inválido. path y mensaje de error
+type ErrField struct {
+	Path    string `json:"path"`
+	Message string `json:"message"`
+}
+
+// ErrValidation es un error de validaciones de parameteros o de campos
+type ErrValidation struct {
+	Messages []ErrField `json:"messages"`
+}
+
+func (e *ErrValidation) Error() string {
+	body, err := json.Marshal(e)
+	if err != nil {
+		return fmt.Sprintf("ErrValidation que no se puede pasar a json.")
+	}
+	return fmt.Sprintf(string(body))
+}
+
+// Add agrega errores a un validation error
+func (e *ErrValidation) Add(path string, message string) ErrValidation {
+	err := ErrField{
+		Path:    path,
+		Message: message,
+	}
+	e.Messages = append(e.Messages, err)
+	return *e
 }

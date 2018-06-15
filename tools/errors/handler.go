@@ -16,13 +16,6 @@ import (
 /**
  * @apiDefine OtherErrors
  *
- * @apiSuccessExample {json} 404 Not Found
- *     HTTP/1.1 404 Not Found
- *     {
- *        "url" : "{Url no encontrada}",
- *        "error" : "Not Found"
- *     }
- *
  * @apiSuccessExample {json} 500 Server Error
  *     HTTP/1.1 500 Internal Server Error
  *     {
@@ -45,11 +38,17 @@ func Handle(c *gin.Context, err interface{}) {
 
 	// Compruebo tipos de errores conocidos
 	switch value := err.(type) {
-	case validator.ValidationErrors:
-		handleValidationError(c, value)
 	case Custom:
+		// Son validaciones hechas con NewCustom
 		handleCustom(c, value)
+	case Validation:
+		// Son validaciones hechas con NewValidation
+		c.JSON(400, err)
+	case validator.ValidationErrors:
+		// Son las validaciones de json con gin
+		handleValidationError(c, value)
 	case mongo.WriteErrors:
+		// Errores de mongo
 		if db.IsUniqueKeyError(value) {
 			handleCustom(c, AlreadyExist)
 		} else {
@@ -57,10 +56,12 @@ func Handle(c *gin.Context, err interface{}) {
 			handleCustom(c, Internal)
 		}
 	case error:
+		// Otros errores
 		c.JSON(500, gin.H{
 			"error": value.Error(),
 		})
 	default:
+		// No se sabe que es, devolvemos internal
 		handleCustom(c, Internal)
 	}
 }
@@ -81,22 +82,15 @@ func Handle(c *gin.Context, err interface{}) {
  *     }
  */
 func handleValidationError(c *gin.Context, validationErrors validator.ValidationErrors) {
-	var result []gin.H
+	err := NewValidation()
 
-	for _, err := range validationErrors {
-		result = append(result, gin.H{
-			"path":    strings.ToLower(err.Field),
-			"message": err.Tag,
-		})
+	for _, e := range validationErrors {
+		err.Add(strings.ToLower(e.Field), e.Tag)
 	}
 
-	c.JSON(400, gin.H{
-		"messages": result,
-	})
+	c.JSON(400, err)
 }
 
 func handleCustom(c *gin.Context, err Custom) {
-	c.JSON(err.Status(), gin.H{
-		"error": err.Message(),
-	})
+	c.JSON(err.Status(), err)
 }
