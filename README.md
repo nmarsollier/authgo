@@ -48,6 +48,22 @@ go install github.com/nmarsollier/authgo
 authgo
 ```
 
+## MongoDB
+
+Seguir las guías de instalación de mongo desde el sitio oficial
+
+<https://www.mongodb.com/download-center#community>
+
+No se requiere ninguna configuración adicional, solo levantarlo luego de instalarlo.
+
+## RabbitMQ
+
+Seguir los pasos de instalación en la pagina oficial
+
+<https://www.rabbitmq.com/>
+
+No se requiere ninguna configuración adicional, solo levantarlo luego de instalarlo.
+
 ## Apidoc
 
 Apidoc es una herramienta para proyectos node, para que funcione correctamente hay que instalarla globalmente con
