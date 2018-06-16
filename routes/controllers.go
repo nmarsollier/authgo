@@ -13,13 +13,13 @@ type permission struct {
 
 // GrantPermission  Otorga Permisos
 /**
- * @api {post} /users/:userId/grant Otorga Permisos
+ * @api {post} /v1/users/:userId/grant Otorga Permisos
  * @apiName Otorga Permisos
  * @apiGroup Seguridad
  *
  * @apiDescription Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
  *
- * @apiParamExample {json} Body
+ * @apiExample {json} Body
  *    {
  *      "permissions" : ["permiso", ...],
  *    }
@@ -68,13 +68,13 @@ func GrantPermission(c *gin.Context) {
 
 // RevokePermission  Revoca Permisos
 /**
- * @api {post} /users/:userId/revoke Revoca Permisos
+ * @api {post} /v1/users/:userId/revoke Revoca Permisos
  * @apiName Revoca Permisos
  * @apiGroup Seguridad
  *
  * @apiDescription Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
  *
- * @apiParamExample {json} Body
+ * @apiExample {json} Body
  *    {
  *      "permissions" : ["permiso", ...],
  *    }
@@ -123,7 +123,7 @@ func RevokePermission(c *gin.Context) {
 
 // Disable  Deshabilita un usuario
 /**
- * @api {post} /users/:userId/disable Deshabilitar Usuario
+ * @api {post} /v1/users/:userId/disable Deshabilitar Usuario
  * @apiName Deshabilitar Usuario
  * @apiGroup Seguridad
  *
@@ -166,7 +166,7 @@ func Disable(c *gin.Context) {
 
 // Enable  Habilita un usuario
 /**
- * @api {post} /users/:userId/enable Habilitar Usuario
+ * @api {post} /v1/users/:userId/enable Habilitar Usuario
  * @apiName Habilitar Usuario
  * @apiGroup Seguridad
  *
@@ -209,13 +209,13 @@ func Enable(c *gin.Context) {
 
 // SignUp registra usuarios nuevos
 /**
- * @api {post} /user Registrar Usuario
+ * @api {post} /v1/user Registrar Usuario
  * @apiName Registrar Usuario
  * @apiGroup Seguridad
  *
  * @apiDescription Registra un nuevo usuario en el sistema.
  *
- * @apiParamExample {json} Body
+ * @apiExample {json} Body
  *    {
  *      "name": "{Nombre de Usuario}",
  *      "login": "{Login de usuario}",
@@ -249,7 +249,7 @@ func SignUp(c *gin.Context) {
 
 // SignOut is the sign out controller
 /**
- * @api {get} /user/signout Logout
+ * @api {get} /v1/user/signout Logout
  * @apiName Logout
  * @apiGroup Seguridad
  *
@@ -280,13 +280,13 @@ func SignOut(c *gin.Context) {
 
 // SignIn is the controller to sign in users
 /**
- * @api {post} /user/signin Login
+ * @api {post} /v1/user/signin Login
  * @apiName Login
  * @apiGroup Seguridad
  *
  * @apiDescription Loguea un usuario en el sistema.
  *
- * @apiParamExample {json} Body
+ * @apiExample {json} Body
  *    {
  *      "login": "{Login de usuario}",
  *      "password": "{Contraseña}"
@@ -324,7 +324,7 @@ func SignIn(c *gin.Context) {
 
 // CurrentUser is the controller to get the current logged in user
 /**
- * @api {get} /users/current Usuario Actual
+ * @api {get} /v1/users/current Usuario Actual
  * @apiName Usuario Actual
  * @apiGroup Seguridad
  *
@@ -337,7 +337,7 @@ func SignIn(c *gin.Context) {
  *        "name": "{Nombre del usuario}",
  *        "login": "{Login de usuario}",
  *        "permissions": [
- *            "{Rol}"
+ *            "{Permission}"
  *        ]
  *     }
  *
@@ -375,13 +375,13 @@ func CurrentUser(c *gin.Context) {
 
 // ChangePassword Change Password Controller
 /**
- * @api {post} /user/password Cambiar Password
+ * @api {post} /v1/user/password Cambiar Password
  * @apiName Cambiar Password
  * @apiGroup Seguridad
  *
  * @apiDescription Cambia la contraseña del usuario actual.
  *
- * @apiParamExample {json} Body
+ * @apiExample {json} Body
  *    {
  *      "currentPassword" : "{Contraseña actual}",
  *      "newPassword" : "{Nueva Contraseña}",

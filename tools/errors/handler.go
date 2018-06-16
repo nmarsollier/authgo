@@ -16,7 +16,7 @@ import (
 /**
  * @apiDefine OtherErrors
  *
- * @apiSuccessExample {json} 500 Server Error
+ * @apiErrorExample {json} 500 Server Error
  *     HTTP/1.1 500 Internal Server Error
  *     {
  *        "error" : "Not Found"
@@ -69,7 +69,7 @@ func Handle(c *gin.Context, err interface{}) {
 /**
  * @apiDefine ParamValidationErrors
  *
- * @apiSuccessExample {json} 400 Bad Request
+ * @apiErrorExample 400 Bad Request
  *     HTTP/1.1 400 Bad Request
  *     {
  *        "messages" : [

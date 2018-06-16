@@ -55,10 +55,10 @@ func Create(userID objectid.ObjectID) (string, error) {
 /**
  * @apiDefine AuthHeader
  *
- * @apiParamExample {String} Header Autorización
+ * @apiExample {String} Header Autorización
  *    Authorization=bearer {token}
  *
- * @apiSuccessExample {json} 401 Unauthorized
+ * @apiErrorExample 401 Unauthorized
  *     HTTP/1.1 401 Unauthorized
  *     {
  *        "error" : "Unauthorized"
