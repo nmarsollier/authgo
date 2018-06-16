@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	cors "github.com/itsjamie/gin-cors"
+	"github.com/nmarsollier/authgo/routes"
 	"github.com/nmarsollier/authgo/tools/env"
 )
 
@@ -37,15 +38,15 @@ func main() {
 
 	server.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, true)))
 
-	server.POST("/v1/user/password", ChangePassword)
-	server.POST("/v1/user/signin", SignIn)
-	server.GET("/v1/user/signout", SignOut)
-	server.POST("/v1/user", SignUp)
-	server.GET("/v1/users/current", CurrentUser)
-	server.POST("/v1/users/:userID/grant", GrantPermission)
-	server.POST("/v1/users/:userID/revoke", RevokePermission)
-	server.POST("/v1/users/:userID/enable", Enable)
-	server.POST("/v1/users/:userID/disable", Disable)
+	server.POST("/v1/user/password", routes.ChangePassword)
+	server.POST("/v1/user/signin", routes.SignIn)
+	server.GET("/v1/user/signout", routes.SignOut)
+	server.POST("/v1/user", routes.SignUp)
+	server.GET("/v1/users/current", routes.CurrentUser)
+	server.POST("/v1/users/:userID/grant", routes.GrantPermission)
+	server.POST("/v1/users/:userID/revoke", routes.RevokePermission)
+	server.POST("/v1/users/:userID/enable", routes.Enable)
+	server.POST("/v1/users/:userID/disable", routes.Disable)
 
 	server.Run(fmt.Sprintf(":%d", env.Get().Port))
 }
