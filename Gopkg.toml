@@ -58,8 +58,8 @@
   name = "golang.org/x/crypto"
 
 [[constraint]]
-  name = "gopkg.in/go-playground/validator.v8"
-  version = "8.18.2"
+  name = "gopkg.in/go-playground/validator.v9"
+  version = "9.17.1"
 
 [prune]
   go-tests = true

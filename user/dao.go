@@ -3,10 +3,7 @@ package user
 import (
 	"context"
 	"log"
-	"strings"
 	"time"
-
-	validator "gopkg.in/go-playground/validator.v8"
 
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
@@ -43,7 +40,7 @@ func collection() (*mongo.Collection, error) {
 }
 
 func insert(user *User) (*User, error) {
-	if err := validateSchema(user); err != nil {
+	if err := user.validateSchema(); err != nil {
 		return nil, err
 	}
 
@@ -60,7 +57,7 @@ func insert(user *User) (*User, error) {
 }
 
 func update(user *User) (*User, error) {
-	if err := validateSchema(user); err != nil {
+	if err := user.validateSchema(); err != nil {
 		return nil, err
 	}
 
@@ -93,39 +90,6 @@ func update(user *User) (*User, error) {
 	}
 
 	return user, nil
-}
-
-func validateSchema(user *User) error {
-	user.Login = strings.TrimSpace(user.Login)
-	user.Name = strings.TrimSpace(user.Name)
-	user.Password = strings.TrimSpace(user.Password)
-
-	result := make(validator.ValidationErrors)
-
-	if len(user.Name) == 0 {
-		result["name"] = &validator.FieldError{
-			Field: "name",
-			Tag:   "Requerido",
-		}
-	}
-	if len(user.Password) == 0 {
-		result["password"] = &validator.FieldError{
-			Field: "password",
-			Tag:   "Requerido",
-		}
-	}
-	if len(user.Login) == 0 {
-		result["login"] = &validator.FieldError{
-			Field: "login",
-			Tag:   "Requerido",
-		}
-	}
-
-	if len(result) > 0 {
-		return result
-	}
-
-	return nil
 }
 
 // FindByID lee un usuario desde la db

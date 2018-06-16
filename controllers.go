@@ -396,8 +396,8 @@ func CurrentUser(c *gin.Context) {
  */
 func ChangePassword(c *gin.Context) {
 	type changePassword struct {
-		Current string `json:"currentPassword" binding:"required"`
-		New     string `json:"newPassword" binding:"required"`
+		Current string `json:"currentPassword" binding:"required,min=1,max=100"`
+		New     string `json:"newPassword" binding:"required,min=1,max=100"`
 	}
 
 	tokenString, err := getTokenHeader(c)

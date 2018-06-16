@@ -5,14 +5,15 @@ import (
 
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"golang.org/x/crypto/bcrypt"
+	validator "gopkg.in/go-playground/validator.v9"
 )
 
 // User data structure
 type User struct {
 	ID          objectid.ObjectID `bson:"_id"`
-	Name        string            `bson:"name"`
-	Login       string            `bson:"login"`
-	Password    string            `bson:"password"`
+	Name        string            `bson:"name" validate:"required,min=1,max=100"`
+	Login       string            `bson:"login" validate:"required,min=5,max=100"`
+	Password    string            `bson:"password" validate:"required"`
 	Permissions []string          `bson:"permissions"`
 	Enabled     bool              `bson:"enabled"`
 	Created     time.Time         `bson:"created"`
@@ -74,4 +75,9 @@ func (e *User) revoke(permission string) {
 		}
 		e.Permissions = newPermissions
 	}
+}
+
+func (e *User) validateSchema() error {
+	validate := validator.New()
+	return validate.Struct(e)
 }

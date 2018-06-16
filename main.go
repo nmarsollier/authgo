@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	cors "github.com/itsjamie/gin-cors"
 	"github.com/nmarsollier/authgo/tools/env"
 )
@@ -16,6 +17,9 @@ func main() {
 	if len(os.Args) > 1 {
 		env.Load(os.Args[1])
 	}
+
+	// Hoy gin usa v8, para actualizar gin validator a v9.
+	binding.Validator = new(defaultValidator)
 
 	server := gin.Default()
 
