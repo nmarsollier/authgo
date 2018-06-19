@@ -10,6 +10,7 @@ Microservicio de Autentificación
 	- [Cambiar Password](#cambiar-password)
 	- [Deshabilitar Usuario](#deshabilitar-usuario)
 	- [Habilitar Usuario](#habilitar-usuario)
+	- [Listar Usuarios](#listar-usuarios)
 	- [Login](#login)
 	- [Logout](#logout)
 	- [Otorga Permisos](#otorga-permisos)
@@ -217,6 +218,59 @@ HTTP/1.1 400 Bad Request
      },
      ...
   ]
+}
+```
+500 Server Error
+
+```
+HTTP/1.1 500 Internal Server Error
+{
+   "error" : "Not Found"
+}
+```
+## <a name='listar-usuarios'></a> Listar Usuarios
+[Back to top](#top)
+
+<p>Obtiene información de todos los usuarios.</p>
+
+	GET /v1/users
+
+
+
+### Examples
+
+Header Autorización
+
+```
+Authorization=bearer {token}
+```
+
+### Success Response
+
+Respuesta
+
+```
+    HTTP/1.1 200 OK
+    [{
+       "id": "{Id usuario}",
+       "name": "{Nombre del usuario}",
+       "login": "{Login de usuario}",
+       "permissions": [
+           "{Permission}"
+       ],
+	      "enabled": true|false
+    }, ...]
+```
+
+
+### Error Response
+
+401 Unauthorized
+
+```
+HTTP/1.1 401 Unauthorized
+{
+   "error" : "Unauthorized"
 }
 ```
 500 Server Error
