@@ -428,3 +428,64 @@ func ChangePassword(c *gin.Context) {
 
 	c.Done()
 }
+
+// Users Devuelve una lista de todos los usuarios
+/**
+ * @api {get} /v1/users Listar Usuarios
+ * @apiName Listar Usuarios
+ * @apiGroup Seguridad
+ *
+ * @apiDescription Obtiene información de todos los usuarios.
+ *
+ * @apiSuccessExample {json} Respuesta
+ *     HTTP/1.1 200 OK
+ *     [{
+ *        "id": "{Id usuario}",
+ *        "name": "{Nombre del usuario}",
+ *        "login": "{Login de usuario}",
+ *        "permissions": [
+ *            "{Permission}"
+ *        ],
+ * 	      "enabled": true|false
+ *     }, ...]
+ *
+ * @apiUse AuthHeader
+ * @apiUse OtherErrors
+ */
+func Users(c *gin.Context) {
+	tokenString, err := getTokenHeader(c)
+	if err != nil {
+		errors.Handle(c, err)
+		return
+	}
+
+	payload, err := token.Validate(tokenString)
+	if err != nil {
+		errors.Handle(c, err)
+		return
+	}
+
+	if !user.Granted(payload.UserID, "admin") {
+		errors.Handle(c, errors.AccessLevel)
+		return
+	}
+
+	user, err := user.Users()
+
+	if err != nil {
+		errors.Handle(c, err)
+		return
+	}
+	result := []gin.H{}
+	for i := 0; i < len(user); i = i + 1 {
+		result = append(result, gin.H{
+			"id":          user[i].ID.Hex(),
+			"name":        user[i].Name,
+			"permissions": user[i].Permissions,
+			"login":       user[i].Login,
+			"enabled":     user[i].Enabled,
+		})
+	}
+
+	c.JSON(200, result)
+}

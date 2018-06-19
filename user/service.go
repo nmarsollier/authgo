@@ -140,3 +140,8 @@ func Enable(userID string) error {
 
 	return err
 }
+
+// Users wrapper para obtener todos los usuarios
+func Users() ([]*User, error) {
+	return findAll()
+}

@@ -92,6 +92,33 @@ func update(user *User) (*User, error) {
 	return user, nil
 }
 
+// findAll devuelve todos los usuarios
+func findAll() ([]*User, error) {
+	collection, err := collection()
+	if err != nil {
+		return nil, err
+	}
+
+	users := []*User{}
+	filter := bson.NewDocument()
+	cur, err := collection.Find(context.Background(), filter, nil)
+	defer cur.Close(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	for cur.Next(context.Background()) {
+		user := &User{}
+		if err := cur.Decode(user); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
 // FindByID lee un usuario desde la db
 func findByID(userID string) (*User, error) {
 	_id, err := objectid.FromHex(userID)

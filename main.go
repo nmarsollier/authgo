@@ -47,6 +47,7 @@ func main() {
 	server.POST("/v1/users/:userID/revoke", routes.RevokePermission)
 	server.POST("/v1/users/:userID/enable", routes.Enable)
 	server.POST("/v1/users/:userID/disable", routes.Disable)
+	server.GET("/v1/users", routes.Users)
 
 	server.Run(fmt.Sprintf(":%d", env.Get().Port))
 }
