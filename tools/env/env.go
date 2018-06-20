@@ -46,6 +46,7 @@ func Load(fileName string) bool {
 		log.Output(1, fmt.Sprintf("%s : %s", fileName, err.Error()))
 		return false
 	}
+	defer file.Close()
 
 	loaded := new()
 	err = json.NewDecoder(file).Decode(&loaded)

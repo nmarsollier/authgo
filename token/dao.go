@@ -11,13 +11,20 @@ import (
 	"github.com/nmarsollier/authgo/tools/errors"
 )
 
-func collection() (*mongo.Collection, error) {
-	db, err := db.Get()
+// Uso en tests solamente
+var collectionTest db.Collection
+
+func collection() (db.Collection, error) {
+	if collectionTest != nil {
+		return collectionTest, nil
+	}
+
+	database, err := db.Get()
 	if err != nil {
 		return nil, err
 	}
 
-	collection := db.Collection("tokens")
+	collection := database.Collection("tokens")
 
 	_, err = collection.Indexes().CreateOne(
 		context.Background(),
@@ -32,7 +39,7 @@ func collection() (*mongo.Collection, error) {
 		log.Output(1, err.Error())
 	}
 
-	return db.Collection("tokens"), nil
+	return db.WrapCollection(collection), nil
 }
 
 // Save agrega un token a la base de datos

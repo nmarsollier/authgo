@@ -8,7 +8,7 @@ import (
 // - Algunos errors comunes en el sistema -
 
 // ErrID el id del documento es invalido
-var ErrID = NewValidationField("id", "invalid")
+var ErrID = NewValidationField("id", "Invalid")
 
 // Unauthorized el usuario no esta autorizado al recurso
 var Unauthorized = NewCustom(401, "Unauthorized")
