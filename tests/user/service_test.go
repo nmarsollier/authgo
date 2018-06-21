@@ -3,6 +3,8 @@ package user
 import (
 	"testing"
 
+	"github.com/nmarsollier/authgo/user"
+
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -14,9 +16,9 @@ import (
 )
 
 func TestSignUpOk(t *testing.T) {
-	srv := NewTestingService(newCustomFakeDao("", "", "", true), newFakeTokenService())
+	srv := user.NewTestingService(newCustomFakeDao("", "", "", true), newFakeTokenService())
 
-	req := SignUpRequest{
+	req := user.SignUpRequest{
 		Name:     "Test",
 		Login:    "Login",
 		Password: "Pass",
@@ -30,12 +32,12 @@ func TestSignUpOk(t *testing.T) {
 }
 
 func TestSignUpError(t *testing.T) {
-	req := SignUpRequest{}
+	req := user.SignUpRequest{}
 	validate := validator.New()
 	validate.SetTagName("binding")
 	errResult := validate.Struct(req)
 
-	srv := NewTestingService(newFakeErrorDao(errResult), newFakeTokenService())
+	srv := user.NewTestingService(newFakeErrorDao(errResult), newFakeTokenService())
 
 	_, err := srv.SignUp(&req)
 	validation, ok := err.(validator.ValidationErrors)
@@ -47,7 +49,7 @@ func TestSignUpError(t *testing.T) {
 }
 
 func TestSignIn(t *testing.T) {
-	srv := NewTestingService(newFakeDao(), newFakeTokenService())
+	srv := user.NewTestingService(newFakeDao(), newFakeTokenService())
 
 	id, err := srv.SignIn("User", "Password")
 
@@ -57,15 +59,15 @@ func TestSignIn(t *testing.T) {
 }
 
 func TestSignInError(t *testing.T) {
-	srv := NewTestingService(newFakeDao(), newFakeTokenService())
+	srv := user.NewTestingService(newFakeDao(), newFakeTokenService())
 
 	_, err := srv.SignIn("User", "Password1")
 
-	assert.Equal(t, ErrPassword, err)
+	assert.Equal(t, user.ErrPassword, err)
 }
 
 func TestSignInError1(t *testing.T) {
-	srv := NewTestingService(newCustomFakeDao("Name", "Login", "Password", false), newFakeTokenService())
+	srv := user.NewTestingService(newCustomFakeDao("Name", "Login", "Password", false), newFakeTokenService())
 
 	_, err := srv.SignIn("User", "Password")
 
@@ -73,54 +75,54 @@ func TestSignInError1(t *testing.T) {
 }
 
 func TestChangePassword(t *testing.T) {
-	srv := NewTestingService(newFakeDao(), newFakeTokenService())
+	srv := user.NewTestingService(newFakeDao(), newFakeTokenService())
 
 	err := srv.ChangePassword("5b2a6b7d893dc92de5a8b833", "Password", "Password1")
 	assert.Nil(t, err)
 
-	srv = NewTestingService(newFakeDao(), newFakeTokenErrorService(ErrPassword))
+	srv = user.NewTestingService(newFakeDao(), newFakeTokenErrorService(user.ErrPassword))
 	err = srv.ChangePassword("5b2a6b7d893dc92de5a8b833", "Password1", "Password1")
-	assert.Equal(t, ErrPassword, err)
+	assert.Equal(t, user.ErrPassword, err)
 
 }
 
-func newFakeDao() dao {
+func newFakeDao() user.Dao {
 	return newCustomFakeDao("TestName", "Login", "Password", true)
 }
 
-func newFakeErrorDao(err error) dao {
+func newFakeErrorDao(err error) user.Dao {
 	result := fakeDao{}
-	result.On("collection").Return(nil, nil)
-	result.On("insert", mock.Anything).Return(nil, err)
-	result.On("update", mock.Anything).Return(nil, err)
-	result.On("findAll").Return(nil, err)
-	result.On("findByID", mock.Anything).Return(nil, err)
-	result.On("findByLogin", mock.Anything).Return(nil, err)
-	result.On("delete", mock.Anything).Return(err)
-	result.On("getID", mock.Anything).Return(nil, err)
+	result.On("Collection").Return(nil, nil)
+	result.On("Insert", mock.Anything).Return(nil, err)
+	result.On("Update", mock.Anything).Return(nil, err)
+	result.On("FindAll").Return(nil, err)
+	result.On("FindByID", mock.Anything).Return(nil, err)
+	result.On("FindByLogin", mock.Anything).Return(nil, err)
+	result.On("Delete", mock.Anything).Return(err)
+	result.On("GetID", mock.Anything).Return(nil, err)
 
 	return &result
 }
 
-func newCustomFakeDao(name string, login string, passw string, userEnabled bool) dao {
+func newCustomFakeDao(name string, login string, passw string, userEnabled bool) user.Dao {
 	result := fakeDao{}
 
-	user := newUser()
-	user.Name = name
-	user.Login = login
-	user.Enabled = userEnabled
-	user.setPasswordText(passw)
-	users := make([]*User, 1)
-	users[0] = user
+	usr := user.NewUser()
+	usr.Name = name
+	usr.Login = login
+	usr.Enabled = userEnabled
+	usr.SetPasswordText(passw)
+	users := make([]*user.User, 1)
+	users[0] = usr
 
-	result.On("collection").Return(nil, nil)
-	result.On("insert", mock.Anything).Return(user, nil)
-	result.On("update", mock.Anything).Return(user, nil)
-	result.On("findAll").Return(users, nil)
-	result.On("findByID", mock.Anything).Return(user, nil)
-	result.On("findByLogin", mock.Anything).Return(user, nil)
-	result.On("delete", mock.Anything).Return(nil)
-	result.On("getID", mock.Anything).Return(user.ID, nil)
+	result.On("Collection").Return(nil, nil)
+	result.On("Insert", mock.Anything).Return(usr, nil)
+	result.On("Update", mock.Anything).Return(usr, nil)
+	result.On("FindAll").Return(usr, nil)
+	result.On("FindByID", mock.Anything).Return(usr, nil)
+	result.On("FindByLogin", mock.Anything).Return(usr, nil)
+	result.On("Delete", mock.Anything).Return(nil)
+	result.On("GetID", mock.Anything).Return(usr.ID, nil)
 
 	return &result
 }
@@ -129,49 +131,49 @@ type fakeDao struct {
 	mock.Mock
 }
 
-func (mc *fakeDao) collection() (db.Collection, error) {
+func (mc *fakeDao) Collection() (db.Collection, error) {
 	res := mc.Called()
 	t, _ := res.Get(0).(db.Collection)
 	err, _ := res.Get(1).(error)
 	return t, err
 }
-func (mc *fakeDao) insert(user *User) (*User, error) {
-	res := mc.Called(user)
-	t, _ := res.Get(0).(*User)
+func (mc *fakeDao) Insert(usr *user.User) (*user.User, error) {
+	res := mc.Called(usr)
+	t, _ := res.Get(0).(*user.User)
 	err, _ := res.Get(1).(error)
 	return t, err
 }
-func (mc *fakeDao) update(user *User) (*User, error) {
-	res := mc.Called(user)
-	t, _ := res.Get(0).(*User)
+func (mc *fakeDao) Update(usr *user.User) (*user.User, error) {
+	res := mc.Called(usr)
+	t, _ := res.Get(0).(*user.User)
 	err, _ := res.Get(1).(error)
 	return t, err
 }
-func (mc *fakeDao) findAll() ([]*User, error) {
+func (mc *fakeDao) FindAll() ([]*user.User, error) {
 	res := mc.Called()
-	t, _ := res.Get(0).([]*User)
+	t, _ := res.Get(0).([]*user.User)
 	err, _ := res.Get(1).(error)
 	return t, err
 }
-func (mc *fakeDao) findByID(userID string) (*User, error) {
+func (mc *fakeDao) FindByID(userID string) (*user.User, error) {
 	res := mc.Called(userID)
-	t, _ := res.Get(0).(*User)
+	t, _ := res.Get(0).(*user.User)
 	err, _ := res.Get(1).(error)
 	return t, err
 }
-func (mc *fakeDao) findByLogin(login string) (*User, error) {
+func (mc *fakeDao) FindByLogin(login string) (*user.User, error) {
 	res := mc.Called(login)
-	t, _ := res.Get(0).(*User)
+	t, _ := res.Get(0).(*user.User)
 	err, _ := res.Get(1).(error)
 	return t, err
 }
-func (mc *fakeDao) delete(userID string) error {
+func (mc *fakeDao) Delete(userID string) error {
 	res := mc.Called(userID)
 	err, _ := res.Get(0).(error)
 	return err
 }
 
-func (mc *fakeDao) getID(ID string) (*objectid.ObjectID, error) {
+func (mc *fakeDao) GetID(ID string) (*objectid.ObjectID, error) {
 	res := mc.Called(ID)
 	t, _ := res.Get(0).(*objectid.ObjectID)
 	err, _ := res.Get(1).(error)
@@ -201,7 +203,7 @@ func newFakeTokenErrorService(err error) token.Service {
 	result.On("Create", mock.Anything).Return(nil, err)
 	result.On("Validate", mock.Anything).Return(nil, err)
 	result.On("Invalidate", mock.Anything).Return(err)
-	result.On("extractPayload", mock.Anything).Return(nil, err)
+	result.On("ExtractPayload", mock.Anything).Return(nil, err)
 
 	return &result
 }
@@ -228,7 +230,7 @@ func (s fakeTokenService) Invalidate(tokenString string) error {
 	err, _ := res.Get(0).(error)
 	return err
 }
-func (s fakeTokenService) extractPayload(tokenString string) (*token.Payload, error) {
+func (s fakeTokenService) ExtractPayload(tokenString string) (*token.Payload, error) {
 	res := s.Called(tokenString)
 	t, _ := res.Get(0).(*token.Payload)
 	err, _ := res.Get(1).(error)

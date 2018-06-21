@@ -7,8 +7,9 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 	validator "gopkg.in/go-playground/validator.v9"
 
+	"github.com/nmarsollier/authgo/tests/mocks"
 	"github.com/nmarsollier/authgo/tools/errors"
-	"github.com/nmarsollier/authgo/tools/test"
+	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -29,82 +30,82 @@ var testMongoError = mongo.WriteErrors{
 }
 
 func TestGetId(t *testing.T) {
-	testDao := newTestingDao(nil)
+	testDao := user.NewTestingDao(nil)
 
-	id, err := testDao.getID("5b2a6b7d893dc92de5a8b833")
+	id, err := testDao.GetID("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
 	assert.Equal(t, id.Hex(), "5b2a6b7d893dc92de5a8b833")
 
-	id, err = testDao.getID("invalid")
+	id, err = testDao.GetID("invalid")
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errors.ErrID)
 }
 
 func TestFindByIdInvalid(t *testing.T) {
-	testDao := newTestingDao(nil)
+	testDao := user.NewTestingDao(nil)
 
-	_, err := testDao.findByID("__invalid__")
+	_, err := testDao.FindByID("__invalid__")
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errors.ErrID)
 }
 
 func TestFindByIdOk(t *testing.T) {
-	mConn := new(test.FakeCollection)
-	testDao := newTestingDao(mConn)
+	mConn := new(mocks.FakeCollection)
+	testDao := user.NewTestingDao(mConn)
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
-		test.FakeDecoder(func(v interface{}) error {
-			if user, ok := v.(*User); ok {
+		mocks.FakeDecoder(func(v interface{}) error {
+			if user, ok := v.(*user.User); ok {
 				user.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 			}
 			return nil
 		}),
 	)
 
-	user, err := testDao.findByID("5b2a6b7d893dc92de5a8b833")
+	user, err := testDao.FindByID("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
 	assert.Equal(t, user.ID.Hex(), "5b2a6b7d893dc92de5a8b833")
 }
 
 func TestFindByIdNotFound(t *testing.T) {
-	mConn := new(test.FakeCollection)
-	testDao := newTestingDao(mConn)
+	mConn := new(mocks.FakeCollection)
+	testDao := user.NewTestingDao(mConn)
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
-		test.FakeDecoder(func(v interface{}) error {
+		mocks.FakeDecoder(func(v interface{}) error {
 			return mongo.ErrNoDocuments
 		}),
 	)
 
-	_, err := testDao.findByID("5b2a6b7d893dc92de5a8b833")
+	_, err := testDao.FindByID("5b2a6b7d893dc92de5a8b833")
 	assert.Equal(t, err, mongo.ErrNoDocuments)
 }
 
 func TestInsertOk(t *testing.T) {
-	mConn := new(test.FakeCollection)
-	testDao := newTestingDao(mConn)
+	mConn := new(mocks.FakeCollection)
+	testDao := user.NewTestingDao(mConn)
 
-	user := newUser()
-	user.Name = "Name"
-	user.Login = "Login"
-	user.setPasswordText("Login")
+	usr := user.NewUser()
+	usr.Name = "Name"
+	usr.Login = "Login"
+	usr.SetPasswordText("Login")
 
-	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(user.ID, nil)
+	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(usr.ID, nil)
 
-	user, err := testDao.insert(user)
+	usr, err := testDao.Insert(usr)
 	assert.Nil(t, err)
-	assert.NotNil(t, user.ID)
+	assert.NotNil(t, usr.ID)
 }
 
 func TestInsertError(t *testing.T) {
-	mConn := new(test.FakeCollection)
-	testDao := newTestingDao(mConn)
+	mConn := new(mocks.FakeCollection)
+	testDao := user.NewTestingDao(mConn)
 
-	user := newUser()
+	usr := user.NewUser()
 
-	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(user.ID, nil)
+	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(usr.ID, nil)
 
-	_, err := testDao.insert(user)
+	_, err := testDao.Insert(usr)
 	validation, ok := err.(validator.ValidationErrors)
 	assert.Equal(t, ok, true)
 	assert.Equal(t, 3, len(validation))
@@ -114,30 +115,30 @@ func TestInsertError(t *testing.T) {
 }
 
 func TestUpdateOk(t *testing.T) {
-	mConn := new(test.FakeCollection)
-	testDao := newTestingDao(mConn)
+	mConn := new(mocks.FakeCollection)
+	testDao := user.NewTestingDao(mConn)
 
-	user := newUser()
-	user.Name = "Name"
-	user.Login = "Login"
-	user.setPasswordText("Login")
+	usr := user.NewUser()
+	usr.Name = "Name"
+	usr.Login = "Login"
+	usr.SetPasswordText("Login")
 
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
 
-	user, err := testDao.update(user)
+	usr, err := testDao.Update(usr)
 	assert.Nil(t, err)
-	assert.NotNil(t, user.ID)
+	assert.NotNil(t, usr.ID)
 }
 
 func TestUpdateError(t *testing.T) {
-	mConn := new(test.FakeCollection)
-	testDao := newTestingDao(mConn)
+	mConn := new(mocks.FakeCollection)
+	testDao := user.NewTestingDao(mConn)
 
-	user := newUser()
+	usr := user.NewUser()
 
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
 
-	_, err := testDao.update(user)
+	_, err := testDao.Update(usr)
 	validation, ok := err.(validator.ValidationErrors)
 	assert.Equal(t, ok, true)
 	assert.Equal(t, 3, len(validation))
@@ -147,30 +148,30 @@ func TestUpdateError(t *testing.T) {
 }
 
 func TestFindByLoginOk(t *testing.T) {
-	mConn := new(test.FakeCollection)
-	testDao := newTestingDao(mConn)
+	mConn := new(mocks.FakeCollection)
+	testDao := user.NewTestingDao(mConn)
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
-		test.FakeDecoder(func(v interface{}) error {
-			if user, ok := v.(*User); ok {
+		mocks.FakeDecoder(func(v interface{}) error {
+			if user, ok := v.(*user.User); ok {
 				user.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 			}
 			return nil
 		}),
 	)
 
-	user, err := testDao.findByLogin("5b2a6b7d893dc92de5a8b833")
+	user, err := testDao.FindByLogin("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
 	assert.Equal(t, user.ID.Hex(), "5b2a6b7d893dc92de5a8b833")
 }
 
 func TestDeleteOk(t *testing.T) {
-	mConn := new(test.FakeCollection)
-	testDao := newTestingDao(mConn)
+	mConn := new(mocks.FakeCollection)
+	testDao := user.NewTestingDao(mConn)
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
-		test.FakeDecoder(func(v interface{}) error {
-			if user, ok := v.(*User); ok {
+		mocks.FakeDecoder(func(v interface{}) error {
+			if user, ok := v.(*user.User); ok {
 				user.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 			}
 			return nil
@@ -178,6 +179,6 @@ func TestDeleteOk(t *testing.T) {
 	)
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
 
-	err := testDao.delete("5b2a6b7d893dc92de5a8b833")
+	err := testDao.Delete("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
 }

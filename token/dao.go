@@ -17,27 +17,29 @@ type daoImpl struct {
 	dbCollection db.Collection
 }
 
-type dao interface {
-	collection() (db.Collection, error)
-	insert(token *Token) (*Token, error)
-	update(token *Token) (*Token, error)
-	findByID(tokenID string) (*Token, error)
-	findByUserID(tokenID string) (*Token, error)
-	delete(tokenID string) error
-	getID(ID string) (*objectid.ObjectID, error)
+// Dao es la interfaz con los método expuestos por este dao
+type Dao interface {
+	Collection() (db.Collection, error)
+	Insert(token *Token) (*Token, error)
+	Update(token *Token) (*Token, error)
+	FindByID(tokenID string) (*Token, error)
+	FindByUserID(tokenID string) (*Token, error)
+	Delete(tokenID string) error
+	GetID(ID string) (*objectid.ObjectID, error)
 }
 
-func newDao() dao {
+func newDao() Dao {
 	return daoImpl{}
 }
 
-func newTestingDao(coll db.Collection) dao {
+// NewTestingDao nuevo dao con fines de testing
+func NewTestingDao(coll db.Collection) Dao {
 	return daoImpl{
 		dbCollection: coll,
 	}
 }
 
-func (d daoImpl) collection() (db.Collection, error) {
+func (d daoImpl) Collection() (db.Collection, error) {
 	if d.dbCollection != nil {
 		return d.dbCollection, nil
 	}
@@ -67,8 +69,8 @@ func (d daoImpl) collection() (db.Collection, error) {
 }
 
 // Save agrega un token a la base de datos
-func (d daoImpl) insert(token *Token) (*Token, error) {
-	collection, err := d.collection()
+func (d daoImpl) Insert(token *Token) (*Token, error) {
+	collection, err := d.Collection()
 	if err != nil {
 		return nil, err
 	}
@@ -82,8 +84,8 @@ func (d daoImpl) insert(token *Token) (*Token, error) {
 }
 
 // Save agrega un token a la base de datos
-func (d daoImpl) update(token *Token) (*Token, error) {
-	collection, err := d.collection()
+func (d daoImpl) Update(token *Token) (*Token, error) {
+	collection, err := d.Collection()
 	if err != nil {
 		return nil, err
 	}
@@ -108,13 +110,13 @@ func (d daoImpl) update(token *Token) (*Token, error) {
 	return token, nil
 }
 
-func (d daoImpl) findByID(tokenID string) (*Token, error) {
-	_id, err := d.getID(tokenID)
+func (d daoImpl) FindByID(tokenID string) (*Token, error) {
+	_id, err := d.GetID(tokenID)
 	if err != nil {
 		return nil, errors.Unauthorized
 	}
 
-	collection, err := d.collection()
+	collection, err := d.Collection()
 	if err != nil {
 		return nil, err
 	}
@@ -132,13 +134,13 @@ func (d daoImpl) findByID(tokenID string) (*Token, error) {
 	return token, nil
 }
 
-func (d daoImpl) findByUserID(tokenID string) (*Token, error) {
-	_id, err := d.getID(tokenID)
+func (d daoImpl) FindByUserID(tokenID string) (*Token, error) {
+	_id, err := d.GetID(tokenID)
 	if err != nil {
 		return nil, errors.Unauthorized
 	}
 
-	collection, err := d.collection()
+	collection, err := d.Collection()
 	if err != nil {
 		return nil, err
 	}
@@ -160,19 +162,19 @@ func (d daoImpl) findByUserID(tokenID string) (*Token, error) {
 	return token, nil
 }
 
-func (d daoImpl) delete(tokenID string) error {
-	token, err := d.findByID(tokenID)
+func (d daoImpl) Delete(tokenID string) error {
+	token, err := d.FindByID(tokenID)
 	if err != nil {
 		return err
 	}
 
 	token.Enabled = false
-	_, err = d.update(token)
+	_, err = d.Update(token)
 
 	return err
 }
 
-func (d daoImpl) getID(ID string) (*objectid.ObjectID, error) {
+func (d daoImpl) GetID(ID string) (*objectid.ObjectID, error) {
 	_id, err := objectid.FromHex(ID)
 	if err != nil {
 		return nil, errors.ErrID

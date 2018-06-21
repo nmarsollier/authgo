@@ -11,8 +11,8 @@ type Token struct {
 	Enabled bool              `bson:"enabled"`
 }
 
-// New creates new User
-func newToken() *Token {
+// NewToken creates new Token
+func NewToken() *Token {
 	return &Token{
 		ID:      objectid.New(),
 		Enabled: true,

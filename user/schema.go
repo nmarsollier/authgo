@@ -20,7 +20,7 @@ type User struct {
 	Updated     time.Time         `bson:"updated"`
 }
 
-func newUser() *User {
+func NewUser() *User {
 	return &User{
 		ID:          objectid.New(),
 		Enabled:     true,
@@ -30,7 +30,7 @@ func newUser() *User {
 	}
 }
 
-func (e *User) setPasswordText(pwd string) error {
+func (e *User) SetPasswordText(pwd string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost)
 	if err != nil {
 		return ErrPassword
@@ -40,7 +40,7 @@ func (e *User) setPasswordText(pwd string) error {
 	return nil
 }
 
-func (e *User) validatePassword(plainPwd string) error {
+func (e *User) ValidatePassword(plainPwd string) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(e.Password), []byte(plainPwd)); err != nil {
 		return ErrPassword
 	}
@@ -48,7 +48,7 @@ func (e *User) validatePassword(plainPwd string) error {
 }
 
 // Granted verifica si el usuario tiene el permiso indicado
-func (e *User) granted(permission string) bool {
+func (e *User) Granted(permission string) bool {
 	for _, p := range e.Permissions {
 		if p == permission {
 			return true
@@ -58,15 +58,15 @@ func (e *User) granted(permission string) bool {
 }
 
 // Grant le otorga el permiso indicado al usuario
-func (e *User) grant(permission string) {
-	if !e.granted(permission) {
+func (e *User) Grant(permission string) {
+	if !e.Granted(permission) {
 		e.Permissions = append(e.Permissions, permission)
 	}
 }
 
 // Revoke le revoca el permiso indicado al usuario
-func (e *User) revoke(permission string) {
-	if e.granted(permission) {
+func (e *User) Revoke(permission string) {
+	if e.Granted(permission) {
 		var newPermissions []string
 		for _, p := range e.Permissions {
 			if p != permission {
@@ -77,7 +77,7 @@ func (e *User) revoke(permission string) {
 	}
 }
 
-func (e *User) validateSchema() error {
+func (e *User) ValidateSchema() error {
 	validate := validator.New()
 	return validate.Struct(e)
 }

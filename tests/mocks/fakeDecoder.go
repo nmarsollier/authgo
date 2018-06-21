@@ -1,4 +1,4 @@
-package test
+package mocks
 
 import (
 	"github.com/nmarsollier/authgo/tools/db"

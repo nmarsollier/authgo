@@ -24,7 +24,7 @@ type Payload struct {
 }
 
 type serviceImpl struct {
-	tokenDao dao
+	tokenDao Dao
 }
 
 // Service es la interfaz ue define el servicio
@@ -32,6 +32,7 @@ type Service interface {
 	Create(userID objectid.ObjectID) (string, error)
 	Validate(token string) (*Payload, error)
 	Invalidate(token string) error
+	ExtractPayload(tokenString string) (*Payload, error)
 }
 
 // NewService retorna una nueva instancia del servicio
@@ -42,7 +43,7 @@ func NewService() Service {
 }
 
 // NewTestingService retorna un servicio con fines de test
-func NewTestingService(fakeDao dao) Service {
+func NewTestingService(fakeDao Dao) Service {
 	return serviceImpl{
 		tokenDao: fakeDao,
 	}
@@ -59,10 +60,10 @@ func NewTestingService(fakeDao dao) Service {
  *     }
  */
 func (s serviceImpl) Create(userID objectid.ObjectID) (string, error) {
-	token := newToken()
+	token := NewToken()
 	token.UserID = userID
 
-	token, err := s.tokenDao.insert(token)
+	token, err := s.tokenDao.Insert(token)
 	if err != nil {
 		return "", err
 	}
@@ -98,13 +99,13 @@ func (s serviceImpl) Validate(token string) (*Payload, error) {
 	}
 
 	// Sino validamos el token y lo agregamos al cache
-	payload, err := extractPayload(token)
+	payload, err := s.ExtractPayload(token)
 	if err != nil {
 		return nil, err
 	}
 
 	// Buscamos el token en la db para validarlo
-	dbToken, err := s.tokenDao.findByID(payload.TokenID)
+	dbToken, err := s.tokenDao.FindByID(payload.TokenID)
 	if err != nil || !dbToken.Enabled {
 		return nil, errors.Unauthorized
 	}
@@ -122,7 +123,7 @@ func (s serviceImpl) Invalidate(token string) error {
 		return errors.Unauthorized
 	}
 
-	if err = s.tokenDao.delete(payload.TokenID); err != nil {
+	if err = s.tokenDao.Delete(payload.TokenID); err != nil {
 		return err
 	}
 
@@ -138,7 +139,7 @@ func (s serviceImpl) Invalidate(token string) error {
 }
 
 // extract payload from token string
-func extractPayload(tokenString string) (*Payload, error) {
+func (s serviceImpl) ExtractPayload(tokenString string) (*Payload, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])

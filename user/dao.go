@@ -16,29 +16,29 @@ type daoImpl struct {
 	dbCollection db.Collection
 }
 
-type dao interface {
-	collection() (db.Collection, error)
-	insert(user *User) (*User, error)
-	update(user *User) (*User, error)
-	findAll() ([]*User, error)
-	findByID(userID string) (*User, error)
-	findByLogin(login string) (*User, error)
-	delete(userID string) error
-	getID(ID string) (*objectid.ObjectID, error)
+type Dao interface {
+	Collection() (db.Collection, error)
+	Insert(user *User) (*User, error)
+	Update(user *User) (*User, error)
+	FindAll() ([]*User, error)
+	FindByID(userID string) (*User, error)
+	FindByLogin(login string) (*User, error)
+	Delete(userID string) error
+	GetID(ID string) (*objectid.ObjectID, error)
 }
 
-func newDao() dao {
+func newDao() Dao {
 	return daoImpl{}
 }
 
-func newTestingDao(coll db.Collection) dao {
+func NewTestingDao(coll db.Collection) Dao {
 	return daoImpl{
 		dbCollection: coll,
 	}
 }
 
 // UsersCollection obtiene la colección de Usuarios
-func (d daoImpl) collection() (db.Collection, error) {
+func (d daoImpl) Collection() (db.Collection, error) {
 	if d.dbCollection != nil {
 		return d.dbCollection, nil
 	}
@@ -69,12 +69,12 @@ func (d daoImpl) collection() (db.Collection, error) {
 	return d.dbCollection, nil
 }
 
-func (d daoImpl) insert(user *User) (*User, error) {
-	if err := user.validateSchema(); err != nil {
+func (d daoImpl) Insert(user *User) (*User, error) {
+	if err := user.ValidateSchema(); err != nil {
 		return nil, err
 	}
 
-	collection, err := d.collection()
+	collection, err := d.Collection()
 	if err != nil {
 		return nil, err
 	}
@@ -86,12 +86,12 @@ func (d daoImpl) insert(user *User) (*User, error) {
 	return user, nil
 }
 
-func (d daoImpl) update(user *User) (*User, error) {
-	if err := user.validateSchema(); err != nil {
+func (d daoImpl) Update(user *User) (*User, error) {
+	if err := user.ValidateSchema(); err != nil {
 		return nil, err
 	}
 
-	collection, err := d.collection()
+	collection, err := d.Collection()
 	if err != nil {
 		return nil, err
 	}
@@ -122,9 +122,9 @@ func (d daoImpl) update(user *User) (*User, error) {
 	return user, nil
 }
 
-// findAll devuelve todos los usuarios
-func (d daoImpl) findAll() ([]*User, error) {
-	collection, err := d.collection()
+// FindAll devuelve todos los usuarios
+func (d daoImpl) FindAll() ([]*User, error) {
+	collection, err := d.Collection()
 	if err != nil {
 		return nil, err
 	}
@@ -150,13 +150,13 @@ func (d daoImpl) findAll() ([]*User, error) {
 }
 
 // FindByID lee un usuario desde la db
-func (d daoImpl) findByID(userID string) (*User, error) {
+func (d daoImpl) FindByID(userID string) (*User, error) {
 	_id, err := objectid.FromHex(userID)
 	if err != nil {
 		return nil, errors.ErrID
 	}
 
-	collection, err := d.collection()
+	collection, err := d.Collection()
 	if err != nil {
 		return nil, err
 	}
@@ -171,8 +171,8 @@ func (d daoImpl) findByID(userID string) (*User, error) {
 }
 
 // FindByLogin lee un usuario desde la db
-func (d daoImpl) findByLogin(login string) (*User, error) {
-	collection, collectionError := d.collection()
+func (d daoImpl) FindByLogin(login string) (*User, error) {
+	collection, collectionError := d.Collection()
 	if collectionError != nil {
 		return nil, collectionError
 	}
@@ -191,18 +191,18 @@ func (d daoImpl) findByLogin(login string) (*User, error) {
 }
 
 // Delete marca un usuario como borrado en la base de datos
-func (d daoImpl) delete(userID string) error {
-	_id, err := d.getID(userID)
+func (d daoImpl) Delete(userID string) error {
+	_id, err := d.GetID(userID)
 	if err != nil {
 		return err
 	}
 
-	collection, err := d.collection()
+	collection, err := d.Collection()
 	if err != nil {
 		return err
 	}
 
-	user := newUser()
+	user := NewUser()
 	user.ID = *_id
 	user.Enabled = false
 	user.Updated = time.Now()
@@ -224,7 +224,7 @@ func (d daoImpl) delete(userID string) error {
 	return err
 }
 
-func (d daoImpl) getID(ID string) (*objectid.ObjectID, error) {
+func (d daoImpl) GetID(ID string) (*objectid.ObjectID, error) {
 	_id, err := objectid.FromHex(ID)
 	if err != nil {
 		return nil, errors.ErrID
