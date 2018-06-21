@@ -7,12 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/test"
 )
 
 func TestCreate(t *testing.T) {
-	collectionTest = fakeServiceCollection()
+	FakeServiceCollection()
 
 	tokenID, _ := objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 	token, err := Create(tokenID)
@@ -26,7 +25,7 @@ func TestCreate(t *testing.T) {
 }
 
 func TestValidate(t *testing.T) {
-	collectionTest = fakeServiceCollection()
+	FakeServiceCollection()
 
 	token := "__invalid__"
 
@@ -43,7 +42,7 @@ func TestValidate(t *testing.T) {
 }
 
 func TestInvalidate(t *testing.T) {
-	collectionTest = fakeServiceCollection()
+	FakeServiceCollection()
 
 	token := "__invalid__"
 
@@ -56,8 +55,9 @@ func TestInvalidate(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func fakeServiceCollection() db.Collection {
+func FakeServiceCollection() {
 	mConn := new(test.FakeCollection)
+	CollectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -75,6 +75,4 @@ func fakeServiceCollection() db.Collection {
 	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(tokenID, nil)
 
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
-
-	return mConn
 }

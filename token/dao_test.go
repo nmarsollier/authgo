@@ -45,7 +45,7 @@ func TestFindByIdInvalid(t *testing.T) {
 
 func TestFindByIdOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -64,7 +64,7 @@ func TestFindByIdOk(t *testing.T) {
 
 func TestFindByIdNotFound(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -78,7 +78,7 @@ func TestFindByIdNotFound(t *testing.T) {
 
 func TestInsertOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	token := newToken()
 	token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
@@ -92,7 +92,7 @@ func TestInsertOk(t *testing.T) {
 
 func TestUpdateOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	token := newToken()
 	token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
@@ -112,7 +112,7 @@ func TestFindByUserIdInvalid(t *testing.T) {
 
 func TestFindByUserIdOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -137,7 +137,7 @@ func TestDeleteInvalid(t *testing.T) {
 
 func TestDeleteOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {

@@ -12,11 +12,11 @@ import (
 )
 
 // Uso en tests solamente
-var collectionTest db.Collection
+var CollectionTest db.Collection
 
 func collection() (db.Collection, error) {
-	if collectionTest != nil {
-		return collectionTest, nil
+	if CollectionTest != nil {
+		return CollectionTest, nil
 	}
 
 	database, err := db.Get()

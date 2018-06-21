@@ -46,7 +46,7 @@ func TestFindByIdInvalid(t *testing.T) {
 
 func TestFindByIdOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -64,7 +64,7 @@ func TestFindByIdOk(t *testing.T) {
 
 func TestFindByIdNotFound(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -78,7 +78,7 @@ func TestFindByIdNotFound(t *testing.T) {
 
 func TestInsertOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	user := newUser()
 	user.Name = "Name"
@@ -94,7 +94,7 @@ func TestInsertOk(t *testing.T) {
 
 func TestInsertError(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	user := newUser()
 
@@ -111,7 +111,7 @@ func TestInsertError(t *testing.T) {
 
 func TestUpdateOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	user := newUser()
 	user.Name = "Name"
@@ -127,7 +127,7 @@ func TestUpdateOk(t *testing.T) {
 
 func TestUpdateError(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	user := newUser()
 
@@ -144,7 +144,7 @@ func TestUpdateError(t *testing.T) {
 
 func TestFindByLoginOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -162,7 +162,7 @@ func TestFindByLoginOk(t *testing.T) {
 
 func TestDeleteOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	collectionTest = mConn
+	CollectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
