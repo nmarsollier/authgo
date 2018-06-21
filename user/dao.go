@@ -12,8 +12,15 @@ import (
 	"github.com/nmarsollier/authgo/tools/errors"
 )
 
+// Uso en tests solamente
+var collectionTest db.Collection
+
 // UsersCollection obtiene la colección de Usuarios
-func collection() (*mongo.Collection, error) {
+func collection() (db.Collection, error) {
+	if collectionTest != nil {
+		return collectionTest, nil
+	}
+
 	database, err := db.Get()
 	if err != nil {
 		return nil, err
@@ -36,7 +43,7 @@ func collection() (*mongo.Collection, error) {
 		log.Output(1, err.Error())
 	}
 
-	return collection, nil
+	return db.WrapCollection(collection), nil
 }
 
 func insert(user *User) (*User, error) {

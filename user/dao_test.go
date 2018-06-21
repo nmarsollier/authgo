@@ -1,10 +1,11 @@
-package token
+package user
 
 import (
 	"testing"
 
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	validator "gopkg.in/go-playground/validator.v9"
 
 	"github.com/nmarsollier/authgo/tools/errors"
 	"github.com/nmarsollier/authgo/tools/test"
@@ -40,7 +41,7 @@ func TestGetId(t *testing.T) {
 func TestFindByIdInvalid(t *testing.T) {
 	_, err := findByID("__invalid__")
 	assert.NotNil(t, err)
-	assert.Equal(t, err, errors.Unauthorized)
+	assert.Equal(t, err, errors.ErrID)
 }
 
 func TestFindByIdOk(t *testing.T) {
@@ -49,17 +50,16 @@ func TestFindByIdOk(t *testing.T) {
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
-			if token, ok := v.(*Token); ok {
-				token.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
-				token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
+			if user, ok := v.(*User); ok {
+				user.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 			}
 			return nil
 		}),
 	)
 
-	token, err := findByID("5b2a6b7d893dc92de5a8b833")
+	user, err := findByID("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
-	assert.Equal(t, token.ID.Hex(), "5b2a6b7d893dc92de5a8b833")
+	assert.Equal(t, user.ID.Hex(), "5b2a6b7d893dc92de5a8b833")
 }
 
 func TestFindByIdNotFound(t *testing.T) {
@@ -73,66 +73,91 @@ func TestFindByIdNotFound(t *testing.T) {
 	)
 
 	_, err := findByID("5b2a6b7d893dc92de5a8b833")
-	assert.Equal(t, err, errors.Unauthorized)
+	assert.Equal(t, err, mongo.ErrNoDocuments)
 }
 
 func TestInsertOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
 	collectionTest = mConn
 
-	token := newToken()
-	token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
+	user := newUser()
+	user.Name = "Name"
+	user.Login = "Login"
+	user.setPasswordText("Login")
 
-	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(token.ID, nil)
+	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(user.ID, nil)
 
-	token, err := insert(token)
+	user, err := insert(user)
 	assert.Nil(t, err)
-	assert.NotNil(t, token.ID)
+	assert.NotNil(t, user.ID)
+}
+
+func TestInsertError(t *testing.T) {
+	mConn := new(test.FakeCollection)
+	collectionTest = mConn
+
+	user := newUser()
+
+	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(user.ID, nil)
+
+	_, err := insert(user)
+	validation, ok := err.(validator.ValidationErrors)
+	assert.Equal(t, ok, true)
+	assert.Equal(t, 3, len(validation))
+	assert.Equal(t, "Name", validation[0].Field())
+	assert.Equal(t, "Login", validation[1].Field())
+	assert.Equal(t, "Password", validation[2].Field())
 }
 
 func TestUpdateOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
 	collectionTest = mConn
 
-	token := newToken()
-	token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
+	user := newUser()
+	user.Name = "Name"
+	user.Login = "Login"
+	user.setPasswordText("Login")
 
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
 
-	token, err := update(token)
+	user, err := update(user)
 	assert.Nil(t, err)
-	assert.NotNil(t, token.ID)
+	assert.NotNil(t, user.ID)
 }
 
-func TestFindByUserIdInvalid(t *testing.T) {
-	_, err := findByUserID("__invalid__")
-	assert.NotNil(t, err)
-	assert.Equal(t, err, errors.Unauthorized)
+func TestUpdateError(t *testing.T) {
+	mConn := new(test.FakeCollection)
+	collectionTest = mConn
+
+	user := newUser()
+
+	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
+
+	_, err := update(user)
+	validation, ok := err.(validator.ValidationErrors)
+	assert.Equal(t, ok, true)
+	assert.Equal(t, 3, len(validation))
+	assert.Equal(t, "Name", validation[0].Field())
+	assert.Equal(t, "Login", validation[1].Field())
+	assert.Equal(t, "Password", validation[2].Field())
 }
 
-func TestFindByUserIdOk(t *testing.T) {
+func TestFindByLoginOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
 	collectionTest = mConn
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
-			if token, ok := v.(*Token); ok {
-				token.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
-				token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
+			if user, ok := v.(*User); ok {
+				user.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 			}
 			return nil
 		}),
 	)
 
-	token, err := findByUserID("5b2a6b7d893dc92de5a8b833")
+	user, err := findByLogin("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
-	assert.Equal(t, token.ID.Hex(), "5b2a6b7d893dc92de5a8b833")
-}
-
-func TestDeleteInvalid(t *testing.T) {
-	err := delete("__invalid__")
-	assert.NotNil(t, err)
-	assert.Equal(t, err, errors.Unauthorized)
+	assert.Equal(t, user.ID.Hex(), "5b2a6b7d893dc92de5a8b833")
 }
 
 func TestDeleteOk(t *testing.T) {
@@ -141,9 +166,8 @@ func TestDeleteOk(t *testing.T) {
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
-			if token, ok := v.(*Token); ok {
-				token.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
-				token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
+			if user, ok := v.(*User); ok {
+				user.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 			}
 			return nil
 		}),

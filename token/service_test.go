@@ -7,11 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/nmarsollier/authgo/test"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/test"
 )
 
-func TestCreateValidate(t *testing.T) {
+func TestCreate(t *testing.T) {
 	collectionTest = fakeServiceCollection()
 
 	tokenID, _ := objectid.FromHex("5b2a6b7d893dc92de5a8b833")
@@ -19,10 +19,41 @@ func TestCreateValidate(t *testing.T) {
 	assert.NotNil(t, token)
 	assert.Nil(t, err)
 
-	payload, err := Validate(token)
+	payload, err := extractPayload(token)
 	assert.Nil(t, err)
 	assert.NotNil(t, payload.TokenID)
 	assert.Equal(t, payload.UserID, "5b2a6b7d893dc92de5a8b833")
+}
+
+func TestValidate(t *testing.T) {
+	collectionTest = fakeServiceCollection()
+
+	token := "__invalid__"
+
+	payload, err := Validate(token)
+	assert.NotNil(t, err)
+	assert.Nil(t, payload)
+
+	token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklEIjoiNWIyYWZkMjA2MDFlZDljNzQ0NDVhYjU3IiwidXNlcklEIjoiNWIyYTZiN2Q4OTNkYzkyZGU1YThiODMzIn0.RBcB_B5D6uL3JXRbi2xe-V9LytIOxxLSnXv0_-rFAVU"
+
+	payload, err = Validate(token)
+	assert.Nil(t, err)
+	assert.NotNil(t, payload.TokenID)
+	assert.Equal(t, payload.UserID, "5b2a6b7d893dc92de5a8b833")
+}
+
+func TestInvalidate(t *testing.T) {
+	collectionTest = fakeServiceCollection()
+
+	token := "__invalid__"
+
+	err := Invalidate(token)
+	assert.NotNil(t, err)
+
+	token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklEIjoiNWIyYWZkMjA2MDFlZDljNzQ0NDVhYjU3IiwidXNlcklEIjoiNWIyYTZiN2Q4OTNkYzkyZGU1YThiODMzIn0.RBcB_B5D6uL3JXRbi2xe-V9LytIOxxLSnXv0_-rFAVU"
+
+	err = Invalidate(token)
+	assert.Nil(t, err)
 }
 
 func fakeServiceCollection() db.Collection {
