@@ -23,6 +23,31 @@ type Payload struct {
 	UserID  string
 }
 
+type serviceImpl struct {
+	tokenDao dao
+}
+
+// Service es la interfaz ue define el servicio
+type Service interface {
+	Create(userID objectid.ObjectID) (string, error)
+	Validate(token string) (*Payload, error)
+	Invalidate(token string) error
+}
+
+// NewService retorna una nueva instancia del servicio
+func NewService() Service {
+	return serviceImpl{
+		tokenDao: newDao(),
+	}
+}
+
+// NewTestingService retorna un servicio con fines de test
+func NewTestingService(fakeDao dao) Service {
+	return serviceImpl{
+		tokenDao: fakeDao,
+	}
+}
+
 // Create crea un token
 /**
  * @apiDefine TokenResponse
@@ -33,11 +58,11 @@ type Payload struct {
  *       "token": "{Token de autorización}"
  *     }
  */
-func Create(userID objectid.ObjectID) (string, error) {
+func (s serviceImpl) Create(userID objectid.ObjectID) (string, error) {
 	token := newToken()
 	token.UserID = userID
 
-	token, err := insert(token)
+	token, err := s.tokenDao.insert(token)
 	if err != nil {
 		return "", err
 	}
@@ -64,7 +89,7 @@ func Create(userID objectid.ObjectID) (string, error) {
  *        "error" : "Unauthorized"
  *     }
  */
-func Validate(token string) (*Payload, error) {
+func (s serviceImpl) Validate(token string) (*Payload, error) {
 	// Si esta en cache, retornamos el cache
 	if found, ok := cache.Get(token); ok {
 		if payload, ok := found.(Payload); ok {
@@ -79,7 +104,7 @@ func Validate(token string) (*Payload, error) {
 	}
 
 	// Buscamos el token en la db para validarlo
-	dbToken, err := findByID(payload.TokenID)
+	dbToken, err := s.tokenDao.findByID(payload.TokenID)
 	if err != nil || !dbToken.Enabled {
 		return nil, errors.Unauthorized
 	}
@@ -91,13 +116,13 @@ func Validate(token string) (*Payload, error) {
 }
 
 // Invalidate invalida un token
-func Invalidate(token string) error {
-	payload, err := Validate(token)
+func (s serviceImpl) Invalidate(token string) error {
+	payload, err := s.Validate(token)
 	if err != nil {
 		return errors.Unauthorized
 	}
 
-	if err = delete(payload.TokenID); err != nil {
+	if err = s.tokenDao.delete(payload.TokenID); err != nil {
 		return err
 	}
 

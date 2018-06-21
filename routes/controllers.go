@@ -38,7 +38,7 @@ func GrantPermission(c *gin.Context) {
 		return
 	}
 
-	payload, err := token.Validate(tokenString)
+	payload, err := token.NewService().Validate(tokenString)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -51,13 +51,14 @@ func GrantPermission(c *gin.Context) {
 		return
 	}
 
-	if !user.Granted(payload.UserID, "admin") {
+	userService := user.NewService()
+	if !userService.Granted(payload.UserID, "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
 	userID := c.Param("userID")
-	err = user.Grant(userID, body.Permissions)
+	err = userService.Grant(userID, body.Permissions)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -93,7 +94,7 @@ func RevokePermission(c *gin.Context) {
 		return
 	}
 
-	payload, err := token.Validate(tokenString)
+	payload, err := token.NewService().Validate(tokenString)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -106,13 +107,14 @@ func RevokePermission(c *gin.Context) {
 		return
 	}
 
-	if !user.Granted(payload.UserID, "admin") {
+	userService := user.NewService()
+	if !userService.Granted(payload.UserID, "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
 	userID := c.Param("userID")
-	err = user.Revoke(userID, body.Permissions)
+	err = userService.Revoke(userID, body.Permissions)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -143,19 +145,20 @@ func Disable(c *gin.Context) {
 		return
 	}
 
-	payload, err := token.Validate(tokenString)
+	payload, err := token.NewService().Validate(tokenString)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	if !user.Granted(payload.UserID, "admin") {
+	userService := user.NewService()
+	if !userService.Granted(payload.UserID, "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
 	userID := c.Param("userID")
-	err = user.Disable(userID)
+	err = userService.Disable(userID)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -186,19 +189,20 @@ func Enable(c *gin.Context) {
 		return
 	}
 
-	payload, err := token.Validate(tokenString)
+	payload, err := token.NewService().Validate(tokenString)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	if !user.Granted(payload.UserID, "admin") {
+	userService := user.NewService()
+	if !userService.Granted(payload.UserID, "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
 	userID := c.Param("userID")
-	err = user.Enable(userID)
+	err = userService.Enable(userID)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -235,7 +239,7 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	token, err := user.SignUp(&body)
+	token, err := user.NewService().SignUp(&body)
 
 	if err != nil {
 		errors.Handle(c, err)
@@ -268,7 +272,7 @@ func SignOut(c *gin.Context) {
 		return
 	}
 
-	err = token.Invalidate(tokenString)
+	err = token.NewService().Invalidate(tokenString)
 
 	if err != nil {
 		errors.Handle(c, err)
@@ -310,7 +314,7 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	tokenString, err := user.SignIn(login.Login, login.Password)
+	tokenString, err := user.NewService().SignIn(login.Login, login.Password)
 
 	if err != nil {
 		errors.Handle(c, err)
@@ -351,14 +355,14 @@ func CurrentUser(c *gin.Context) {
 		return
 	}
 
-	payload, err := token.Validate(tokenString)
+	payload, err := token.NewService().Validate(tokenString)
 
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	user, err := user.GetUser(payload.UserID)
+	user, err := user.NewService().GetUser(payload.UserID)
 
 	if err != nil {
 		errors.Handle(c, err)
@@ -406,7 +410,7 @@ func ChangePassword(c *gin.Context) {
 		return
 	}
 
-	payload, err := token.Validate(tokenString)
+	payload, err := token.NewService().Validate(tokenString)
 
 	if err != nil {
 		errors.Handle(c, err)
@@ -420,7 +424,7 @@ func ChangePassword(c *gin.Context) {
 		return
 	}
 
-	err = user.ChangePassword(payload.UserID, body.Current, body.New)
+	err = user.NewService().ChangePassword(payload.UserID, body.Current, body.New)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -459,18 +463,18 @@ func Users(c *gin.Context) {
 		return
 	}
 
-	payload, err := token.Validate(tokenString)
+	payload, err := token.NewService().Validate(tokenString)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	if !user.Granted(payload.UserID, "admin") {
+	if !user.NewService().Granted(payload.UserID, "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	user, err := user.Users()
+	user, err := user.NewService().Users()
 
 	if err != nil {
 		errors.Handle(c, err)

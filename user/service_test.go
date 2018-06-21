@@ -9,12 +9,12 @@ import (
 	validator "gopkg.in/go-playground/validator.v9"
 
 	"github.com/nmarsollier/authgo/token"
+	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errors"
-	"github.com/nmarsollier/authgo/tools/test"
 )
 
 func TestSignUpOk(t *testing.T) {
-	FakeServiceCollection(true)
+	srv := NewTestingService(newCustomFakeDao("", "", "", true), newFakeTokenService())
 
 	req := SignUpRequest{
 		Name:     "Test",
@@ -22,7 +22,7 @@ func TestSignUpOk(t *testing.T) {
 		Password: "Pass",
 	}
 
-	id, err := SignUp(&req)
+	id, err := srv.SignUp(&req)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, id)
@@ -30,23 +30,26 @@ func TestSignUpOk(t *testing.T) {
 }
 
 func TestSignUpError(t *testing.T) {
-	FakeServiceCollection(true)
-
 	req := SignUpRequest{}
+	validate := validator.New()
+	validate.SetTagName("binding")
+	errResult := validate.Struct(req)
 
-	_, err := SignUp(&req)
+	srv := NewTestingService(newFakeErrorDao(errResult), newFakeTokenService())
 
+	_, err := srv.SignUp(&req)
 	validation, ok := err.(validator.ValidationErrors)
 	assert.Equal(t, ok, true)
-	assert.Equal(t, 2, len(validation))
+	assert.Equal(t, 3, len(validation))
 	assert.Equal(t, "Name", validation[0].Field())
-	assert.Equal(t, "Login", validation[1].Field())
+	assert.Equal(t, "Password", validation[1].Field())
+	assert.Equal(t, "Login", validation[2].Field())
 }
 
 func TestSignIn(t *testing.T) {
-	FakeServiceCollection(true)
+	srv := NewTestingService(newFakeDao(), newFakeTokenService())
 
-	id, err := SignIn("User", "Password")
+	id, err := srv.SignIn("User", "Password")
 
 	assert.Nil(t, err)
 	assert.NotNil(t, id)
@@ -54,74 +57,180 @@ func TestSignIn(t *testing.T) {
 }
 
 func TestSignInError(t *testing.T) {
-	FakeServiceCollection(true)
+	srv := NewTestingService(newFakeDao(), newFakeTokenService())
 
-	_, err := SignIn("User", "Password1")
+	_, err := srv.SignIn("User", "Password1")
 
-	assert.Equal(t, err, ErrPassword)
+	assert.Equal(t, ErrPassword, err)
 }
 
 func TestSignInError1(t *testing.T) {
-	FakeServiceCollection(false)
+	srv := NewTestingService(newCustomFakeDao("Name", "Login", "Password", false), newFakeTokenService())
 
-	_, err := SignIn("User", "Password")
+	_, err := srv.SignIn("User", "Password")
 
-	assert.Equal(t, err, errors.Unauthorized)
+	assert.Equal(t, errors.Unauthorized, err)
 }
 
 func TestChangePassword(t *testing.T) {
-	FakeServiceCollection(false)
+	srv := NewTestingService(newFakeDao(), newFakeTokenService())
 
-	err := ChangePassword("5b2a6b7d893dc92de5a8b833", "Password", "Password1")
+	err := srv.ChangePassword("5b2a6b7d893dc92de5a8b833", "Password", "Password1")
 	assert.Nil(t, err)
 
-	err = ChangePassword("5b2a6b7d893dc92de5a8b833", "Password1", "Password1")
-	assert.Equal(t, err, ErrPassword)
+	srv = NewTestingService(newFakeDao(), newFakeTokenErrorService(ErrPassword))
+	err = srv.ChangePassword("5b2a6b7d893dc92de5a8b833", "Password1", "Password1")
+	assert.Equal(t, ErrPassword, err)
 
 }
 
-func FakeServiceCollection(enabledUser bool) {
-	FakeTokenServiceCollection()
-	mConn := new(test.FakeCollection)
-	CollectionTest = mConn
-
-	objectID, _ := objectid.FromHex("5b2a6b7d893dc92de5a8b833")
-
-	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
-		test.FakeDecoder(func(v interface{}) error {
-			if user, ok := v.(*User); ok {
-				user.ID = objectID
-				user.Name = "User"
-				user.Login = "Login"
-				user.Enabled = enabledUser
-				user.setPasswordText("Password")
-			}
-			return nil
-		}),
-	)
-	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
-
-	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(objectID, nil)
+func newFakeDao() dao {
+	return newCustomFakeDao("TestName", "Login", "Password", true)
 }
 
-func FakeTokenServiceCollection() {
-	mConn := new(test.FakeCollection)
-	token.CollectionTest = mConn
+func newFakeErrorDao(err error) dao {
+	result := fakeDao{}
+	result.On("collection").Return(nil, nil)
+	result.On("insert", mock.Anything).Return(nil, err)
+	result.On("update", mock.Anything).Return(nil, err)
+	result.On("findAll").Return(nil, err)
+	result.On("findByID", mock.Anything).Return(nil, err)
+	result.On("findByLogin", mock.Anything).Return(nil, err)
+	result.On("delete", mock.Anything).Return(err)
+	result.On("getID", mock.Anything).Return(nil, err)
 
-	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
-		test.FakeDecoder(func(v interface{}) error {
-			if token, ok := v.(*token.Token); ok {
-				token.ID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
-				token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
-				token.Enabled = true
-			}
-			return nil
-		}),
-	)
+	return &result
+}
 
-	tokenID, _ := objectid.FromHex("5b2a6b7d893dc92de5a8b833")
+func newCustomFakeDao(name string, login string, passw string, userEnabled bool) dao {
+	result := fakeDao{}
 
-	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(tokenID, nil)
+	user := newUser()
+	user.Name = name
+	user.Login = login
+	user.Enabled = userEnabled
+	user.setPasswordText(passw)
+	users := make([]*User, 1)
+	users[0] = user
 
-	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
+	result.On("collection").Return(nil, nil)
+	result.On("insert", mock.Anything).Return(user, nil)
+	result.On("update", mock.Anything).Return(user, nil)
+	result.On("findAll").Return(users, nil)
+	result.On("findByID", mock.Anything).Return(user, nil)
+	result.On("findByLogin", mock.Anything).Return(user, nil)
+	result.On("delete", mock.Anything).Return(nil)
+	result.On("getID", mock.Anything).Return(user.ID, nil)
+
+	return &result
+}
+
+type fakeDao struct {
+	mock.Mock
+}
+
+func (mc *fakeDao) collection() (db.Collection, error) {
+	res := mc.Called()
+	t, _ := res.Get(0).(db.Collection)
+	err, _ := res.Get(1).(error)
+	return t, err
+}
+func (mc *fakeDao) insert(user *User) (*User, error) {
+	res := mc.Called(user)
+	t, _ := res.Get(0).(*User)
+	err, _ := res.Get(1).(error)
+	return t, err
+}
+func (mc *fakeDao) update(user *User) (*User, error) {
+	res := mc.Called(user)
+	t, _ := res.Get(0).(*User)
+	err, _ := res.Get(1).(error)
+	return t, err
+}
+func (mc *fakeDao) findAll() ([]*User, error) {
+	res := mc.Called()
+	t, _ := res.Get(0).([]*User)
+	err, _ := res.Get(1).(error)
+	return t, err
+}
+func (mc *fakeDao) findByID(userID string) (*User, error) {
+	res := mc.Called(userID)
+	t, _ := res.Get(0).(*User)
+	err, _ := res.Get(1).(error)
+	return t, err
+}
+func (mc *fakeDao) findByLogin(login string) (*User, error) {
+	res := mc.Called(login)
+	t, _ := res.Get(0).(*User)
+	err, _ := res.Get(1).(error)
+	return t, err
+}
+func (mc *fakeDao) delete(userID string) error {
+	res := mc.Called(userID)
+	err, _ := res.Get(0).(error)
+	return err
+}
+
+func (mc *fakeDao) getID(ID string) (*objectid.ObjectID, error) {
+	res := mc.Called(ID)
+	t, _ := res.Get(0).(*objectid.ObjectID)
+	err, _ := res.Get(1).(error)
+	return t, err
+}
+
+func newFakeTokenService() token.Service {
+	result := fakeTokenService{}
+
+	payload := new(token.Payload)
+	payload.TokenID = "992a6b7d893dc92de5a8b811"
+	payload.UserID = "112a6b7d893dc92de5a8b899"
+
+	tokenTxt := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklEIjoiNWIyYWZkMjA2MDFlZDljNzQ0NDVhYjU3IiwidXNlcklEIjoiNWIyYTZiN2Q4OTNkYzkyZGU1YThiODMzIn0.RBcB_B5D6uL3JXRbi2xe-V9LytIOxxLSnXv0_-rFAVU"
+
+	result.On("Create", mock.Anything).Return(tokenTxt, nil)
+	result.On("Validate", mock.Anything).Return(payload, nil)
+	result.On("Invalidate", mock.Anything).Return(nil)
+	result.On("extractPayload", mock.Anything).Return(payload, nil)
+
+	return &result
+}
+
+func newFakeTokenErrorService(err error) token.Service {
+	result := fakeTokenService{}
+
+	result.On("Create", mock.Anything).Return(nil, err)
+	result.On("Validate", mock.Anything).Return(nil, err)
+	result.On("Invalidate", mock.Anything).Return(err)
+	result.On("extractPayload", mock.Anything).Return(nil, err)
+
+	return &result
+}
+
+type fakeTokenService struct {
+	mock.Mock
+}
+
+func (s fakeTokenService) Create(userID objectid.ObjectID) (string, error) {
+	res := s.Called(userID)
+	t, _ := res.Get(0).(string)
+	err, _ := res.Get(1).(error)
+	return t, err
+}
+
+func (s fakeTokenService) Validate(tokenString string) (*token.Payload, error) {
+	res := s.Called(tokenString)
+	t, _ := res.Get(0).(*token.Payload)
+	err, _ := res.Get(1).(error)
+	return t, err
+}
+func (s fakeTokenService) Invalidate(tokenString string) error {
+	res := s.Called(tokenString)
+	err, _ := res.Get(0).(error)
+	return err
+}
+func (s fakeTokenService) extractPayload(tokenString string) (*token.Payload, error) {
+	res := s.Called(tokenString)
+	t, _ := res.Get(0).(*token.Payload)
+	err, _ := res.Get(1).(error)
+	return t, err
 }

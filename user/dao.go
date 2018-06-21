@@ -12,13 +12,35 @@ import (
 	"github.com/nmarsollier/authgo/tools/errors"
 )
 
-// Uso en tests solamente
-var CollectionTest db.Collection
+type daoImpl struct {
+	dbCollection db.Collection
+}
+
+type dao interface {
+	collection() (db.Collection, error)
+	insert(user *User) (*User, error)
+	update(user *User) (*User, error)
+	findAll() ([]*User, error)
+	findByID(userID string) (*User, error)
+	findByLogin(login string) (*User, error)
+	delete(userID string) error
+	getID(ID string) (*objectid.ObjectID, error)
+}
+
+func newDao() dao {
+	return daoImpl{}
+}
+
+func newTestingDao(coll db.Collection) dao {
+	return daoImpl{
+		dbCollection: coll,
+	}
+}
 
 // UsersCollection obtiene la colección de Usuarios
-func collection() (db.Collection, error) {
-	if CollectionTest != nil {
-		return CollectionTest, nil
+func (d daoImpl) collection() (db.Collection, error) {
+	if d.dbCollection != nil {
+		return d.dbCollection, nil
 	}
 
 	database, err := db.Get()
@@ -43,15 +65,16 @@ func collection() (db.Collection, error) {
 		log.Output(1, err.Error())
 	}
 
-	return db.WrapCollection(collection), nil
+	d.dbCollection = db.WrapCollection(collection)
+	return d.dbCollection, nil
 }
 
-func insert(user *User) (*User, error) {
+func (d daoImpl) insert(user *User) (*User, error) {
 	if err := user.validateSchema(); err != nil {
 		return nil, err
 	}
 
-	collection, err := collection()
+	collection, err := d.collection()
 	if err != nil {
 		return nil, err
 	}
@@ -63,12 +86,12 @@ func insert(user *User) (*User, error) {
 	return user, nil
 }
 
-func update(user *User) (*User, error) {
+func (d daoImpl) update(user *User) (*User, error) {
 	if err := user.validateSchema(); err != nil {
 		return nil, err
 	}
 
-	collection, err := collection()
+	collection, err := d.collection()
 	if err != nil {
 		return nil, err
 	}
@@ -100,8 +123,8 @@ func update(user *User) (*User, error) {
 }
 
 // findAll devuelve todos los usuarios
-func findAll() ([]*User, error) {
-	collection, err := collection()
+func (d daoImpl) findAll() ([]*User, error) {
+	collection, err := d.collection()
 	if err != nil {
 		return nil, err
 	}
@@ -127,13 +150,13 @@ func findAll() ([]*User, error) {
 }
 
 // FindByID lee un usuario desde la db
-func findByID(userID string) (*User, error) {
+func (d daoImpl) findByID(userID string) (*User, error) {
 	_id, err := objectid.FromHex(userID)
 	if err != nil {
 		return nil, errors.ErrID
 	}
 
-	collection, err := collection()
+	collection, err := d.collection()
 	if err != nil {
 		return nil, err
 	}
@@ -148,8 +171,8 @@ func findByID(userID string) (*User, error) {
 }
 
 // FindByLogin lee un usuario desde la db
-func findByLogin(login string) (*User, error) {
-	collection, collectionError := collection()
+func (d daoImpl) findByLogin(login string) (*User, error) {
+	collection, collectionError := d.collection()
 	if collectionError != nil {
 		return nil, collectionError
 	}
@@ -168,13 +191,13 @@ func findByLogin(login string) (*User, error) {
 }
 
 // Delete marca un usuario como borrado en la base de datos
-func delete(userID string) error {
-	_id, err := getID(userID)
+func (d daoImpl) delete(userID string) error {
+	_id, err := d.getID(userID)
 	if err != nil {
 		return err
 	}
 
-	collection, err := collection()
+	collection, err := d.collection()
 	if err != nil {
 		return err
 	}
@@ -201,7 +224,7 @@ func delete(userID string) error {
 	return err
 }
 
-func getID(ID string) (*objectid.ObjectID, error) {
+func (d daoImpl) getID(ID string) (*objectid.ObjectID, error) {
 	_id, err := objectid.FromHex(ID)
 	if err != nil {
 		return nil, errors.ErrID

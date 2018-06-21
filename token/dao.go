@@ -12,11 +12,34 @@ import (
 )
 
 // Uso en tests solamente
-var CollectionTest db.Collection
 
-func collection() (db.Collection, error) {
-	if CollectionTest != nil {
-		return CollectionTest, nil
+type daoImpl struct {
+	dbCollection db.Collection
+}
+
+type dao interface {
+	collection() (db.Collection, error)
+	insert(token *Token) (*Token, error)
+	update(token *Token) (*Token, error)
+	findByID(tokenID string) (*Token, error)
+	findByUserID(tokenID string) (*Token, error)
+	delete(tokenID string) error
+	getID(ID string) (*objectid.ObjectID, error)
+}
+
+func newDao() dao {
+	return daoImpl{}
+}
+
+func newTestingDao(coll db.Collection) dao {
+	return daoImpl{
+		dbCollection: coll,
+	}
+}
+
+func (d daoImpl) collection() (db.Collection, error) {
+	if d.dbCollection != nil {
+		return d.dbCollection, nil
 	}
 
 	database, err := db.Get()
@@ -39,12 +62,13 @@ func collection() (db.Collection, error) {
 		log.Output(1, err.Error())
 	}
 
-	return db.WrapCollection(collection), nil
+	d.dbCollection = db.WrapCollection(collection)
+	return d.dbCollection, nil
 }
 
 // Save agrega un token a la base de datos
-func insert(token *Token) (*Token, error) {
-	collection, err := collection()
+func (d daoImpl) insert(token *Token) (*Token, error) {
+	collection, err := d.collection()
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +82,8 @@ func insert(token *Token) (*Token, error) {
 }
 
 // Save agrega un token a la base de datos
-func update(token *Token) (*Token, error) {
-	collection, err := collection()
+func (d daoImpl) update(token *Token) (*Token, error) {
+	collection, err := d.collection()
 	if err != nil {
 		return nil, err
 	}
@@ -84,13 +108,13 @@ func update(token *Token) (*Token, error) {
 	return token, nil
 }
 
-func findByID(tokenID string) (*Token, error) {
-	_id, err := getID(tokenID)
+func (d daoImpl) findByID(tokenID string) (*Token, error) {
+	_id, err := d.getID(tokenID)
 	if err != nil {
 		return nil, errors.Unauthorized
 	}
 
-	collection, err := collection()
+	collection, err := d.collection()
 	if err != nil {
 		return nil, err
 	}
@@ -108,13 +132,13 @@ func findByID(tokenID string) (*Token, error) {
 	return token, nil
 }
 
-func findByUserID(tokenID string) (*Token, error) {
-	_id, err := getID(tokenID)
+func (d daoImpl) findByUserID(tokenID string) (*Token, error) {
+	_id, err := d.getID(tokenID)
 	if err != nil {
 		return nil, errors.Unauthorized
 	}
 
-	collection, err := collection()
+	collection, err := d.collection()
 	if err != nil {
 		return nil, err
 	}
@@ -136,19 +160,19 @@ func findByUserID(tokenID string) (*Token, error) {
 	return token, nil
 }
 
-func delete(tokenID string) error {
-	token, err := findByID(tokenID)
+func (d daoImpl) delete(tokenID string) error {
+	token, err := d.findByID(tokenID)
 	if err != nil {
 		return err
 	}
 
 	token.Enabled = false
-	_, err = update(token)
+	_, err = d.update(token)
 
 	return err
 }
 
-func getID(ID string) (*objectid.ObjectID, error) {
+func (d daoImpl) getID(ID string) (*objectid.ObjectID, error) {
 	_id, err := objectid.FromHex(ID)
 	if err != nil {
 		return nil, errors.ErrID

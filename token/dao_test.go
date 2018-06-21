@@ -28,24 +28,26 @@ var testMongoError = mongo.WriteErrors{
 }
 
 func TestGetId(t *testing.T) {
-	id, err := getID("5b2a6b7d893dc92de5a8b833")
+	testDao := newTestingDao(nil)
+	id, err := testDao.getID("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
 	assert.Equal(t, id.Hex(), "5b2a6b7d893dc92de5a8b833")
 
-	id, err = getID("invalid")
+	id, err = testDao.getID("invalid")
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errors.ErrID)
 }
 
 func TestFindByIdInvalid(t *testing.T) {
-	_, err := findByID("__invalid__")
+	testDao := newTestingDao(nil)
+	_, err := testDao.findByID("__invalid__")
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errors.Unauthorized)
 }
 
 func TestFindByIdOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	CollectionTest = mConn
+	testDao := newTestingDao(mConn)
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -57,14 +59,14 @@ func TestFindByIdOk(t *testing.T) {
 		}),
 	)
 
-	token, err := findByID("5b2a6b7d893dc92de5a8b833")
+	token, err := testDao.findByID("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
 	assert.Equal(t, token.ID.Hex(), "5b2a6b7d893dc92de5a8b833")
 }
 
 func TestFindByIdNotFound(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	CollectionTest = mConn
+	testDao := newTestingDao(mConn)
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -72,47 +74,48 @@ func TestFindByIdNotFound(t *testing.T) {
 		}),
 	)
 
-	_, err := findByID("5b2a6b7d893dc92de5a8b833")
+	_, err := testDao.findByID("5b2a6b7d893dc92de5a8b833")
 	assert.Equal(t, err, errors.Unauthorized)
 }
 
 func TestInsertOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	CollectionTest = mConn
+	testDao := newTestingDao(mConn)
 
 	token := newToken()
 	token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 
 	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(token.ID, nil)
 
-	token, err := insert(token)
+	token, err := testDao.insert(token)
 	assert.Nil(t, err)
 	assert.NotNil(t, token.ID)
 }
 
 func TestUpdateOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	CollectionTest = mConn
+	testDao := newTestingDao(mConn)
 
 	token := newToken()
 	token.UserID, _ = objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
 
-	token, err := update(token)
+	token, err := testDao.update(token)
 	assert.Nil(t, err)
 	assert.NotNil(t, token.ID)
 }
 
 func TestFindByUserIdInvalid(t *testing.T) {
-	_, err := findByUserID("__invalid__")
+	testDao := newTestingDao(nil)
+	_, err := testDao.findByUserID("__invalid__")
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errors.Unauthorized)
 }
 
 func TestFindByUserIdOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	CollectionTest = mConn
+	testDao := newTestingDao(mConn)
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -124,20 +127,21 @@ func TestFindByUserIdOk(t *testing.T) {
 		}),
 	)
 
-	token, err := findByUserID("5b2a6b7d893dc92de5a8b833")
+	token, err := testDao.findByUserID("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
 	assert.Equal(t, token.ID.Hex(), "5b2a6b7d893dc92de5a8b833")
 }
 
 func TestDeleteInvalid(t *testing.T) {
-	err := delete("__invalid__")
+	testDao := newTestingDao(nil)
+	err := testDao.delete("__invalid__")
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errors.Unauthorized)
 }
 
 func TestDeleteOk(t *testing.T) {
 	mConn := new(test.FakeCollection)
-	CollectionTest = mConn
+	testDao := newTestingDao(mConn)
 
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
 		test.FakeDecoder(func(v interface{}) error {
@@ -150,6 +154,6 @@ func TestDeleteOk(t *testing.T) {
 	)
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
 
-	err := delete("5b2a6b7d893dc92de5a8b833")
+	err := testDao.delete("5b2a6b7d893dc92de5a8b833")
 	assert.Nil(t, err)
 }
