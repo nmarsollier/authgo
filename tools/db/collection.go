@@ -7,6 +7,11 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
+// Decoder permite mockear mongo.DocumentResult, para poder testear la app
+type Decoder interface {
+	Decode(v interface{}) error
+}
+
 // WrapCollection Instancia db.Collection haciendo un wrap a un mongo.Collection real.
 func WrapCollection(coll *mongo.Collection) Collection {
 	return &fakeCollection{
