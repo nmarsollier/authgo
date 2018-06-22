@@ -6,6 +6,16 @@ import (
 	"github.com/nmarsollier/authgo/tools/env"
 )
 
+/**
+ * @apiDefine TokenResponse
+ *
+ * @apiSuccessExample {json} Respuesta
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "token": "{Token de autorización}"
+ *     }
+ */
+
 // Token es un objeto valor que representa un token.
 type Token struct {
 	ID      objectid.ObjectID `bson:"_id"`

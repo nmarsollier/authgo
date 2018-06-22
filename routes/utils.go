@@ -9,7 +9,7 @@ import (
 )
 
 // get token from Authorization header
-func getTokenHeader(c *gin.Context) (string, error) {
+func getAuthHeader(c *gin.Context) (string, error) {
 	tokenString := c.GetHeader("Authorization")
 	if strings.Index(tokenString, "bearer ") != 0 {
 		return "", errors.Unauthorized
@@ -17,8 +17,8 @@ func getTokenHeader(c *gin.Context) (string, error) {
 	return tokenString[7:], nil
 }
 
-func validateTokenHeader(c *gin.Context) (*security.Token, error) {
-	tokenString, err := getTokenHeader(c)
+func validateAuthHeader(c *gin.Context) (*security.Token, error) {
+	tokenString, err := getAuthHeader(c)
 	if err != nil {
 		return nil, err
 	}

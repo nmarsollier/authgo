@@ -7,15 +7,15 @@ import (
 )
 
 type serviceImpl struct {
-	userDao         Dao
-	tokenRepository security.Service
+	dao        Dao
+	secService security.Service
 }
 
 // Service es la interfaz ue define el servicio
 type Service interface {
 	SignUp(user *SignUpRequest) (string, error)
 	SignIn(login string, password string) (string, error)
-	GetUser(userID string) (*User, error)
+	Get(userID string) (*User, error)
 	ChangePassword(userID string, current string, newPassword string) error
 	Grant(userID string, permissions []string) error
 	Revoke(userID string, permissions []string) error
@@ -27,22 +27,27 @@ type Service interface {
 
 // NewService retorna una nueva instancia del servicio
 func NewService() (Service, error) {
-	tRepo, err := security.NewService()
+	secService, err := security.NewService()
+	if err != nil {
+		return nil, err
+	}
+
+	dao, err := newDao()
 	if err != nil {
 		return nil, err
 	}
 
 	return serviceImpl{
-		userDao:         newDao(),
-		tokenRepository: tRepo,
+		dao:        dao,
+		secService: secService,
 	}, nil
 }
 
-// NewTestingService retorna un servicio con fines de test
-func NewTestingService(fakeDao Dao, fakeTRepo security.Service) Service {
+// MockedService permite mockear el servicio
+func MockedService(fakeDao Dao, fakeTRepo security.Service) Service {
 	return serviceImpl{
-		userDao:         fakeDao,
-		tokenRepository: fakeTRepo,
+		dao:        fakeDao,
+		secService: fakeTRepo,
 	}
 }
 
@@ -60,7 +65,7 @@ func (s serviceImpl) SignUp(user *SignUpRequest) (string, error) {
 	newUser.Name = user.Name
 	newUser.SetPasswordText(user.Password)
 
-	newUser, err := s.userDao.Insert(newUser)
+	newUser, err := s.dao.Insert(newUser)
 	if err != nil {
 		if db.IsUniqueKeyError(err) {
 			return "", ErrLoginExist
@@ -68,7 +73,7 @@ func (s serviceImpl) SignUp(user *SignUpRequest) (string, error) {
 		return "", err
 	}
 
-	token, err := s.tokenRepository.Create(newUser.ID)
+	token, err := s.secService.Create(newUser.ID)
 	if err != nil {
 		return "", nil
 	}
@@ -78,7 +83,7 @@ func (s serviceImpl) SignUp(user *SignUpRequest) (string, error) {
 
 // SignIn is the controller to sign in users
 func (s serviceImpl) SignIn(login string, password string) (string, error) {
-	user, err := s.userDao.FindByLogin(login)
+	user, err := s.dao.FindByLogin(login)
 	if err != nil {
 		return "", err
 	}
@@ -91,7 +96,7 @@ func (s serviceImpl) SignIn(login string, password string) (string, error) {
 		return "", err
 	}
 
-	token, err := s.tokenRepository.Create(user.ID)
+	token, err := s.secService.Create(user.ID)
 	if err != nil {
 		return "", nil
 	}
@@ -99,14 +104,14 @@ func (s serviceImpl) SignIn(login string, password string) (string, error) {
 	return token.Encode()
 }
 
-// GetUser wrapper para obtener un usuario
-func (s serviceImpl) GetUser(userID string) (*User, error) {
-	return s.userDao.FindByID(userID)
+// Get wrapper para obtener un usuario
+func (s serviceImpl) Get(userID string) (*User, error) {
+	return s.dao.FindByID(userID)
 }
 
 // ChangePassword cambiar la contraseña del usuario indicado
 func (s serviceImpl) ChangePassword(userID string, current string, newPassword string) error {
-	user, err := s.userDao.FindByID(userID)
+	user, err := s.dao.FindByID(userID)
 	if err != nil {
 		return err
 	}
@@ -119,14 +124,14 @@ func (s serviceImpl) ChangePassword(userID string, current string, newPassword s
 		return err
 	}
 
-	_, err = s.userDao.Update(user)
+	_, err = s.dao.Update(user)
 
 	return err
 }
 
 // Grant Le habilita los permisos enviados por parametros
 func (s serviceImpl) Grant(userID string, permissions []string) error {
-	user, err := s.userDao.FindByID(userID)
+	user, err := s.dao.FindByID(userID)
 	if err != nil {
 		return err
 	}
@@ -134,14 +139,14 @@ func (s serviceImpl) Grant(userID string, permissions []string) error {
 	for _, value := range permissions {
 		user.Grant(value)
 	}
-	_, err = s.userDao.Update(user)
+	_, err = s.dao.Update(user)
 
 	return err
 }
 
 // Revoke Le revoca los permisos enviados por parametros
 func (s serviceImpl) Revoke(userID string, permissions []string) error {
-	user, err := s.userDao.FindByID(userID)
+	user, err := s.dao.FindByID(userID)
 	if err != nil {
 		return err
 	}
@@ -149,14 +154,14 @@ func (s serviceImpl) Revoke(userID string, permissions []string) error {
 	for _, value := range permissions {
 		user.Revoke(value)
 	}
-	_, err = s.userDao.Update(user)
+	_, err = s.dao.Update(user)
 
 	return err
 }
 
 //Granted verifica si el usuario tiene el permiso
 func (s serviceImpl) Granted(userID string, permission string) bool {
-	usr, err := s.userDao.FindByID(userID)
+	usr, err := s.dao.FindByID(userID)
 	if err != nil {
 		return false
 	}
@@ -166,32 +171,32 @@ func (s serviceImpl) Granted(userID string, permission string) bool {
 
 //Disable deshabilita un usuario
 func (s serviceImpl) Disable(userID string) error {
-	usr, err := s.userDao.FindByID(userID)
+	usr, err := s.dao.FindByID(userID)
 	if err != nil {
 		return err
 	}
 
 	usr.Enabled = false
 
-	_, err = s.userDao.Update(usr)
+	_, err = s.dao.Update(usr)
 
 	return err
 }
 
 //Enable habilita un usuario
 func (s serviceImpl) Enable(userID string) error {
-	usr, err := s.userDao.FindByID(userID)
+	usr, err := s.dao.FindByID(userID)
 	if err != nil {
 		return err
 	}
 
 	usr.Enabled = true
-	_, err = s.userDao.Update(usr)
+	_, err = s.dao.Update(usr)
 
 	return err
 }
 
 // Users wrapper para obtener todos los usuarios
 func (s serviceImpl) Users() ([]*User, error) {
-	return s.userDao.FindAll()
+	return s.dao.FindAll()
 }

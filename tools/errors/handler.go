@@ -13,6 +13,20 @@ import (
 )
 
 // Handle maneja cualquier error para serializarlo como JSON al cliente
+
+/**
+ * @apiDefine AuthHeader
+ *
+ * @apiExample {String} Header Autorización
+ *    Authorization=bearer {token}
+ *
+ * @apiErrorExample 401 Unauthorized
+ *    HTTP/1.1 401 Unauthorized
+ *    {
+ *       "error" : "Unauthorized"
+ *    }
+ */
+
 /**
  * @apiDefine OtherErrors
  *
