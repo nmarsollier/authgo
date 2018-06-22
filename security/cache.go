@@ -32,7 +32,7 @@ func cacheGet(tokenString string) (*Token, error) {
 
 // Remove elimia un token del cache
 func cacheRemove(token *Token) {
-	if tokenString, err := token.Encode(); err != nil {
+	if tokenString, err := token.Encode(); err == nil {
 		cache.Delete(tokenString)
 	}
 }
