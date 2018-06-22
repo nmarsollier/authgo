@@ -7,7 +7,7 @@ import (
 )
 
 func TestResponseWriter(t *testing.T) {
-	response := NewFakeResponseWriter(t)
+	response := ResponseWriter(t)
 	context, _ := gin.CreateTestContext(response)
 	context.JSON(500, gin.H{"error": "Internal server error"})
 	response.Assert(500, "{\"error\":\"Internal server error\"}")

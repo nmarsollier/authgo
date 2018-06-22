@@ -10,13 +10,13 @@ import (
 func TestDecoder(t *testing.T) {
 	err := errors.New("Test")
 
-	decoder := FakeDecoder(func(v interface{}) error {
+	decoder := Decoder(func(v interface{}) error {
 		return err
 	})
 
 	assert.Equal(t, err, decoder.Decode(""))
 
-	decoder = FakeDecoder(func(v interface{}) error {
+	decoder = Decoder(func(v interface{}) error {
 		return nil
 	})
 

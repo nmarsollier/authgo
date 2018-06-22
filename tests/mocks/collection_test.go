@@ -27,9 +27,9 @@ var testMongoError = mongo.WriteErrors{
 }
 
 func TestFindOneOk(t *testing.T) {
-	mConn := new(FakeCollection)
+	mConn := new(Collection)
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
-		FakeDecoder(func(v interface{}) error {
+		Decoder(func(v interface{}) error {
 			return nil
 		}),
 	)
@@ -37,9 +37,9 @@ func TestFindOneOk(t *testing.T) {
 	assert.Nil(t, err)
 }
 func TestFindOneError(t *testing.T) {
-	mConn := new(FakeCollection)
+	mConn := new(Collection)
 	mConn.On("FindOne", mock.Anything, mock.Anything, mock.Anything).Return(
-		FakeDecoder(func(v interface{}) error {
+		Decoder(func(v interface{}) error {
 			return testMongoError
 		}),
 	)
@@ -48,7 +48,7 @@ func TestFindOneError(t *testing.T) {
 }
 
 func TestInsertOk(t *testing.T) {
-	mConn := new(FakeCollection)
+	mConn := new(Collection)
 
 	ID, _ := objectid.FromHex("5b2a6b7d893dc92de5a8b833")
 	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(ID, nil)
@@ -58,7 +58,7 @@ func TestInsertOk(t *testing.T) {
 }
 
 func TestInsertUniqueError(t *testing.T) {
-	mConn := new(FakeCollection)
+	mConn := new(Collection)
 
 	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(nil, testMongoUnique)
 
@@ -67,7 +67,7 @@ func TestInsertUniqueError(t *testing.T) {
 }
 
 func TestInsertOtherError(t *testing.T) {
-	mConn := new(FakeCollection)
+	mConn := new(Collection)
 
 	mConn.On("InsertOne", mock.Anything, mock.Anything, mock.Anything).Return(nil, testMongoError)
 
@@ -76,7 +76,7 @@ func TestInsertOtherError(t *testing.T) {
 }
 
 func TestUpdateOk(t *testing.T) {
-	mConn := new(FakeCollection)
+	mConn := new(Collection)
 
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, nil)
 
@@ -86,7 +86,7 @@ func TestUpdateOk(t *testing.T) {
 }
 
 func TestUpdateUniqueError(t *testing.T) {
-	mConn := new(FakeCollection)
+	mConn := new(Collection)
 
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, testMongoUnique)
 
@@ -95,7 +95,7 @@ func TestUpdateUniqueError(t *testing.T) {
 }
 
 func TestUpdateOtherError(t *testing.T) {
-	mConn := new(FakeCollection)
+	mConn := new(Collection)
 
 	mConn.On("UpdateOne", mock.Anything, mock.Anything, mock.Anything).Return(1, 1, 1, testMongoError)
 

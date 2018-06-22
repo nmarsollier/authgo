@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nmarsollier/authgo/security"
 	"github.com/nmarsollier/authgo/tools/errors"
 )
 
@@ -14,4 +15,23 @@ func getTokenHeader(c *gin.Context) (string, error) {
 		return "", errors.Unauthorized
 	}
 	return tokenString[7:], nil
+}
+
+func validateTokenHeader(c *gin.Context) (*security.Token, error) {
+	tokenString, err := getTokenHeader(c)
+	if err != nil {
+		return nil, err
+	}
+
+	payloadRepository, err := security.NewService()
+	if err != nil {
+		return nil, err
+	}
+
+	payload, err := payloadRepository.Validate(tokenString)
+	if err != nil {
+		return nil, err
+	}
+
+	return payload, nil
 }

@@ -11,18 +11,18 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// FakeCollection es una implamentacion falsa de db.Collection que nos permite testear el sistema.
-type FakeCollection struct {
+// Collection es una implamentacion falsa de db.Collection que nos permite testear el sistema.
+type Collection struct {
 	mock.Mock
 }
 
 // Name mocked
-func (mc *FakeCollection) Name() string {
+func (mc *Collection) Name() string {
 	return "MockedConnection"
 }
 
 // InsertOne mocked
-func (mc *FakeCollection) InsertOne(
+func (mc *Collection) InsertOne(
 	ctx context.Context,
 	document interface{},
 	opts ...option.InsertOneOptioner) (*mongo.InsertOneResult, error) {
@@ -38,7 +38,7 @@ func (mc *FakeCollection) InsertOne(
 }
 
 // InsertMany mocked
-func (mc *FakeCollection) InsertMany(
+func (mc *Collection) InsertMany(
 	ctx context.Context,
 	documents []interface{},
 	opts ...option.InsertManyOptioner) (*mongo.InsertManyResult, error) {
@@ -55,7 +55,7 @@ func (mc *FakeCollection) InsertMany(
 }
 
 // DeleteOne mocked
-func (mc *FakeCollection) DeleteOne(ctx context.Context,
+func (mc *Collection) DeleteOne(ctx context.Context,
 	filter interface{},
 	opts ...option.DeleteOptioner) (*mongo.DeleteResult, error) {
 
@@ -71,7 +71,7 @@ func (mc *FakeCollection) DeleteOne(ctx context.Context,
 }
 
 // DeleteMany mocked
-func (mc *FakeCollection) DeleteMany(ctx context.Context,
+func (mc *Collection) DeleteMany(ctx context.Context,
 	filter interface{},
 	opts ...option.DeleteOptioner) (*mongo.DeleteResult, error) {
 
@@ -87,7 +87,7 @@ func (mc *FakeCollection) DeleteMany(ctx context.Context,
 }
 
 // UpdateOne mocked
-func (mc *FakeCollection) UpdateOne(ctx context.Context,
+func (mc *Collection) UpdateOne(ctx context.Context,
 	filter interface{},
 	update interface{},
 	options ...option.UpdateOptioner) (*mongo.UpdateResult, error) {
@@ -106,7 +106,7 @@ func (mc *FakeCollection) UpdateOne(ctx context.Context,
 }
 
 // UpdateMany mocked
-func (mc *FakeCollection) UpdateMany(ctx context.Context,
+func (mc *Collection) UpdateMany(ctx context.Context,
 	filter interface{},
 	update interface{},
 	opts ...option.UpdateOptioner) (*mongo.UpdateResult, error) {
@@ -126,7 +126,7 @@ func (mc *FakeCollection) UpdateMany(ctx context.Context,
 }
 
 // ReplaceOne mocked
-func (mc *FakeCollection) ReplaceOne(ctx context.Context,
+func (mc *Collection) ReplaceOne(ctx context.Context,
 	filter interface{},
 	replacement interface{},
 	opts ...option.ReplaceOptioner) (*mongo.UpdateResult, error) {
@@ -146,7 +146,7 @@ func (mc *FakeCollection) ReplaceOne(ctx context.Context,
 }
 
 // Aggregate mocked
-func (mc *FakeCollection) Aggregate(ctx context.Context,
+func (mc *Collection) Aggregate(ctx context.Context,
 	pipeline interface{},
 	opts ...option.AggregateOptioner) (mongo.Cursor, error) {
 
@@ -164,7 +164,7 @@ func (mc *FakeCollection) Aggregate(ctx context.Context,
 }
 
 // Count mocked
-func (mc *FakeCollection) Count(ctx context.Context,
+func (mc *Collection) Count(ctx context.Context,
 	filter interface{},
 	opts ...option.CountOptioner) (int64, error) {
 
@@ -177,7 +177,7 @@ func (mc *FakeCollection) Count(ctx context.Context,
 }
 
 // Distinct mocked
-func (mc *FakeCollection) Distinct(ctx context.Context,
+func (mc *Collection) Distinct(ctx context.Context,
 	fieldName string,
 	filter interface{},
 	opts ...option.DistinctOptioner) ([]interface{}, error) {
@@ -185,7 +185,7 @@ func (mc *FakeCollection) Distinct(ctx context.Context,
 }
 
 // Find mocked
-func (mc *FakeCollection) Find(ctx context.Context,
+func (mc *Collection) Find(ctx context.Context,
 	filter interface{},
 	opts ...option.FindOptioner) (mongo.Cursor, error) {
 
@@ -203,7 +203,7 @@ func (mc *FakeCollection) Find(ctx context.Context,
 }
 
 // FindOne mocked
-func (mc *FakeCollection) FindOne(
+func (mc *Collection) FindOne(
 	ctx context.Context,
 	filter interface{},
 	opts ...option.FindOneOptioner) db.Decoder {
@@ -212,11 +212,11 @@ func (mc *FakeCollection) FindOne(
 	if mocked, ok := res.Get(0).(db.Decoder); ok {
 		return mocked
 	}
-	return FakeDecoder(nil)
+	return Decoder(nil)
 }
 
 // FindOneAndDelete mocked
-func (mc *FakeCollection) FindOneAndDelete(
+func (mc *Collection) FindOneAndDelete(
 	ctx context.Context, filter interface{},
 	opts ...option.FindOneAndDeleteOptioner) db.Decoder {
 
@@ -224,11 +224,11 @@ func (mc *FakeCollection) FindOneAndDelete(
 	if mocked, ok := res.Get(0).(db.Decoder); ok {
 		return mocked
 	}
-	return FakeDecoder(nil)
+	return Decoder(nil)
 }
 
 // FindOneAndReplace mocked
-func (mc *FakeCollection) FindOneAndReplace(
+func (mc *Collection) FindOneAndReplace(
 	ctx context.Context,
 	filter interface{},
 	replacement interface{},
@@ -238,11 +238,11 @@ func (mc *FakeCollection) FindOneAndReplace(
 	if mocked, ok := res.Get(0).(db.Decoder); ok {
 		return mocked
 	}
-	return FakeDecoder(nil)
+	return Decoder(nil)
 }
 
 // FindOneAndUpdate mocked
-func (mc *FakeCollection) FindOneAndUpdate(
+func (mc *Collection) FindOneAndUpdate(
 	ctx context.Context,
 	filter interface{},
 	update interface{},
@@ -252,11 +252,11 @@ func (mc *FakeCollection) FindOneAndUpdate(
 	if mocked, ok := res.Get(0).(db.Decoder); ok {
 		return mocked
 	}
-	return FakeDecoder(nil)
+	return Decoder(nil)
 }
 
 // Watch mocked
-func (mc *FakeCollection) Watch(
+func (mc *Collection) Watch(
 	ctx context.Context,
 	pipeline interface{},
 	opts ...option.ChangeStreamOptioner) (mongo.Cursor, error) {
@@ -275,11 +275,11 @@ func (mc *FakeCollection) Watch(
 }
 
 // Indexes mocked
-func (mc *FakeCollection) Indexes() mongo.IndexView {
+func (mc *Collection) Indexes() mongo.IndexView {
 	return mongo.IndexView{}
 }
 
 // Drop mocked
-func (mc *FakeCollection) Drop(ctx context.Context) error {
+func (mc *Collection) Drop(ctx context.Context) error {
 	return errors.New("MockedConnection.Drop - Not Implemented")
 }

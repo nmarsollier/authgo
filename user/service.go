@@ -1,14 +1,14 @@
 package user
 
 import (
-	"github.com/nmarsollier/authgo/token"
+	"github.com/nmarsollier/authgo/security"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errors"
 )
 
 type serviceImpl struct {
-	userDao      Dao
-	tokenService token.Service
+	userDao         Dao
+	tokenRepository security.Service
 }
 
 // Service es la interfaz ue define el servicio
@@ -26,18 +26,23 @@ type Service interface {
 }
 
 // NewService retorna una nueva instancia del servicio
-func NewService() Service {
-	return serviceImpl{
-		userDao:      newDao(),
-		tokenService: token.NewService(),
+func NewService() (Service, error) {
+	tRepo, err := security.NewService()
+	if err != nil {
+		return nil, err
 	}
+
+	return serviceImpl{
+		userDao:         newDao(),
+		tokenRepository: tRepo,
+	}, nil
 }
 
 // NewTestingService retorna un servicio con fines de test
-func NewTestingService(fakeDao Dao, fakedTokenService token.Service) Service {
+func NewTestingService(fakeDao Dao, fakeTRepo security.Service) Service {
 	return serviceImpl{
-		userDao:      fakeDao,
-		tokenService: fakedTokenService,
+		userDao:         fakeDao,
+		tokenRepository: fakeTRepo,
 	}
 }
 
@@ -63,7 +68,12 @@ func (s serviceImpl) SignUp(user *SignUpRequest) (string, error) {
 		return "", err
 	}
 
-	return s.tokenService.Create(newUser.ID)
+	token, err := s.tokenRepository.Create(newUser.ID)
+	if err != nil {
+		return "", nil
+	}
+
+	return token.Encode()
 }
 
 // SignIn is the controller to sign in users
@@ -81,7 +91,12 @@ func (s serviceImpl) SignIn(login string, password string) (string, error) {
 		return "", err
 	}
 
-	return s.tokenService.Create(user.ID)
+	token, err := s.tokenRepository.Create(user.ID)
+	if err != nil {
+		return "", nil
+	}
+
+	return token.Encode()
 }
 
 // GetUser wrapper para obtener un usuario

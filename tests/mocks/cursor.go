@@ -8,8 +8,8 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
-// NewFakeCursor un fake cursor para la data indicada
-func NewFakeCursor(data []interface{}) mongo.Cursor {
+// Cursor un fake cursor para la data indicada
+func Cursor(data []interface{}) mongo.Cursor {
 	cursor := fakeCursor{
 		data: data,
 		idx:  -1,

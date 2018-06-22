@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func NewFakeResponseWriter(t *testing.T) *FakeResponseWriter {
+func ResponseWriter(t *testing.T) *FakeResponseWriter {
 	return &FakeResponseWriter{
 		t:       t,
 		headers: make(http.Header),

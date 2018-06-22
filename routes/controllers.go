@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/token"
+	"github.com/nmarsollier/authgo/security"
 	"github.com/nmarsollier/authgo/tools/errors"
 	"github.com/nmarsollier/authgo/user"
 )
@@ -32,33 +32,29 @@ type permission struct {
  * @apiUse OtherErrors
  */
 func GrantPermission(c *gin.Context) {
-	tokenString, err := getTokenHeader(c)
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	payload, err := token.NewService().Validate(tokenString)
+	payload, err := validateTokenHeader(c)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
 	body := permission{}
-
 	if err := c.ShouldBindJSON(&body); err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	userService := user.NewService()
-	if !userService.Granted(payload.UserID, "admin") {
+	userService, err := user.NewService()
+	if err != nil {
+		errors.Handle(c, err)
+		return
+	}
+	if !userService.Granted(payload.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	userID := c.Param("userID")
-	err = userService.Grant(userID, body.Permissions)
+	err = userService.Grant(c.Param("userID"), body.Permissions)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -88,33 +84,29 @@ func GrantPermission(c *gin.Context) {
  * @apiUse OtherErrors
  */
 func RevokePermission(c *gin.Context) {
-	tokenString, err := getTokenHeader(c)
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	payload, err := token.NewService().Validate(tokenString)
+	payload, err := validateTokenHeader(c)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
 	body := permission{}
-
 	if err := c.ShouldBindJSON(&body); err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	userService := user.NewService()
-	if !userService.Granted(payload.UserID, "admin") {
+	userService, err := user.NewService()
+	if err != nil {
+		errors.Handle(c, err)
+		return
+	}
+	if !userService.Granted(payload.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	userID := c.Param("userID")
-	err = userService.Revoke(userID, body.Permissions)
+	err = userService.Revoke(c.Param("userID"), body.Permissions)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -139,26 +131,23 @@ func RevokePermission(c *gin.Context) {
  * @apiUse OtherErrors
  */
 func Disable(c *gin.Context) {
-	tokenString, err := getTokenHeader(c)
+	payload, err := validateTokenHeader(c)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	payload, err := token.NewService().Validate(tokenString)
+	userService, err := user.NewService()
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
-
-	userService := user.NewService()
-	if !userService.Granted(payload.UserID, "admin") {
+	if !userService.Granted(payload.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	userID := c.Param("userID")
-	err = userService.Disable(userID)
+	err = userService.Disable(c.Param("userID"))
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -183,26 +172,23 @@ func Disable(c *gin.Context) {
  * @apiUse OtherErrors
  */
 func Enable(c *gin.Context) {
-	tokenString, err := getTokenHeader(c)
+	payload, err := validateTokenHeader(c)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	payload, err := token.NewService().Validate(tokenString)
+	userService, err := user.NewService()
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
-
-	userService := user.NewService()
-	if !userService.Granted(payload.UserID, "admin") {
+	if !userService.Granted(payload.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	userID := c.Param("userID")
-	err = userService.Enable(userID)
+	err = userService.Enable(c.Param("userID"))
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -233,13 +219,17 @@ func Enable(c *gin.Context) {
  */
 func SignUp(c *gin.Context) {
 	body := user.SignUpRequest{}
-
 	if err := c.ShouldBindJSON(&body); err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	token, err := user.NewService().SignUp(&body)
+	userService, err := user.NewService()
+	if err != nil {
+		errors.Handle(c, err)
+		return
+	}
+	token, err := userService.SignUp(&body)
 
 	if err != nil {
 		errors.Handle(c, err)
@@ -272,9 +262,13 @@ func SignOut(c *gin.Context) {
 		return
 	}
 
-	err = token.NewService().Invalidate(tokenString)
-
+	payloadRepository, err := security.NewService()
 	if err != nil {
+		errors.Handle(c, err)
+		return
+	}
+
+	if err = payloadRepository.Invalidate(tokenString); err != nil {
 		errors.Handle(c, err)
 		return
 	}
@@ -314,8 +308,12 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	tokenString, err := user.NewService().SignIn(login.Login, login.Password)
-
+	userService, err := user.NewService()
+	if err != nil {
+		errors.Handle(c, err)
+		return
+	}
+	tokenString, err := userService.SignIn(login.Login, login.Password)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -349,20 +347,18 @@ func SignIn(c *gin.Context) {
  * @apiUse OtherErrors
  */
 func CurrentUser(c *gin.Context) {
-	tokenString, err := getTokenHeader(c)
+	payload, err := validateTokenHeader(c)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	payload, err := token.NewService().Validate(tokenString)
-
+	userService, err := user.NewService()
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
-
-	user, err := user.NewService().GetUser(payload.UserID)
+	user, err := userService.GetUser(payload.UserID.Hex())
 
 	if err != nil {
 		errors.Handle(c, err)
@@ -404,27 +400,24 @@ func ChangePassword(c *gin.Context) {
 		New     string `json:"newPassword" binding:"required,min=1,max=100"`
 	}
 
-	tokenString, err := getTokenHeader(c)
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	payload, err := token.NewService().Validate(tokenString)
-
+	payload, err := validateTokenHeader(c)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
 	body := changePassword{}
-
 	if err := c.ShouldBindJSON(&body); err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	err = user.NewService().ChangePassword(payload.UserID, body.Current, body.New)
+	userService, err := user.NewService()
+	if err != nil {
+		errors.Handle(c, err)
+		return
+	}
+	err = userService.ChangePassword(payload.UserID.Hex(), body.Current, body.New)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -457,24 +450,23 @@ func ChangePassword(c *gin.Context) {
  * @apiUse OtherErrors
  */
 func Users(c *gin.Context) {
-	tokenString, err := getTokenHeader(c)
+	payload, err := validateTokenHeader(c)
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
 
-	payload, err := token.NewService().Validate(tokenString)
+	userService, err := user.NewService()
 	if err != nil {
 		errors.Handle(c, err)
 		return
 	}
-
-	if !user.NewService().Granted(payload.UserID, "admin") {
+	if !userService.Granted(payload.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	user, err := user.NewService().Users()
+	user, err := userService.Users()
 
 	if err != nil {
 		errors.Handle(c, err)

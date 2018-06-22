@@ -4,8 +4,8 @@ import (
 	"github.com/nmarsollier/authgo/tools/db"
 )
 
-// FakeDecoder permite mockear mongo.DocumentResponse
-func FakeDecoder(decoder func(v interface{}) error) db.Decoder {
+// Decoder permite mockear mongo.DocumentResponse
+func Decoder(decoder func(v interface{}) error) db.Decoder {
 	return &fakeDecoder{
 		decoder: decoder,
 	}

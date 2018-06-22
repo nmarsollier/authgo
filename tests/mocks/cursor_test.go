@@ -14,7 +14,7 @@ func TestCursor(t *testing.T) {
 	names[0] = testStruct{Name: "uno"}
 	names[1] = testStruct{Name: "dos"}
 
-	cur := NewFakeCursor(names)
+	cur := Cursor(names)
 
 	result := testStruct{}
 	assert.Equal(t, cur.Next(nil), true)
