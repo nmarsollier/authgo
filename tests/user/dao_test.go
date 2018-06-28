@@ -1,4 +1,4 @@
-package user_test
+package user
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 	validator "gopkg.in/go-playground/validator.v9"
 
-	"github.com/nmarsollier/authgo/mocks"
+	"github.com/nmarsollier/authgo/tests/mocks"
 	"github.com/nmarsollier/authgo/tools/errors"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"

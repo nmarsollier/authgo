@@ -1,9 +1,9 @@
-package user_test
+package user
 
 import (
 	"testing"
 
-	"github.com/nmarsollier/authgo/mocks"
+	"github.com/nmarsollier/authgo/tests/mocks"
 	"github.com/nmarsollier/authgo/user"
 
 	"github.com/stretchr/testify/assert"

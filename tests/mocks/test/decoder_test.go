@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/nmarsollier/authgo/mocks"
+	"github.com/nmarsollier/authgo/tests/mocks"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -1,4 +1,4 @@
-package test
+package errors
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mongodb/mongo-go-driver/core/topology"
 	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/nmarsollier/authgo/mocks"
+	"github.com/nmarsollier/authgo/tests/mocks"
 	handler "github.com/nmarsollier/authgo/tools/errors"
 	validator "gopkg.in/go-playground/validator.v9"
 )

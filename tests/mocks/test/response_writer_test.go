@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/mocks"
+	"github.com/nmarsollier/authgo/tests/mocks"
 )
 
 func TestResponseWriter(t *testing.T) {

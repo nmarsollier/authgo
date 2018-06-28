@@ -1,12 +1,12 @@
-package test
+package security
 
 import (
 	"testing"
 
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 
-	"github.com/nmarsollier/authgo/mocks"
 	"github.com/nmarsollier/authgo/security"
+	"github.com/nmarsollier/authgo/tests/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
