@@ -7,6 +7,7 @@ import (
 
 	"github.com/mongodb/mongo-go-driver/core/topology"
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/mongo/clientopt"
 	"github.com/nmarsollier/authgo/tools/env"
 )
 
@@ -17,7 +18,7 @@ func Get() (*mongo.Database, error) {
 	if database == nil {
 		client, err := mongo.NewClientWithOptions(
 			env.Get().MongoURL,
-			mongo.ClientOpt.ServerSelectionTimeout(time.Second),
+			clientopt.ServerSelectionTimeout(time.Second),
 		)
 		if err != nil {
 			log.Fatal(err)

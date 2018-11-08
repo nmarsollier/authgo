@@ -74,6 +74,16 @@ func (d daoStruct) Insert(user *User) (*User, error) {
 	return user, nil
 }
 
+func toDoc(v interface{}) (doc *bson.Document, err error) {
+	data, err := bson.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+
+	err = bson.Unmarshal(data, &doc)
+	return doc, err
+}
+
 func (d daoStruct) Update(user *User) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
 		return nil, err
@@ -81,7 +91,7 @@ func (d daoStruct) Update(user *User) (*User, error) {
 
 	user.Updated = time.Now()
 
-	doc, err := bson.NewDocumentEncoder().EncodeDocument(user)
+	doc, err := toDoc(user)
 	if err != nil {
 		return nil, err
 	}
