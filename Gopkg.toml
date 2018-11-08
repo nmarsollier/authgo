@@ -43,7 +43,7 @@
 
 [[constraint]]
   name = "github.com/mongodb/mongo-go-driver"
-  version = "0.0.6"
+  version = "0.0.17"
 
 [[constraint]]
   name = "github.com/patrickmn/go-cache"
@@ -59,11 +59,11 @@
 
 [[constraint]]
   name = "gopkg.in/go-playground/validator.v9"
-  version = "9.17.1"
+  version = "9.23.0"
 
 [[constraint]]
   name = "github.com/stretchr/testify"
-  branch = "master"
+  version = "1.2.2"
 
 [prune]
   go-tests = true
