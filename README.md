@@ -17,9 +17,8 @@ que una vez levantado el servidor se puede navegar en [localhost:3000](http://lo
 
 ## Requisitos
 
-Go 1.10  [golang.org](https://golang.org/doc/install)
+Go 1.14  [golang.org](https://golang.org/doc/install)
 
-Dep [github.com/golang/dep](https://github.com/golang/dep)
 
 ## Configuración inicial
 
@@ -47,7 +46,7 @@ cd $GOPATH/src/github.com/nmarsollier/authgo
 
 
 ```bash
-dep ensure
+go mod tidy
 ```
 
 Build y ejecución

@@ -1,9 +1,9 @@
 package errors
 
 import (
+	"encoding/json"
 	"testing"
 
-	"github.com/gin-gonic/gin/json"
 	"github.com/nmarsollier/authgo/tools/errors"
 	"github.com/stretchr/testify/assert"
 )
