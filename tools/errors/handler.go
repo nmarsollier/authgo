@@ -6,8 +6,9 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mongodb/mongo-go-driver/core/topology"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
+
 	"github.com/nmarsollier/authgo/tools/db"
 	validator "gopkg.in/go-playground/validator.v9"
 )

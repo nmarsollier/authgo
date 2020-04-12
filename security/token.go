@@ -2,8 +2,8 @@ package security
 
 import (
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"github.com/nmarsollier/authgo/tools/env"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 /**
@@ -18,9 +18,9 @@ import (
 
 // Token es un objeto valor que representa un token.
 type Token struct {
-	ID      objectid.ObjectID `bson:"_id"`
-	UserID  objectid.ObjectID `bson:"userId"`
-	Enabled bool              `bson:"enabled"`
+	ID      primitive.ObjectID `bson:"_id"`
+	UserID  primitive.ObjectID `bson:"userId"`
+	Enabled bool               `bson:"enabled"`
 }
 
 // Encode codifica un Token obteniendo el tokenString
@@ -40,9 +40,9 @@ func (t Token) Encode() (string, error) {
 }
 
 // NewToken crea un nuevo Token con la información minima necesaria
-func newToken(userID objectid.ObjectID) *Token {
+func newToken(userID primitive.ObjectID) *Token {
 	return &Token{
-		ID:      objectid.New(),
+		ID:      primitive.NewObjectID(),
 		UserID:  userID,
 		Enabled: true,
 	}

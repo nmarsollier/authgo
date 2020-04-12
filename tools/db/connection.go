@@ -3,12 +3,11 @@ package db
 import (
 	"context"
 	"log"
-	"time"
 
-	"github.com/mongodb/mongo-go-driver/core/topology"
-	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/mongodb/mongo-go-driver/mongo/clientopt"
 	"github.com/nmarsollier/authgo/tools/env"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 var database *mongo.Database
@@ -16,15 +15,9 @@ var database *mongo.Database
 // Get the mongo database
 func Get() (*mongo.Database, error) {
 	if database == nil {
-		client, err := mongo.NewClientWithOptions(
-			env.Get().MongoURL,
-			clientopt.ServerSelectionTimeout(time.Second),
-		)
-		if err != nil {
-			log.Fatal(err)
-			return nil, err
-		}
-		err = client.Connect(context.TODO())
+		clientOptions := options.Client().ApplyURI(env.Get().MongoURL)
+
+		client, err := mongo.Connect(context.TODO(), clientOptions)
 		if err != nil {
 			log.Fatal(err)
 			return nil, err

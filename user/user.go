@@ -3,26 +3,26 @@ package user
 import (
 	"time"
 
-	"github.com/mongodb/mongo-go-driver/bson/objectid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
 // User data structure
 type User struct {
-	ID          objectid.ObjectID `bson:"_id"`
-	Name        string            `bson:"name" validate:"required,min=1,max=100"`
-	Login       string            `bson:"login" validate:"required,min=5,max=100"`
-	Password    string            `bson:"password" validate:"required"`
-	Permissions []string          `bson:"permissions"`
-	Enabled     bool              `bson:"enabled"`
-	Created     time.Time         `bson:"created"`
-	Updated     time.Time         `bson:"updated"`
+	ID          primitive.ObjectID `bson:"_id"`
+	Name        string             `bson:"name" validate:"required,min=1,max=100"`
+	Login       string             `bson:"login" validate:"required,min=5,max=100"`
+	Password    string             `bson:"password" validate:"required"`
+	Permissions []string           `bson:"permissions"`
+	Enabled     bool               `bson:"enabled"`
+	Created     time.Time          `bson:"created"`
+	Updated     time.Time          `bson:"updated"`
 }
 
 func NewUser() *User {
 	return &User{
-		ID:          objectid.New(),
+		ID:          primitive.NewObjectID(),
 		Enabled:     true,
 		Created:     time.Now(),
 		Updated:     time.Now(),

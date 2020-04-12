@@ -3,18 +3,25 @@ package security
 import (
 	"context"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/objectid"
-	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Dao es la interfaz con los método expuestos por este dao
 type Dao interface {
-	Create(userID objectid.ObjectID) (*Token, error)
+	Create(userID primitive.ObjectID) (*Token, error)
 	FindByID(tokenID string) (*Token, error)
-	Delete(tokenID objectid.ObjectID) error
+	Delete(tokenID primitive.ObjectID) error
+}
+
+// MockedDao con fines de testing para mockear db.collection
+func MockedDao(coll mongo.Collection) Dao {
+	return daoStruct{
+		collection: coll,
+	}
 }
 
 // newDao es interno, solo se puede usar en este modulo
@@ -29,10 +36,9 @@ func newDao() (Dao, error) {
 	_, err = collection.Indexes().CreateOne(
 		context.Background(),
 		mongo.IndexModel{
-			Keys: bson.NewDocument(
-				bson.EC.String("userId", ""),
-			),
-			Options: bson.NewDocument(),
+			Keys: bson.M{
+				"userId": 1, // index in ascending order
+			}, Options: nil,
 		},
 	)
 	if err != nil {
@@ -40,24 +46,17 @@ func newDao() (Dao, error) {
 	}
 
 	return daoStruct{
-		collection: db.WrapCollection(collection),
+		collection: *collection,
 	}, nil
-}
-
-// MockedDao con fines de testing para mockear db.collection
-func MockedDao(coll db.Collection) Dao {
-	return daoStruct{
-		collection: coll,
-	}
 }
 
 // El repositorio
 type daoStruct struct {
-	collection db.Collection
+	collection mongo.Collection
 }
 
 // Create crea un nuevo token y lo almacena en la db
-func (d daoStruct) Create(userID objectid.ObjectID) (*Token, error) {
+func (d daoStruct) Create(userID primitive.ObjectID) (*Token, error) {
 	token := newToken(userID)
 
 	_, err := d.collection.InsertOne(context.Background(), token)
@@ -70,13 +69,13 @@ func (d daoStruct) Create(userID objectid.ObjectID) (*Token, error) {
 
 // Find busca un token en la db
 func (d daoStruct) FindByID(tokenID string) (*Token, error) {
-	_id, err := objectid.FromHex(tokenID)
+	_id, err := primitive.ObjectIDFromHex(tokenID)
 	if err != nil {
 		return nil, errors.Unauthorized
 	}
 
 	token := &Token{}
-	filter := bson.NewDocument(bson.EC.ObjectID("_id", _id))
+	filter := bson.M{"_id": _id}
 
 	if err = d.collection.FindOne(context.Background(), filter).Decode(token); err != nil {
 		return nil, err
@@ -86,14 +85,13 @@ func (d daoStruct) FindByID(tokenID string) (*Token, error) {
 }
 
 // Delete como deshabilitado un token
-func (d daoStruct) Delete(tokenID objectid.ObjectID) error {
+func (d daoStruct) Delete(tokenID primitive.ObjectID) error {
 	_, err := d.collection.UpdateOne(context.Background(),
-		bson.NewDocument(bson.EC.ObjectID("_id", tokenID)),
-		bson.NewDocument(
-			bson.EC.SubDocumentFromElements("$set",
-				bson.EC.Boolean("enabled", false),
-			),
-		))
+		bson.M{"_id": tokenID},
+		bson.M{"$set": bson.M{
+			"enabled": false,
+		}},
+	)
 
 	return err
 }

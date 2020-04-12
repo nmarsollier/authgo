@@ -4,12 +4,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/mongodb/mongo-go-driver/bson/objectid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestCache(t *testing.T) {
-	userID, _ := objectid.FromHex("111111111111111111111111")
+	userID, _ := primitive.ObjectIDFromHex("111111111111111111111111")
 	token := newToken(userID)
 	token1 := newToken(userID)
 	token2 := newToken(userID)

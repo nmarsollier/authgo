@@ -5,15 +5,15 @@ import (
 	"log"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"github.com/nmarsollier/authgo/rabbit"
 	"github.com/nmarsollier/authgo/tools/env"
 	"github.com/nmarsollier/authgo/tools/errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Service es la interfaz con los método expuestos por este dao
 type Service interface {
-	Create(userID objectid.ObjectID) (*Token, error)
+	Create(userID primitive.ObjectID) (*Token, error)
 	Find(tokenID string) (*Token, error)
 	Validate(tokenString string) (*Token, error)
 	Invalidate(tokenString string) error
@@ -44,7 +44,7 @@ type serviceStruct struct {
 }
 
 // Create crea un nuevo token y lo almacena en la db
-func (d serviceStruct) Create(userID objectid.ObjectID) (*Token, error) {
+func (d serviceStruct) Create(userID primitive.ObjectID) (*Token, error) {
 	token, err := d.dao.Create(userID)
 	if err != nil {
 		return nil, err
