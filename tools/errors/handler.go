@@ -62,7 +62,7 @@ func Handle(c *gin.Context, err interface{}) {
 	case validator.ValidationErrors:
 		// Son las validaciones de validator usadas en validaciones de estructuras
 		handleValidationError(c, value)
-	case mongo.WriteErrors:
+	case mongo.WriteException:
 		// Errores de mongo
 		if db.IsUniqueKeyError(value) {
 			handleCustom(c, AlreadyExist)

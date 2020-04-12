@@ -23,12 +23,7 @@ func validateAuthHeader(c *gin.Context) (*security.Token, error) {
 		return nil, err
 	}
 
-	payloadRepository, err := security.NewService()
-	if err != nil {
-		return nil, err
-	}
-
-	payload, err := payloadRepository.Validate(tokenString)
+	payload, err := getSecurityService().Validate(tokenString)
 	if err != nil {
 		return nil, err
 	}

@@ -19,33 +19,18 @@ type Service interface {
 	Invalidate(tokenString string) error
 }
 
+// Implementacion de Service
+type serviceImpl struct {
+}
+
 // NewService devuelve el servicio principal de seguridad
-func NewService() (Service, error) {
-	dao, err := newDao()
-	if err != nil {
-		return nil, err
-	}
-
-	return serviceStruct{
-		dao: dao,
-	}, nil
-}
-
-// MockedService con fines de testing para mockear db.collection
-func MockedService(coll Dao) Service {
-	return serviceStruct{
-		dao: coll,
-	}
-}
-
-// El repositorio
-type serviceStruct struct {
-	dao Dao
+func NewService() Service {
+	return new(serviceImpl)
 }
 
 // Create crea un nuevo token y lo almacena en la db
-func (d serviceStruct) Create(userID primitive.ObjectID) (*Token, error) {
-	token, err := d.dao.Create(userID)
+func (d serviceImpl) Create(userID primitive.ObjectID) (*Token, error) {
+	token, err := getDao().Create(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -56,12 +41,12 @@ func (d serviceStruct) Create(userID primitive.ObjectID) (*Token, error) {
 }
 
 // Find busca un token en la db
-func (d serviceStruct) Find(tokenID string) (*Token, error) {
-	return d.dao.FindByID(tokenID)
+func (d serviceImpl) Find(tokenID string) (*Token, error) {
+	return getDao().FindByID(tokenID)
 }
 
 // Validate dado un tokenString devuelve el Token asociado
-func (d serviceStruct) Validate(tokenString string) (*Token, error) {
+func (d serviceImpl) Validate(tokenString string) (*Token, error) {
 	if token, err := cacheGet(tokenString); err == nil {
 		return token, err
 	}
@@ -73,7 +58,7 @@ func (d serviceStruct) Validate(tokenString string) (*Token, error) {
 	}
 
 	// Buscamos el token en la db para validarlo
-	token, err := d.dao.FindByID(tokenID)
+	token, err := getDao().FindByID(tokenID)
 	if err != nil || !token.Enabled {
 		return nil, errors.Unauthorized
 	}
@@ -85,13 +70,13 @@ func (d serviceStruct) Validate(tokenString string) (*Token, error) {
 }
 
 // Invalidate invalida un token
-func (d serviceStruct) Invalidate(tokenString string) error {
+func (d serviceImpl) Invalidate(tokenString string) error {
 	token, err := d.Validate(tokenString)
 	if err != nil {
 		return errors.Unauthorized
 	}
 
-	if err = d.dao.Delete(token.ID); err != nil {
+	if err = getDao().Delete(token.ID); err != nil {
 		return err
 	}
 

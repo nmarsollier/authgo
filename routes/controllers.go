@@ -2,7 +2,6 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/security"
 	"github.com/nmarsollier/authgo/tools/errors"
 	"github.com/nmarsollier/authgo/user"
 )
@@ -44,18 +43,12 @@ func GrantPermission(c *gin.Context) {
 		return
 	}
 
-	userService, err := user.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	if !userService.Granted(token.UserID.Hex(), "admin") {
+	if !getUserService().Granted(token.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	err = userService.Grant(c.Param("userID"), body.Permissions)
+	err = getUserService().Grant(c.Param("userID"), body.Permissions)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -97,18 +90,12 @@ func RevokePermission(c *gin.Context) {
 		return
 	}
 
-	userService, err := user.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	if !userService.Granted(token.UserID.Hex(), "admin") {
+	if !getUserService().Granted(token.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	err = userService.Revoke(c.Param("userID"), body.Permissions)
+	err = getUserService().Revoke(c.Param("userID"), body.Permissions)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -139,18 +126,12 @@ func Disable(c *gin.Context) {
 		return
 	}
 
-	userService, err := user.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	if !userService.Granted(payload.UserID.Hex(), "admin") {
+	if !getUserService().Granted(payload.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	err = userService.Disable(c.Param("userID"))
+	err = getUserService().Disable(c.Param("userID"))
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -181,18 +162,12 @@ func Enable(c *gin.Context) {
 		return
 	}
 
-	userService, err := user.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	if !userService.Granted(payload.UserID.Hex(), "admin") {
+	if !getUserService().Granted(payload.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	err = userService.Enable(c.Param("userID"))
+	err = getUserService().Enable(c.Param("userID"))
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -228,13 +203,7 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	userService, err := user.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	token, err := userService.SignUp(&body)
+	token, err := getUserService().SignUp(&body)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -266,13 +235,7 @@ func SignOut(c *gin.Context) {
 		return
 	}
 
-	secService, err := security.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	if err = secService.Invalidate(tokenString); err != nil {
+	if err = getSecurityService().Invalidate(tokenString); err != nil {
 		errors.Handle(c, err)
 		return
 	}
@@ -310,13 +273,7 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	userService, err := user.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	tokenString, err := userService.SignIn(login.Login, login.Password)
+	tokenString, err := getUserService().SignIn(login.Login, login.Password)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -356,13 +313,7 @@ func CurrentUser(c *gin.Context) {
 		return
 	}
 
-	userService, err := user.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	user, err := userService.Get(token.UserID.Hex())
+	user, err := getUserService().Get(token.UserID.Hex())
 
 	if err != nil {
 		errors.Handle(c, err)
@@ -415,13 +366,7 @@ func ChangePassword(c *gin.Context) {
 		return
 	}
 
-	userService, err := user.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	err = userService.ChangePassword(payload.UserID.Hex(), body.Current, body.New)
+	err = getUserService().ChangePassword(payload.UserID.Hex(), body.Current, body.New)
 	if err != nil {
 		errors.Handle(c, err)
 		return
@@ -460,18 +405,12 @@ func Users(c *gin.Context) {
 		return
 	}
 
-	userService, err := user.NewService()
-	if err != nil {
-		errors.Handle(c, err)
-		return
-	}
-
-	if !userService.Granted(payload.UserID.Hex(), "admin") {
+	if !getUserService().Granted(payload.UserID.Hex(), "admin") {
 		errors.Handle(c, errors.AccessLevel)
 		return
 	}
 
-	user, err := userService.Users()
+	user, err := getUserService().Users()
 
 	if err != nil {
 		errors.Handle(c, err)

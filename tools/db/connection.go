@@ -37,9 +37,9 @@ func CheckError(err interface{}) {
 
 // IsUniqueKeyError retorna true si el error es de indice único
 func IsUniqueKeyError(err error) bool {
-	if wErr, ok := err.(mongo.WriteErrors); ok {
-		for i := 0; i < len(wErr); i++ {
-			if wErr[i].Code == 11000 {
+	if wErr, ok := err.(mongo.WriteException); ok {
+		for i := 0; i < len(wErr.WriteErrors); i++ {
+			if wErr.WriteErrors[i].Code == 11000 {
 				return true
 			}
 		}

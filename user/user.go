@@ -20,6 +20,7 @@ type User struct {
 	Updated     time.Time          `bson:"updated"`
 }
 
+// NewUser Nueva instancia de usuario
 func NewUser() *User {
 	return &User{
 		ID:          primitive.NewObjectID(),
@@ -30,6 +31,7 @@ func NewUser() *User {
 	}
 }
 
+// SetPasswordText Asigna la contraseña en modo texto, la encripta
 func (e *User) SetPasswordText(pwd string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost)
 	if err != nil {
@@ -40,6 +42,7 @@ func (e *User) SetPasswordText(pwd string) error {
 	return nil
 }
 
+// ValidatePassword Valida si la contraseña es la correcta
 func (e *User) ValidatePassword(plainPwd string) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(e.Password), []byte(plainPwd)); err != nil {
 		return ErrPassword
@@ -77,7 +80,7 @@ func (e *User) Revoke(permission string) {
 	}
 }
 
+// ValidateSchema valida la estructura para ser insertada en la db
 func (e *User) ValidateSchema() error {
-	validate := validator.New()
-	return validate.Struct(e)
+	return validator.New().Struct(e)
 }
