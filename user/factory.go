@@ -41,24 +41,26 @@ func getCollection() (*mongo.Collection, error) {
 	return collectionInstance, nil
 }
 
-var daoInstance Dao
+// DaoInstance allows to mock dao
+var DaoInstance Dao
 
 func getDao() Dao {
-	if daoInstance != nil {
-		return daoInstance
+	if DaoInstance != nil {
+		return DaoInstance
 	}
 
-	daoInstance = newDao()
-	return daoInstance
+	DaoInstance = newDao()
+	return DaoInstance
 }
 
-var secServiceInstance security.Service
+// SecServiceInstance allows mock service
+var SecServiceInstance security.Service
 
 func getService() security.Service {
-	if secServiceInstance != nil {
-		return secServiceInstance
+	if SecServiceInstance != nil {
+		return SecServiceInstance
 	}
 
-	secServiceInstance = security.NewService()
-	return secServiceInstance
+	SecServiceInstance = security.NewService()
+	return SecServiceInstance
 }

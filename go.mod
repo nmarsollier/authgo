@@ -7,6 +7,7 @@ require (
 	github.com/gin-contrib/gzip v0.0.1
 	github.com/gin-contrib/static v0.0.0-20191128031702-f81c604d8ac2
 	github.com/gin-gonic/gin v1.6.2
+	github.com/go-playground/validator/v10 v10.2.0
 	github.com/golang/protobuf v1.3.5 // indirect
 	github.com/google/go-cmp v0.4.0 // indirect
 	github.com/itsjamie/gin-cors v0.0.0-20160420130702-97b4a9da7933
@@ -19,5 +20,4 @@ require (
 	golang.org/x/crypto v0.0.0-20200406173513-056763e48d71
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a // indirect
 	golang.org/x/sys v0.0.0-20200409092240-59c9f1ba88fa // indirect
-	github.com/go-playground/validator/v10 v10.2.0
 )

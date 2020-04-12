@@ -38,13 +38,14 @@ func getCollection() (*mongo.Collection, error) {
 	return collectionInstance, nil
 }
 
-var daoInstance Dao
+// public DaoInstance allow us to mock daos
+var DaoInstance Dao
 
 func getDao() Dao {
-	if daoInstance != nil {
-		return daoInstance
+	if DaoInstance != nil {
+		return DaoInstance
 	}
 
-	daoInstance = newDao()
-	return daoInstance
+	DaoInstance = newDao()
+	return DaoInstance
 }
