@@ -28,6 +28,8 @@ establecer variables de entorno (consultar documentación de la version instalad
 export GOPATH="$HOME/go"
 export GOROOT=/usr/local/go
 export PATH="$PATH:$GOPATH/bin:$GOROOT/bin"
+export GO111MODULE=on
+export GOFLAGS=-mod=vendor
 ```
 
 Para descargar el proyecto correctamente hay que ejecutar :
@@ -46,14 +48,15 @@ cd $GOPATH/src/github.com/nmarsollier/authgo
 
 
 ```bash
-go mod tidy
+go mod download
+go mod vendor
 ```
 
 Build y ejecución
 -
 
 ```bash
-go install github.com/nmarsollier/authgo
+go install
 authgo
 ```
 
