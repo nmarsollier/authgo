@@ -4,3 +4,4 @@ pkg
 www
 vendor
 Gopkg.lock
+go.sum

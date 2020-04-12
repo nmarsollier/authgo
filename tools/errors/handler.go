@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 
 	"github.com/nmarsollier/authgo/tools/db"
-	validator "gopkg.in/go-playground/validator.v9"
 )
 
 // Handle maneja cualquier error para serializarlo como JSON al cliente
@@ -60,7 +60,7 @@ func Handle(c *gin.Context, err interface{}) {
 		// Son validaciones hechas con NewValidation
 		c.JSON(400, err)
 	case validator.ValidationErrors:
-		// Son las validaciones de validator.v9 usadas en validaciones de estructuras
+		// Son las validaciones de validator usadas en validaciones de estructuras
 		handleValidationError(c, value)
 	case mongo.WriteErrors:
 		// Errores de mongo

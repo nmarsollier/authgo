@@ -3,9 +3,9 @@ package user
 import (
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
-	validator "gopkg.in/go-playground/validator.v9"
 )
 
 // User data structure
