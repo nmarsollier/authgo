@@ -1,3 +1,6 @@
+### Si queres sabes mas sobre mi:
+[Nestor Marsollier](https://github.com/nmarsollier/profile)
+
 # Auth Service en GO
 
 Este Microservicio de seguridad reemplaza al del proyecto
