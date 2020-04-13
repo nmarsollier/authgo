@@ -25,9 +25,6 @@ Go 1.14  [golang.org](https://golang.org/doc/install)
 establecer variables de entorno (consultar documentación de la version instalada)
 
 ```bash
-export GOPATH="$HOME/go"
-export GOROOT=/usr/local/go
-export PATH="$PATH:$GOPATH/bin:$GOROOT/bin"
 export GO111MODULE=on
 export GOFLAGS=-mod=vendor
 ```
