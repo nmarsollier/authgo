@@ -59,7 +59,7 @@ func (d daoImpl) Update(user *User) (*User, error) {
 	_, err = collection.UpdateOne(context.Background(),
 		bson.M{"_id": user.ID},
 		bson.M{
-			"&set": bson.M{
+			"$set": bson.M{
 				"password":    user.Password,
 				"name":        user.Name,
 				"enabled":     user.Enabled,
