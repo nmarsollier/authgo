@@ -1,7 +1,8 @@
 .DS_Store
 .vscode
 pkg
-www
 vendor
 Gopkg.lock
 go.sum
+node_modules
+package-lock.json

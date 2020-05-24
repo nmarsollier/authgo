@@ -32,6 +32,7 @@ Microservicio de Autentificación
 
 
 
+
 ### Success Response
 
 Mensaje
@@ -70,6 +71,7 @@ Header Autorización
 ```
 Authorization=bearer {token}
 ```
+
 
 ### Success Response
 
@@ -129,6 +131,7 @@ Header Autorización
 Authorization=bearer {token}
 ```
 
+
 ### Success Response
 
 Respuesta
@@ -186,6 +189,7 @@ Header Autorización
 ```
 Authorization=bearer {token}
 ```
+
 
 ### Success Response
 
@@ -245,6 +249,7 @@ Header Autorización
 Authorization=bearer {token}
 ```
 
+
 ### Success Response
 
 Respuesta
@@ -301,6 +306,7 @@ Body
 }
 ```
 
+
 ### Success Response
 
 Respuesta
@@ -354,6 +360,7 @@ Header Autorización
 Authorization=bearer {token}
 ```
 
+
 ### Success Response
 
 Respuesta
@@ -404,6 +411,7 @@ Header Autorización
 ```
 Authorization=bearer {token}
 ```
+
 
 ### Success Response
 
@@ -467,6 +475,7 @@ Body
 }
 ```
 
+
 ### Success Response
 
 Respuesta
@@ -527,6 +536,7 @@ Header Autorización
 Authorization=bearer {token}
 ```
 
+
 ### Success Response
 
 Respuesta
@@ -584,6 +594,7 @@ Header Autorización
 ```
 Authorization=bearer {token}
 ```
+
 
 ### Success Response
 
