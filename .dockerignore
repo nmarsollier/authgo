@@ -1,0 +1,5 @@
+node_modules
+vendor
+.dockerignore
+Dockerfile
+Dockerfile.prod

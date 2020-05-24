@@ -110,3 +110,24 @@ authgo [path_to_config.json]
 ```
 
 Para mas detalles ver el archivo tools/env/env.go
+
+
+## Docker
+
+Tambien podemos usar docker en este repositorio, ejecutamos :
+
+```bash
+docker build -t dev-auth-go .
+docker run -d --name dev-auth-go --network host dev-auth-go
+```
+
+El contenedor se puede parar usando :
+
+```bash
+docker stop dev-auth-go
+```
+Se vuelve a levantar usando 
+
+```bash
+docker start dev-auth-go 
+```
