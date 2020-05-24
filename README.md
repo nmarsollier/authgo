@@ -100,7 +100,7 @@ apidoc-markdown2 -p www -o README-API.md
 
 Esto nos genera una carpeta con la documentación, esta carpeta debe estar presente desde donde se ejecute auth, auth busca ./www para localizarlo, aunque se puede configurar desde el archivo de properties.
 
-## Archivo config.json
+## Archivo config.json
 
 Este archivo permite configurar los parámetros del servidor, ver ejemplos en config-example.json.
 El servidor busca el archivo "./config.json". Podemos definir el archivo su ruta completa ejecutando
