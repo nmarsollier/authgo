@@ -1,4 +1,4 @@
-# Docker produccion o stage
+# Docker para desarrollo
 FROM golang:1.14.3-buster
 
 WORKDIR /go/src/github.com/nmarsollier/authgo

@@ -117,7 +117,7 @@ Para mas detalles ver el archivo tools/env/env.go
 Tambien podemos usar docker en este repositorio, ejecutamos :
 
 ```bash
-docker build -t dev-auth-go .
+docker build -t dev-auth-go -f Dockerfile.dev .
 docker run -d --name dev-auth-go --network host dev-auth-go
 ```
 
