@@ -102,7 +102,7 @@ Esto nos genera una carpeta con la documentación, esta carpeta debe estar prese
 
 ## Configuración del servidor
 
-Este servidor usa las siguientes variables de entorno para configuracion :
+Este servidor usa las siguientes variables de entorno para configuración :
 
 RABBIT_URL : Url de rabbit (default amqp://localhost)
 MONGO_URL : Url de mongo (default mongodb://localhost:27017)
