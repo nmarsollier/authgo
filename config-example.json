@@ -1,7 +1,0 @@
-{
-    "port": 3000,
-    "rabbitUrl": "amqp://localhost",
-    "mongoUrl": "mongodb://localhost:27017",
-    "wwwPath": "www",
-    "jwtSecret" : "ecb6d3479ac3823f1da7f314d871989b"
-}

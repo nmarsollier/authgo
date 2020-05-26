@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/gin-contrib/gzip"
@@ -14,10 +13,6 @@ import (
 )
 
 func main() {
-	if len(os.Args) > 1 {
-		env.Load(os.Args[1])
-	}
-
 	server := gin.Default()
 
 	server.Use(gzip.Gzip(gzip.DefaultCompression))

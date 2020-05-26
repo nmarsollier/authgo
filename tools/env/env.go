@@ -1,10 +1,8 @@
 package env
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
 	"os"
+	"strconv"
 )
 
 // Configuration properties
@@ -31,31 +29,37 @@ func new() *Configuration {
 // Get Obtiene las variables de entorno del sistema
 func Get() *Configuration {
 	if config == nil {
-		if ok := Load("config.json"); !ok {
-			config = new()
-		}
+		config = load()
 	}
 
 	return config
 }
 
 // Load file properties
-func Load(fileName string) bool {
-	file, err := os.Open(fileName)
-	if err != nil {
-		log.Output(1, fmt.Sprintf("%s : %s", fileName, err.Error()))
-		return false
-	}
-	defer file.Close()
+func load() *Configuration {
+	result := new()
 
-	loaded := new()
-	err = json.NewDecoder(file).Decode(&loaded)
-	if err != nil {
-		log.Output(1, fmt.Sprintf("%s : %s", fileName, err.Error()))
-		return false
+	if value := os.Getenv("RABBIT_URL"); len(value) > 0 {
+		result.RabbitURL = value
 	}
 
-	config = loaded
-	log.Output(1, fmt.Sprintf("%s cargado correctamente", fileName))
-	return true
+	if value := os.Getenv("MONGO_URL"); len(value) > 0 {
+		result.MongoURL = value
+	}
+
+	if value := os.Getenv("PORT"); len(value) > 0 {
+		if intVal, err := strconv.Atoi(value); err != nil {
+			result.Port = intVal
+		}
+	}
+
+	if value := os.Getenv("WWW_PATH"); len(value) > 0 {
+		result.WWWWPath = value
+	}
+
+	if value := os.Getenv("JWT_SECRET"); len(value) > 0 {
+		result.JWTSecret = value
+	}
+
+	return result
 }

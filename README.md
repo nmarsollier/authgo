@@ -100,25 +100,23 @@ apidoc-markdown2 -p www -o README-API.md
 
 Esto nos genera una carpeta con la documentación, esta carpeta debe estar presente desde donde se ejecute auth, auth busca ./www para localizarlo, aunque se puede configurar desde el archivo de properties.
 
-## Archivo config.json
+## Configuración del servidor
 
-Este archivo permite configurar los parámetros del servidor, ver ejemplos en config-example.json.
-El servidor busca el archivo "./config.json". Podemos definir el archivo su ruta completa ejecutando
+Este servidor usa las siguientes variables de entorno para configuracion :
 
-```bash
-authgo [path_to_config.json]
-```
-
-Para mas detalles ver el archivo tools/env/env.go
-
+RABBIT_URL : Url de rabbit (default amqp://localhost)
+MONGO_URL : Url de mongo (default mongodb://localhost:27017)
+PORT : Puerto (default 3000)
+WWW_PATH : Path donde se ubica la documentación apidoc (default www)
+JWT_SECRET : Secret para password (default ecb6d3479ac3823f1da7f314d871989b)
 
 ## Docker
 
-Tambien podemos usar docker en este repositorio, ejecutamos :
+También podemos usar docker en este repositorio, ejecutamos :
 
 ```bash
 docker build -t dev-auth-go -f Dockerfile.dev .
-docker run -d --name dev-auth-go --network host dev-auth-go
+docker run -d --name dev-auth-go -p 3000:3000 dev-auth-go
 ```
 
 El contenedor se puede parar usando :
@@ -126,8 +124,9 @@ El contenedor se puede parar usando :
 ```bash
 docker stop dev-auth-go
 ```
-Se vuelve a levantar usando 
+
+Se vuelve a levantar usando
 
 ```bash
-docker start dev-auth-go 
+docker start dev-auth-go
 ```
