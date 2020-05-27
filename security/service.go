@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go/v4"
 	"github.com/nmarsollier/authgo/rabbit"
 	"github.com/nmarsollier/authgo/tools/env"
 	"github.com/nmarsollier/authgo/tools/errors"
