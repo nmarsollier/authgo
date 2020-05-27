@@ -110,28 +110,59 @@ PORT : Puerto (default 3000)
 WWW_PATH : Path donde se ubica la documentación apidoc (default www)
 JWT_SECRET : Secret para password (default ecb6d3479ac3823f1da7f314d871989b)
 
-## Docker
+## Docker para desarrollo
 
-También podemos usar docker en este repositorio, ejecutamos :
+### Build
 
 ```bash
-docker build -t dev-auth-go -f Dockerfile.dev .
+docker build -t dev-auth-go .
+```
 
-# Mac || Windows
-docker run -d --name dev-auth-go -p 3000:3000 dev-auth-go
+### El contenedor
+
+```bash
+# Mac | Windows
+docker run -it --name dev-auth-go -p 3000:3000 -v $PWD:/go/src/github.com/nmarsollier/authgo dev-auth-go
 
 # Linux
-docker run --add-host host.docker.internal:172.17.0.1 -d --name dev-auth-go -p 3000:3000 dev-auth-go
+docker run -it --add-host host.docker.internal:172.17.0.1 --name dev-auth-go -p 3000:3000 -v $PWD:/go/src/github.com/nmarsollier/authgo dev-auth-go
 ```
 
-El contenedor se puede parar usando :
+### Debug con VSCode
+
+Existe un archivo Docker.debug, hay que armar la imagen usando ese archivo.
 
 ```bash
-docker stop dev-auth-go
+docker build -t debug-auth-go -f Dockerfile.debug .
 ```
-
-Se vuelve a levantar usando
 
 ```bash
-docker start dev-auth-go
+# Mac | Windows
+docker run -it --name debug-auth-go -p 3000:3000 -p 40000:40000 -v $PWD:/go/src/github.com/nmarsollier/authgo debug-auth-go
+
+# Linux
+docker run -it --add-host host.docker.internal:172.17.0.1 --name debug-auth-go -p 3000:3000 -p 40000:40000 -v $PWD:/go/src/github.com/nmarsollier/authgo debug-auth-go
 ```
+
+El archivo launch.json debe contener lo siguiente
+
+```bash
+{
+    "version": "0.2.0",
+    "configurations": [
+          {
+                "name": "Debug en Docker",
+                "type": "go",
+                "request": "launch",
+                "mode": "remote",
+                "remotePath": "/go/src/github.com/nmarsollier/authgo",
+                "port": 40000,
+                "host": "127.0.0.1",
+                "program": "${workspaceRoot}",
+                "showLog": true
+          }
+    ]
+}
+```
+
+En el menú run start debugging se conecta a docker.

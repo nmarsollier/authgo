@@ -1,0 +1,14 @@
+# Docker para desarrollo
+FROM golang:1.14.3-buster
+
+WORKDIR /go/src/github.com/nmarsollier/authgo
+RUN go get github.com/derekparker/delve/cmd/dlv
+
+ENV MONGO_URL mongodb://host.docker.internal:27017
+ENV RABBIT_URL amqp://host.docker.internal
+
+# Puerto de Auth Service y debug
+EXPOSE 3000 40000
+
+# To run in debug mode
+CMD ["dlv", "debug", "--listen=:40000", "--headless=true", "--api-version=2", "--log"]
