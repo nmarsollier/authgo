@@ -116,7 +116,12 @@ También podemos usar docker en este repositorio, ejecutamos :
 
 ```bash
 docker build -t dev-auth-go -f Dockerfile.dev .
+
+# Mac || Windows
 docker run -d --name dev-auth-go -p 3000:3000 dev-auth-go
+
+# Linux
+docker run --add-host host.docker.internal:172.17.0.1 -d --name dev-auth-go -p 3000:3000 dev-auth-go
 ```
 
 El contenedor se puede parar usando :
