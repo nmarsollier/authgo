@@ -29,9 +29,9 @@ func init() {
 }
 
 func signOut(c *gin.Context) {
-	tokenString := middlewares.HeaderToken(c)
+	tokenString, _ := middlewares.RAWHeaderToken(c)
 
-	if err := token.Invalidate(tokenString.ID.String()); err != nil {
+	if err := token.Invalidate(tokenString); err != nil {
 		middlewares.AbortWithError(c, err)
 		return
 	}

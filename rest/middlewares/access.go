@@ -38,7 +38,7 @@ func HeaderToken(c *gin.Context) *token.Token {
 }
 
 func fetchAuthHeader(c *gin.Context) (*token.Token, error) {
-	tokenString, err := getAuthToken(c)
+	tokenString, err := RAWHeaderToken(c)
 	if err != nil {
 		return nil, err
 	}
@@ -53,8 +53,8 @@ func fetchAuthHeader(c *gin.Context) (*token.Token, error) {
 	return payload, nil
 }
 
-// return token from Authorization header
-func getAuthToken(c *gin.Context) (string, error) {
+// RAWHeaderToken token from Authorization header
+func RAWHeaderToken(c *gin.Context) (string, error) {
 	tokenString := c.GetHeader("Authorization")
 	if strings.Index(tokenString, "bearer ") != 0 {
 		return "", errors.Unauthorized

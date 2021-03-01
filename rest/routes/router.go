@@ -17,26 +17,29 @@ func Start() {
 	router().Run(fmt.Sprintf(":%d", env.Get().Port))
 }
 
-var engine *gin.Engine
+var engine *gin.Engine = nil
 
 func router() *gin.Engine {
-	engine = gin.Default()
+	if engine == nil {
 
-	engine.Use(gzip.Gzip(gzip.DefaultCompression))
+		engine = gin.Default()
 
-	engine.Use(cors.Middleware(cors.Config{
-		Origins:         "*",
-		Methods:         "GET, PUT, POST, DELETE",
-		RequestHeaders:  "Origin, Authorization, Content-Type",
-		ExposedHeaders:  "",
-		MaxAge:          50 * time.Second,
-		Credentials:     true,
-		ValidateHeaders: false,
-	}))
+		engine.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	engine.Use(middlewares.ErrorHandler)
+		engine.Use(cors.Middleware(cors.Config{
+			Origins:         "*",
+			Methods:         "GET, PUT, POST, DELETE",
+			RequestHeaders:  "Origin, Authorization, Content-Type",
+			ExposedHeaders:  "",
+			MaxAge:          50 * time.Second,
+			Credentials:     true,
+			ValidateHeaders: false,
+		}))
 
-	engine.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, true)))
+		engine.Use(middlewares.ErrorHandler)
+
+		engine.Use(static.Serve("/", static.LocalFile(env.Get().WWWWPath, true)))
+	}
 
 	return engine
 }
