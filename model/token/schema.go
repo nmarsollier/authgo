@@ -1,4 +1,4 @@
-package security
+package token
 
 import (
 	jwt "github.com/dgrijalva/jwt-go/v4"
@@ -24,7 +24,7 @@ type Token struct {
 }
 
 // Encode codifica un Token obteniendo el tokenString
-func (t Token) Encode() (string, error) {
+func Encode(t *Token) (string, error) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"tokenID": t.ID.Hex(),
 		"userID":  t.UserID.Hex(),

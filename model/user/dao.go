@@ -2,37 +2,53 @@ package user
 
 import (
 	"context"
+	"log"
 	"time"
 
+	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Dao es la interface que expone los servicios de acceso a la DB
-type Dao interface {
-	Insert(user *User) (*User, error)
-	Update(user *User) (*User, error)
-	FindAll() ([]*User, error)
-	FindByID(userID string) (*User, error)
-	FindByLogin(login string) (*User, error)
+// Define mongo Collection
+var collection *mongo.Collection
+
+func dbCollection() (*mongo.Collection, error) {
+	if collection != nil {
+		return collection, nil
+	}
+
+	database, err := db.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	col := database.Collection("users")
+
+	_, err = col.Indexes().CreateOne(
+		context.Background(),
+		mongo.IndexModel{
+			Keys:    bson.M{"login": ""},
+			Options: options.Index().SetUnique(true),
+		},
+	)
+	if err != nil {
+		log.Output(1, err.Error())
+	}
+
+	collection = col
+	return collection, nil
 }
 
-// New dao es interno a este modulo, nadie fuera del modulo tiene acceso
-func newDao() Dao {
-	return new(daoImpl)
-}
-
-type daoImpl struct {
-}
-
-func (d daoImpl) Insert(user *User) (*User, error) {
+func insert(user *User) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
 		return nil, err
 	}
 
-	var collection, err = getCollection()
+	var collection, err = dbCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -44,12 +60,12 @@ func (d daoImpl) Insert(user *User) (*User, error) {
 	return user, nil
 }
 
-func (d daoImpl) Update(user *User) (*User, error) {
+func update(user *User) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
 		return nil, err
 	}
 
-	var collection, err = getCollection()
+	var collection, err = dbCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -77,8 +93,8 @@ func (d daoImpl) Update(user *User) (*User, error) {
 }
 
 // FindAll devuelve todos los usuarios
-func (d daoImpl) FindAll() ([]*User, error) {
-	var collection, err = getCollection()
+func findAll() ([]*User, error) {
+	var collection, err = dbCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -104,8 +120,8 @@ func (d daoImpl) FindAll() ([]*User, error) {
 }
 
 // FindByID lee un usuario desde la db
-func (d daoImpl) FindByID(userID string) (*User, error) {
-	var collection, err = getCollection()
+func findByID(userID string) (*User, error) {
+	var collection, err = dbCollection()
 	if err != nil {
 		return nil, err
 	}
@@ -125,8 +141,8 @@ func (d daoImpl) FindByID(userID string) (*User, error) {
 }
 
 // FindByLogin lee un usuario desde la db
-func (d daoImpl) FindByLogin(login string) (*User, error) {
-	var collection, err = getCollection()
+func findByLogin(login string) (*User, error) {
+	var collection, err = dbCollection()
 	if err != nil {
 		return nil, err
 	}

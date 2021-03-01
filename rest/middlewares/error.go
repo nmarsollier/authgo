@@ -1,4 +1,4 @@
-package errors
+package middlewares
 
 import (
 	"fmt"
@@ -6,14 +6,12 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator"
+	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
-
-	"github.com/nmarsollier/authgo/tools/db"
 )
-
-// Handle maneja cualquier error para serializarlo como JSON al cliente
 
 /**
  * @apiDefine AuthHeader
@@ -28,6 +26,18 @@ import (
  *    }
  */
 
+// ErrorHandler a middleware to handle errors
+func ErrorHandler(c *gin.Context) {
+	c.Next()
+
+	handleErrorIfNeeded(c)
+}
+
+func AbortWithError(c *gin.Context, err error) {
+	c.Error(err)
+	c.Abort()
+}
+
 /**
  * @apiDefine OtherErrors
  *
@@ -38,25 +48,30 @@ import (
  *     }
  *
  */
-func Handle(c *gin.Context, err interface{}) {
+func handleErrorIfNeeded(c *gin.Context) {
+	err := c.Errors.Last()
+	if err == nil {
+		return
+	}
+
 	// Compruebo errores bien conocidos
 	switch err {
 	case topology.ErrServerSelectionTimeout, topology.ErrTopologyClosed:
 		// Errores de conexión con MongoDB
 		db.CheckError(err)
-		handleCustom(c, Internal)
+		handleCustom(c, errors.Internal)
 		return
 	case mongo.ErrNoDocuments:
-		handleCustom(c, NotFound)
+		handleCustom(c, errors.NotFound)
 		return
 	}
 
 	// Compruebo tipos de errores conocidos
-	switch value := err.(type) {
-	case Custom:
+	switch value := err.Err.(type) {
+	case errors.Custom:
 		// Son validaciones hechas con NewCustom
 		handleCustom(c, value)
-	case Validation:
+	case errors.Validation:
 		// Son validaciones hechas con NewValidation
 		c.JSON(400, err)
 	case validator.ValidationErrors:
@@ -65,10 +80,10 @@ func Handle(c *gin.Context, err interface{}) {
 	case mongo.WriteException:
 		// Errores de mongo
 		if db.IsUniqueKeyError(value) {
-			handleCustom(c, AlreadyExist)
+			handleCustom(c, errors.AlreadyExist)
 		} else {
 			log.Output(1, fmt.Sprintf("Error DB : %s", value.Error()))
-			handleCustom(c, Internal)
+			handleCustom(c, errors.Internal)
 		}
 	case error:
 		// Otros errores
@@ -77,7 +92,7 @@ func Handle(c *gin.Context, err interface{}) {
 		})
 	default:
 		// No se sabe que es, devolvemos internal
-		handleCustom(c, Internal)
+		handleCustom(c, errors.Internal)
 	}
 }
 
@@ -97,7 +112,7 @@ func Handle(c *gin.Context, err interface{}) {
  *     }
  */
 func handleValidationError(c *gin.Context, validationErrors validator.ValidationErrors) {
-	err := NewValidation()
+	err := errors.NewValidation()
 
 	for _, e := range validationErrors {
 		err.Add(strings.ToLower(e.Field()), e.Tag())
@@ -106,6 +121,6 @@ func handleValidationError(c *gin.Context, validationErrors validator.Validation
 	c.JSON(400, err)
 }
 
-func handleCustom(c *gin.Context, err Custom) {
+func handleCustom(c *gin.Context, err errors.Custom) {
 	c.JSON(err.Status(), err)
 }

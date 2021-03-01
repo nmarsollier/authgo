@@ -1,4 +1,4 @@
-package security
+package token
 
 import (
 	"fmt"
@@ -11,26 +11,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Service es la interfaz con los método expuestos por este dao
-type Service interface {
-	Create(userID primitive.ObjectID) (*Token, error)
-	Find(tokenID string) (*Token, error)
-	Validate(tokenString string) (*Token, error)
-	Invalidate(tokenString string) error
-}
-
-// Implementacion de Service
-type serviceImpl struct {
-}
-
-// NewService devuelve el servicio principal de seguridad
-func NewService() Service {
-	return new(serviceImpl)
-}
-
 // Create crea un nuevo token y lo almacena en la db
-func (d serviceImpl) Create(userID primitive.ObjectID) (*Token, error) {
-	token, err := getDao().Create(userID)
+func Create(userID primitive.ObjectID) (*Token, error) {
+	token, err := insert(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -41,12 +24,12 @@ func (d serviceImpl) Create(userID primitive.ObjectID) (*Token, error) {
 }
 
 // Find busca un token en la db
-func (d serviceImpl) Find(tokenID string) (*Token, error) {
-	return getDao().FindByID(tokenID)
+func Find(tokenID string) (*Token, error) {
+	return findByID(tokenID)
 }
 
 // Validate dado un tokenString devuelve el Token asociado
-func (d serviceImpl) Validate(tokenString string) (*Token, error) {
+func Validate(tokenString string) (*Token, error) {
 	if token, err := cacheGet(tokenString); err == nil {
 		return token, err
 	}
@@ -58,7 +41,7 @@ func (d serviceImpl) Validate(tokenString string) (*Token, error) {
 	}
 
 	// Buscamos el token en la db para validarlo
-	token, err := getDao().FindByID(tokenID)
+	token, err := findByID(tokenID)
 	if err != nil || !token.Enabled {
 		return nil, errors.Unauthorized
 	}
@@ -70,13 +53,13 @@ func (d serviceImpl) Validate(tokenString string) (*Token, error) {
 }
 
 // Invalidate invalida un token
-func (d serviceImpl) Invalidate(tokenString string) error {
-	token, err := d.Validate(tokenString)
+func Invalidate(tokenString string) error {
+	token, err := Validate(tokenString)
 	if err != nil {
 		return errors.Unauthorized
 	}
 
-	if err = getDao().Delete(token.ID); err != nil {
+	if err = delete(token.ID); err != nil {
 		return err
 	}
 

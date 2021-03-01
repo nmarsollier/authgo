@@ -1,4 +1,4 @@
-package security
+package token
 
 import (
 	"time"
@@ -11,7 +11,7 @@ var cache = gocache.New(60*time.Minute, 10*time.Minute)
 
 // Add genera un nuevo token al cache
 func cacheAdd(token *Token) error {
-	tokenString, err := token.Encode()
+	tokenString, err := Encode(token)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func cacheGet(tokenString string) (*Token, error) {
 
 // Remove elimia un token del cache
 func cacheRemove(token *Token) {
-	if tokenString, err := token.Encode(); err == nil {
+	if tokenString, err := Encode(token); err == nil {
 		cache.Delete(tokenString)
 	}
 }
