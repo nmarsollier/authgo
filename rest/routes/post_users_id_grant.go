@@ -35,8 +35,12 @@ func init() {
 	)
 }
 
+type grantPermissionBody struct {
+	Permissions []string `json:"permissions" binding:"required"`
+}
+
 func grantPermission(c *gin.Context) {
-	body := c.MustGet("data").(permission)
+	body := c.MustGet("data").(grantPermissionBody)
 
 	if err := user.Grant(c.Param("userID"), body.Permissions); err != nil {
 		middlewares.AbortWithError(c, err)
@@ -45,7 +49,7 @@ func grantPermission(c *gin.Context) {
 }
 
 func validateGrantBody(c *gin.Context) {
-	body := permission{}
+	body := grantPermissionBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
 		middlewares.AbortWithError(c, err)
 		return

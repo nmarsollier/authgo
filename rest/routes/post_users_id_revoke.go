@@ -35,8 +35,12 @@ func init() {
 	)
 }
 
+type revokePermissionBody struct {
+	Permissions []string `json:"permissions" binding:"required"`
+}
+
 func revokePermission(c *gin.Context) {
-	body := c.MustGet("data").(permission)
+	body := c.MustGet("data").(revokePermissionBody)
 
 	if err := user.Revoke(c.Param("userID"), body.Permissions); err != nil {
 		middlewares.AbortWithError(c, err)
@@ -45,7 +49,7 @@ func revokePermission(c *gin.Context) {
 }
 
 func validateRevokeBody(c *gin.Context) {
-	body := permission{}
+	body := revokePermissionBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
 		middlewares.AbortWithError(c, err)
 		return
