@@ -35,7 +35,7 @@ export GOFLAGS=-mod=vendor
 Para descargar el proyecto correctamente hay que ejecutar :
 
 ```bash
-go get github.com/nmarsollier/authgo
+git clone https://github.com/nmarsollier/authgo $GOPATH/src/github.com/nmarsollier/authgo
 ```
 
 Una vez descargado, tendremos el codigo fuente del proyecto en la carpeta
