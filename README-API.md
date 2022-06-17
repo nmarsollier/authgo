@@ -346,7 +346,7 @@ HTTP/1.1 500 Internal Server Error
 ## <a name='logout'></a> Logout
 [Back to top](#top)
 
-<p>Desloguea un usuario en el sistema, invalida el token.</p>
+<p>desloguea un usuario en el sistema, invalida el token.</p>
 
 	GET /v1/user/signout
 

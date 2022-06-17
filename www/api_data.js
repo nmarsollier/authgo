@@ -48,7 +48,7 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/post_user_password.go",
     "groupTitle": "Seguridad",
     "error": {
       "examples": [
@@ -87,7 +87,7 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/post_users_id_disable.go",
     "groupTitle": "Seguridad",
     "examples": [
       {
@@ -133,7 +133,7 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/post_users_id_enable.go",
     "groupTitle": "Seguridad",
     "examples": [
       {
@@ -179,7 +179,7 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/get_users.go",
     "groupTitle": "Seguridad",
     "examples": [
       {
@@ -218,7 +218,7 @@ define({ "api": [
       }
     ],
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/post_user_signin.go",
     "groupTitle": "Seguridad",
     "success": {
       "examples": [
@@ -250,7 +250,7 @@ define({ "api": [
     "title": "Logout",
     "name": "Logout",
     "group": "Seguridad",
-    "description": "<p>Desloguea un usuario en el sistema, invalida el token.</p>",
+    "description": "<p>desloguea un usuario en el sistema, invalida el token.</p>",
     "success": {
       "examples": [
         {
@@ -261,7 +261,7 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/get_user_signout.go",
     "groupTitle": "Seguridad",
     "examples": [
       {
@@ -314,7 +314,7 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/post_users_id_grant.go",
     "groupTitle": "Seguridad",
     "error": {
       "examples": [
@@ -351,7 +351,7 @@ define({ "api": [
       }
     ],
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/post_user.go",
     "groupTitle": "Seguridad",
     "success": {
       "examples": [
@@ -406,7 +406,7 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/post_users_id_revoke.go",
     "groupTitle": "Seguridad",
     "error": {
       "examples": [
@@ -445,7 +445,7 @@ define({ "api": [
       ]
     },
     "version": "0.0.0",
-    "filename": "./routes/controllers.go",
+    "filename": "./user/routes/get_users_current.go",
     "groupTitle": "Seguridad",
     "examples": [
       {
