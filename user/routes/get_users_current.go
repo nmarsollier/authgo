@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/model/user"
-	"github.com/nmarsollier/authgo/rest/middlewares"
+	rest "github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/user"
 )
 
 /**
@@ -29,19 +29,19 @@ import (
  */
 
 func init() {
-	router().GET(
+	rest.Router().GET(
 		"/v1/users/current",
-		middlewares.ValidateLoggedIn,
+		rest.ValidateLoggedIn,
 		currentUser,
 	)
 }
 
 func currentUser(c *gin.Context) {
-	token := middlewares.HeaderToken(c)
+	token := rest.HeaderToken(c)
 
 	user, err := user.Get(token.UserID.Hex())
 	if err != nil {
-		middlewares.AbortWithError(c, err)
+		rest.AbortWithError(c, err)
 		return
 	}
 

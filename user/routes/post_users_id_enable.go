@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/model/user"
-	"github.com/nmarsollier/authgo/rest/middlewares"
+	"github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/user"
 )
 
 /**
@@ -22,15 +22,15 @@ import (
  */
 
 func init() {
-	router().POST(
+	rest.Router().POST(
 		"/v1/users/:userID/enable",
-		middlewares.ValidateAdmin,
+		rest.ValidateAdmin,
 		enable,
 	)
 }
 
 func enable(c *gin.Context) {
 	if err := user.Enable(c.Param("userID")); err != nil {
-		middlewares.AbortWithError(c, err)
+		rest.AbortWithError(c, err)
 	}
 }

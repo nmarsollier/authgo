@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/model/user"
-	"github.com/nmarsollier/authgo/rest/middlewares"
+	"github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/user"
 )
 
 /**
@@ -27,9 +27,9 @@ import (
  */
 
 func init() {
-	router().POST(
+	rest.Router().POST(
 		"/v1/users/:userID/revoke",
-		middlewares.ValidateAdmin,
+		rest.ValidateAdmin,
 		validateRevokeBody,
 		revokePermission,
 	)
@@ -43,7 +43,7 @@ func revokePermission(c *gin.Context) {
 	body := c.MustGet("data").(revokePermissionBody)
 
 	if err := user.Revoke(c.Param("userID"), body.Permissions); err != nil {
-		middlewares.AbortWithError(c, err)
+		rest.AbortWithError(c, err)
 		return
 	}
 }
@@ -51,7 +51,7 @@ func revokePermission(c *gin.Context) {
 func validateRevokeBody(c *gin.Context) {
 	body := revokePermissionBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		middlewares.AbortWithError(c, err)
+		rest.AbortWithError(c, err)
 		return
 	}
 

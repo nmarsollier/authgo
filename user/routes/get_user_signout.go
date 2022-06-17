@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/model/token"
-	"github.com/nmarsollier/authgo/rest/middlewares"
+	rest "github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/token"
 )
 
 /**
@@ -21,18 +21,18 @@ import (
  */
 
 func init() {
-	router().GET(
+	rest.Router().GET(
 		"/v1/user/signout",
-		middlewares.ValidateLoggedIn,
+		rest.ValidateLoggedIn,
 		signOut,
 	)
 }
 
 func signOut(c *gin.Context) {
-	tokenString, _ := middlewares.RAWHeaderToken(c)
+	tokenString, _ := rest.RAWHeaderToken(c)
 
 	if err := token.Invalidate(tokenString); err != nil {
-		middlewares.AbortWithError(c, err)
+		rest.AbortWithError(c, err)
 		return
 	}
 

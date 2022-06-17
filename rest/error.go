@@ -1,4 +1,4 @@
-package middlewares
+package rest
 
 import (
 	"fmt"

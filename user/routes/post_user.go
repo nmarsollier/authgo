@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/model/user"
-	"github.com/nmarsollier/authgo/rest/middlewares"
+	"github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/user"
 )
 
 /**
@@ -27,7 +27,7 @@ import (
  */
 
 func init() {
-	router().POST(
+	rest.Router().POST(
 		"/v1/user",
 		validateSignUpBody,
 		signUp,
@@ -39,7 +39,7 @@ func signUp(c *gin.Context) {
 
 	token, err := user.SignUp(&body)
 	if err != nil {
-		middlewares.AbortWithError(c, err)
+		rest.AbortWithError(c, err)
 		return
 	}
 
@@ -51,7 +51,7 @@ func signUp(c *gin.Context) {
 func validateSignUpBody(c *gin.Context) {
 	body := user.SignUpRequest{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		middlewares.AbortWithError(c, err)
+		rest.AbortWithError(c, err)
 		return
 	}
 

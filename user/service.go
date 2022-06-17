@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/nmarsollier/authgo/model/token"
+	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errors"
 )

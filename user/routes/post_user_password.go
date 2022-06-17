@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/model/user"
-	"github.com/nmarsollier/authgo/rest/middlewares"
+	"github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/user"
 )
 
 /**
@@ -28,9 +28,9 @@ import (
  */
 
 func init() {
-	router().POST(
+	rest.Router().POST(
 		"/v1/user/password",
-		middlewares.ValidateLoggedIn,
+		rest.ValidateLoggedIn,
 		validateChangePasswordBody,
 		changePassword,
 	)
@@ -44,9 +44,9 @@ type changePasswordBody struct {
 func changePassword(c *gin.Context) {
 	body := c.MustGet("data").(changePasswordBody)
 
-	payload := middlewares.HeaderToken(c)
+	payload := rest.HeaderToken(c)
 	if err := user.ChangePassword(payload.UserID.Hex(), body.Current, body.New); err != nil {
-		middlewares.AbortWithError(c, err)
+		rest.AbortWithError(c, err)
 		return
 	}
 }
@@ -54,7 +54,7 @@ func changePassword(c *gin.Context) {
 func validateChangePasswordBody(c *gin.Context) {
 	body := changePasswordBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		middlewares.AbortWithError(c, err)
+		rest.AbortWithError(c, err)
 		return
 	}
 

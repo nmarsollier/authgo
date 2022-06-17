@@ -1,12 +1,12 @@
-package middlewares
+package rest
 
 import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/model/token"
-	"github.com/nmarsollier/authgo/model/user"
+	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/errors"
+	"github.com/nmarsollier/authgo/user"
 )
 
 // ValidateAdmin check admin user is logged in
