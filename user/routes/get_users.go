@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/user"
 )
 
@@ -30,9 +30,9 @@ import (
  */
 
 func init() {
-	rest.Router().GET(
+	engine.Router().GET(
 		"/v1/users",
-		rest.ValidateAdmin,
+		engine.ValidateAdmin,
 		users,
 	)
 }
@@ -41,7 +41,7 @@ func users(c *gin.Context) {
 	user, err := user.Users()
 
 	if err != nil {
-		rest.AbortWithError(c, err)
+		engine.AbortWithError(c, err)
 		return
 	}
 	result := []gin.H{}

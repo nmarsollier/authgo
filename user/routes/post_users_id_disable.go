@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/user"
 )
 
@@ -22,15 +22,15 @@ import (
  */
 
 func init() {
-	rest.Router().POST(
+	engine.Router().POST(
 		"/v1/users/:userID/disable",
-		rest.ValidateAdmin,
+		engine.ValidateAdmin,
 		disable,
 	)
 }
 
 func disable(c *gin.Context) {
 	if err := user.Disable(c.Param("userID")); err != nil {
-		rest.AbortWithError(c, err)
+		engine.AbortWithError(c, err)
 	}
 }

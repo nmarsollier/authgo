@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/user"
 )
 
@@ -26,7 +26,7 @@ import (
  */
 
 func init() {
-	rest.Router().POST(
+	engine.Router().POST(
 		"/v1/user/signin",
 		validateSignInBody,
 		signIn,
@@ -43,7 +43,7 @@ func signIn(c *gin.Context) {
 
 	tokenString, err := user.SignIn(login.Login, login.Password)
 	if err != nil {
-		rest.AbortWithError(c, err)
+		engine.AbortWithError(c, err)
 		return
 	}
 
@@ -55,7 +55,7 @@ func signIn(c *gin.Context) {
 func validateSignInBody(c *gin.Context) {
 	login := signInBody{}
 	if err := c.ShouldBindJSON(&login); err != nil {
-		rest.AbortWithError(c, err)
+		engine.AbortWithError(c, err)
 		return
 	}
 

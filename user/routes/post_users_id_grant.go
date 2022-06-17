@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/user"
 )
 
@@ -27,9 +27,9 @@ import (
  */
 
 func init() {
-	rest.Router().POST(
+	engine.Router().POST(
 		"/v1/users/:userID/grant",
-		rest.ValidateAdmin,
+		engine.ValidateAdmin,
 		validateGrantBody,
 		grantPermission,
 	)
@@ -43,7 +43,7 @@ func grantPermission(c *gin.Context) {
 	body := c.MustGet("data").(grantPermissionBody)
 
 	if err := user.Grant(c.Param("userID"), body.Permissions); err != nil {
-		rest.AbortWithError(c, err)
+		engine.AbortWithError(c, err)
 		return
 	}
 }
@@ -51,7 +51,7 @@ func grantPermission(c *gin.Context) {
 func validateGrantBody(c *gin.Context) {
 	body := grantPermissionBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		rest.AbortWithError(c, err)
+		engine.AbortWithError(c, err)
 		return
 	}
 
