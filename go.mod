@@ -20,5 +20,5 @@ require (
 	go.mongodb.org/mongo-driver v1.3.3
 	golang.org/x/crypto v0.0.0-20200406173513-056763e48d71
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a // indirect
-	golang.org/x/sys v0.0.0-20200409092240-59c9f1ba88fa // indirect
+	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
 )
