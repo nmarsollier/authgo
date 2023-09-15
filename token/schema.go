@@ -1,7 +1,10 @@
 package token
 
 import (
+	"fmt"
+
 	jwt "github.com/dgrijalva/jwt-go/v4"
+	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/tools/env"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -46,4 +49,30 @@ func newToken(userID primitive.ObjectID) *Token {
 		UserID:  userID,
 		Enabled: true,
 	}
+}
+
+// descifra el token string y devuelve los datos del payload
+func ExtractPayload(tokenString string) (string, string, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return []byte(env.Get().JWTSecret), nil
+	})
+
+	if err != nil || !token.Valid {
+		return "", "", app_errors.Unauthorized
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+
+	if !ok {
+		return "", "", app_errors.Unauthorized
+	}
+
+	tokenID := claims["tokenID"].(string)
+	userID := claims["userID"].(string)
+
+	return tokenID, userID, nil
 }

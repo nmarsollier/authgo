@@ -33,12 +33,12 @@ func NewUser() *User {
 
 // SetPasswordText Asigna la contraseña en modo texto, la encripta
 func (e *User) SetPasswordText(pwd string) error {
-	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost)
+	hash, err := encryptPassword(pwd)
 	if err != nil {
 		return ErrPassword
 	}
 
-	e.Password = string(hash)
+	e.Password = hash
 	return nil
 }
 
@@ -83,4 +83,13 @@ func (e *User) Revoke(permission string) {
 // ValidateSchema valida la estructura para ser insertada en la db
 func (e *User) ValidateSchema() error {
 	return validator.New().Struct(e)
+}
+
+func encryptPassword(pwd string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost)
+	if err != nil {
+		return "", ErrPassword
+	}
+
+	return string(hash), nil
 }

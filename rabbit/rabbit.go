@@ -4,15 +4,37 @@ import (
 	"encoding/json"
 	"log"
 
+	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/tools/env"
-	"github.com/nmarsollier/authgo/tools/errors"
 	"github.com/streadway/amqp"
 )
 
 // ErrChannelNotInitialized Rabbit channel could not be initialized
-var ErrChannelNotInitialized = errors.NewCustom(400, "Channel not initialized")
+var ErrChannelNotInitialized = app_errors.NewCustom(400, "Channel not initialized")
 
 var channel *amqp.Channel
+
+type Rabbit interface {
+	SendLogout(token string) error
+}
+
+type rabbitImpl struct {
+}
+
+var currentRabbit Rabbit
+
+func Get(options ...interface{}) Rabbit {
+	for _, o := range options {
+		if ti, ok := o.(Rabbit); ok {
+			return ti
+		}
+	}
+
+	if currentRabbit == nil {
+		currentRabbit = &rabbitImpl{}
+	}
+	return currentRabbit
+}
 
 type message struct {
 	Type    string `json:"type"`
@@ -51,7 +73,7 @@ func getChannel() (*amqp.Channel, error) {
  *        "message": "{Token revocado}"
  *     }
  */
-func SendLogout(token string) error {
+func (r *rabbitImpl) SendLogout(token string) error {
 	send := message{
 		Type:    "logout",
 		Message: token,

@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/tools/db"
-	"github.com/nmarsollier/authgo/tools/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -14,9 +14,25 @@ import (
 )
 
 // Define mongo Collection
-var collection *mongo.Collection
+var collection db.MongoCollection
 
-func dbCollection() (*mongo.Collection, error) {
+func NewProps(collection db.MongoCollection) UserProps {
+	return UserProps{
+		Collection: collection,
+	}
+}
+
+type UserProps struct {
+	Collection db.MongoCollection
+}
+
+func dbCollection(props ...interface{}) (db.MongoCollection, error) {
+	for _, p := range props {
+		if ti, ok := p.(UserProps); ok {
+			return ti.Collection, nil
+		}
+	}
+
 	if collection != nil {
 		return collection, nil
 	}
@@ -39,16 +55,16 @@ func dbCollection() (*mongo.Collection, error) {
 		log.Output(1, err.Error())
 	}
 
-	collection = col
+	collection = db.NewMongoCollection(col)
 	return collection, nil
 }
 
-func insert(user *User) (*User, error) {
+func insert(user *User, props ...interface{}) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
 		return nil, err
 	}
 
-	var collection, err = dbCollection()
+	var collection, err = dbCollection(props...)
 	if err != nil {
 		return nil, err
 	}
@@ -60,12 +76,12 @@ func insert(user *User) (*User, error) {
 	return user, nil
 }
 
-func update(user *User) (*User, error) {
+func update(user *User, props ...interface{}) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
 		return nil, err
 	}
 
-	var collection, err = dbCollection()
+	var collection, err = dbCollection(props...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,19 +109,18 @@ func update(user *User) (*User, error) {
 }
 
 // FindAll devuelve todos los usuarios
-func findAll() ([]*User, error) {
-	var collection, err = dbCollection()
+func findAll(props ...interface{}) ([]*User, error) {
+	var collection, err = dbCollection(props...)
 	if err != nil {
 		return nil, err
 	}
 
 	filter := bson.D{}
-	cur, err := collection.Find(context.Background(), filter, nil)
-	defer cur.Close(context.Background())
-
+	cur, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		return nil, err
 	}
+	defer cur.Close(context.Background())
 
 	users := []*User{}
 	for cur.Next(context.Background()) {
@@ -120,20 +135,20 @@ func findAll() ([]*User, error) {
 }
 
 // FindByID lee un usuario desde la db
-func findByID(userID string) (*User, error) {
-	var collection, err = dbCollection()
+func findByID(userID string, props ...interface{}) (*User, error) {
+	var collection, err = dbCollection(props...)
 	if err != nil {
 		return nil, err
 	}
 
 	_id, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
-		return nil, errors.ErrID
+		return nil, app_errors.ErrID
 	}
 
 	user := &User{}
 	filter := bson.M{"_id": _id}
-	if err = collection.FindOne(context.Background(), filter).Decode(user); err != nil {
+	if err = collection.FindOne(context.Background(), filter, user); err != nil {
 		return nil, err
 	}
 
@@ -141,15 +156,15 @@ func findByID(userID string) (*User, error) {
 }
 
 // FindByLogin lee un usuario desde la db
-func findByLogin(login string) (*User, error) {
-	var collection, err = dbCollection()
+func findByLogin(login string, props ...interface{}) (*User, error) {
+	var collection, err = dbCollection(props...)
 	if err != nil {
 		return nil, err
 	}
 
 	user := &User{}
 	filter := bson.M{"login": login}
-	err = collection.FindOne(context.Background(), filter).Decode(user)
+	err = collection.FindOne(context.Background(), filter, user)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, ErrLogin

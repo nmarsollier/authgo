@@ -5,20 +5,26 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/errors"
+	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/user"
 )
 
 // ValidateAdmin check admin user is logged in
 func ValidateAdmin(c *gin.Context) {
-	payload, err := fetchAuthHeader(c)
-	if err != nil {
-		c.Error(errors.Unauthorized)
-		c.Abort()
+	var extraParams []interface{}
+	if mocks, ok := c.Get("mocks"); ok {
+		extraParams = mocks.([]interface{})
 	}
 
-	if !user.Granted(payload.UserID.Hex(), "admin") {
-		c.Error(errors.Unauthorized)
+	payload, err := fetchAuthHeader(c)
+	if err != nil {
+		c.Error(app_errors.Unauthorized)
+		c.Abort()
+		return
+	}
+
+	if !user.Granted(payload.UserID.Hex(), "admin", extraParams...) {
+		c.Error(app_errors.Unauthorized)
 		c.Abort()
 	}
 }
@@ -27,7 +33,7 @@ func ValidateAdmin(c *gin.Context) {
 func ValidateLoggedIn(c *gin.Context) {
 	_, err := fetchAuthHeader(c)
 	if err != nil {
-		c.Error(errors.Unauthorized)
+		c.Error(app_errors.Unauthorized)
 		c.Abort()
 	}
 }
@@ -38,12 +44,17 @@ func HeaderToken(c *gin.Context) *token.Token {
 }
 
 func fetchAuthHeader(c *gin.Context) (*token.Token, error) {
+	var extraParams []interface{}
+	if mocks, ok := c.Get("mocks"); ok {
+		extraParams = mocks.([]interface{})
+	}
+
 	tokenString, err := RAWHeaderToken(c)
 	if err != nil {
 		return nil, err
 	}
 
-	payload, err := token.Validate(tokenString)
+	payload, err := token.Validate(tokenString, extraParams...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +68,7 @@ func fetchAuthHeader(c *gin.Context) (*token.Token, error) {
 func RAWHeaderToken(c *gin.Context) (string, error) {
 	tokenString := c.GetHeader("Authorization")
 	if strings.Index(tokenString, "bearer ") != 0 {
-		return "", errors.Unauthorized
+		return "", app_errors.Unauthorized
 	}
 	return tokenString[7:], nil
 }

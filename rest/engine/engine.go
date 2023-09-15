@@ -12,9 +12,21 @@ import (
 
 var engine *gin.Engine = nil
 
+func TestRouter(props ...interface{}) *gin.Engine {
+	engine = nil
+	Router()
+	if len(props) > 0 {
+		engine.Use(func(c *gin.Context) {
+			c.Set("mocks", props)
+			c.Next()
+		})
+	}
+
+	return engine
+}
+
 func Router() *gin.Engine {
 	if engine == nil {
-
 		engine = gin.Default()
 
 		engine.Use(gzip.Gzip(gzip.DefaultCompression))
@@ -25,7 +37,7 @@ func Router() *gin.Engine {
 			RequestHeaders:  "Origin, Authorization, Content-Type",
 			ExposedHeaders:  "",
 			MaxAge:          50 * time.Second,
-			Credentials:     true,
+			Credentials:     false,
 			ValidateHeaders: false,
 		}))
 

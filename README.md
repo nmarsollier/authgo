@@ -25,13 +25,6 @@ Go 1.14  [golang.org](https://golang.org/doc/install)
 
 ## Configuración inicial
 
-establecer variables de entorno (consultar documentación de la version instalada)
-
-```bash
-export GO111MODULE=on
-export GOFLAGS=-mod=vendor
-```
-
 Para descargar el proyecto correctamente hay que ejecutar :
 
 ```bash
@@ -49,7 +42,6 @@ cd $GOPATH/src/github.com/nmarsollier/authgo
 
 ```bash
 go mod download
-go mod vendor
 ```
 
 Build y ejecución

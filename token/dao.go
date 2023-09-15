@@ -3,16 +3,32 @@ package token
 import (
 	"context"
 
+	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/tools/db"
-	"github.com/nmarsollier/authgo/tools/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var collection *mongo.Collection
+var collection db.MongoCollection
 
-func dbCollection() (*mongo.Collection, error) {
+func NewProps(collection db.MongoCollection) TokenProps {
+	return TokenProps{
+		Collection: collection,
+	}
+}
+
+type TokenProps struct {
+	Collection db.MongoCollection
+}
+
+func dbCollection(props ...interface{}) (db.MongoCollection, error) {
+	for _, o := range props {
+		if ti, ok := o.(TokenProps); ok {
+			return ti.Collection, nil
+		}
+	}
+
 	if collection != nil {
 		return collection, nil
 	}
@@ -22,9 +38,9 @@ func dbCollection() (*mongo.Collection, error) {
 		return nil, err
 	}
 
-	collection = database.Collection("tokens")
+	_collection := database.Collection("tokens")
 
-	_, err = collection.Indexes().CreateOne(
+	_, err = _collection.Indexes().CreateOne(
 		context.Background(),
 		mongo.IndexModel{
 			Keys: bson.M{
@@ -36,12 +52,14 @@ func dbCollection() (*mongo.Collection, error) {
 		return nil, err
 	}
 
+	collection = db.NewMongoCollection(_collection)
+
 	return collection, nil
 }
 
 // insert crea un nuevo token y lo almacena en la db
-func insert(userID primitive.ObjectID) (*Token, error) {
-	collection, err := dbCollection()
+func insert(userID primitive.ObjectID, props ...interface{}) (*Token, error) {
+	collection, err := dbCollection(props...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,21 +75,21 @@ func insert(userID primitive.ObjectID) (*Token, error) {
 }
 
 // findByID busca un token en la db
-func findByID(tokenID string) (*Token, error) {
-	collection, err := dbCollection()
+func findByID(tokenID string, props ...interface{}) (*Token, error) {
+	collection, err := dbCollection(props...)
 	if err != nil {
 		return nil, err
 	}
 
 	_id, err := primitive.ObjectIDFromHex(tokenID)
 	if err != nil {
-		return nil, errors.Unauthorized
+		return nil, app_errors.Unauthorized
 	}
 
 	token := &Token{}
 	filter := bson.M{"_id": _id}
 
-	if err = collection.FindOne(context.Background(), filter).Decode(token); err != nil {
+	if err = collection.FindOne(context.Background(), filter, token); err != nil {
 		return nil, err
 	}
 
@@ -79,8 +97,8 @@ func findByID(tokenID string) (*Token, error) {
 }
 
 // delete como deshabilitado un token
-func delete(tokenID primitive.ObjectID) error {
-	collection, err := dbCollection()
+func delete(tokenID primitive.ObjectID, props ...interface{}) error {
+	collection, err := dbCollection(props...)
 	if err != nil {
 		return err
 	}
