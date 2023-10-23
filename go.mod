@@ -14,7 +14,7 @@ require (
 	github.com/itsjamie/gin-cors v0.0.0-20160420130702-97b4a9da7933
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
-	github.com/stretchr/testify v1.5.1
+	github.com/stretchr/testify v1.5.1 // indirect
 	github.com/tidwall/pretty v1.0.1 // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.3.3
