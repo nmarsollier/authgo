@@ -9,7 +9,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:3080",
+    "host": "localhost:3000",
     "basePath": "/v1",
     "paths": {
         "/rabbit/logout": {

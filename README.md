@@ -13,7 +13,9 @@ Utiliza el esquema JWT con un header Authorization "bearer" estándar.
 
 Cada usuario tiene asociado una lista de permisos, existen 2 permisos genéricos "user" y "admin". Los usuarios que se registran son todos "user",  muchos procesos necesitan un usuario "admin" para poder funcionar, por lo tanto hay que editar el esquema en mongodb para asociarle el permiso admin a algún usuario inicialmente.
 
-La documentación de las api se pueden consultar desde el home del microservicio
+[Documentación de API](./README-API.md)
+
+La documentación de las api también se pueden consultar desde el home del microservicio
 que una vez levantado el servidor se puede navegar en [localhost:3000](http://localhost:3000/docs/index.html)
 
 ## Requisitos
@@ -73,8 +75,7 @@ Usamos [swaggo](https://github.com/swaggo/swag)
 Requisitos 
 
 ```bash
-go install github.com/swaggo/swag/cmd/swag  
-go install github.com/swaggo/gin-swagger  
+go install github.com/swaggo/swag/cmd/swag@latest
 ```
 
 La documentacion la generamos con el comando
@@ -83,18 +84,36 @@ La documentacion la generamos con el comando
 swag init
 ```
 
+Para generar el archivo README-API.md
+
+Requisito 
+
+```bash
+sudo npm install -g swagger-markdown
+```
+
+y ejecutamos 
+
+```bash
+npx swagger-markdown -i ./docs/swagger.yaml -o README-API.md
+```
+
 ## Configuración del servidor
 
 Este servidor usa las siguientes variables de entorno para configuración :
 
+```
 RABBIT_URL : Url de rabbit (default amqp://localhost)
 MONGO_URL : Url de mongo (default mongodb://localhost:27017)
 PORT : Puerto (default 3000)
 JWT_SECRET : Secret para password (default ecb6d3479ac3823f1da7f314d871989b)
+```
 
 ## Docker para desarrollo
 
 ### Build
+
+Hacer un build local para ejecutar en docker :
 
 ```bash
 docker build -t dev-auth-go .

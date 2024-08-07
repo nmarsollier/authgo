@@ -1,633 +1,328 @@
-<a name="top"></a>
-# AuthGo Service v0.1.0
+# AuthGo
+Microservicio de Autentificación.
 
-Microservicio de Autentificación
+## Version: 1.0
 
-- [RabbitMQ_POST](#rabbitmq_post)
-	- [Invalidar Token](#invalidar-token)
-	
-- [Seguridad](#seguridad)
-	- [Cambiar Password](#cambiar-password)
-	- [Deshabilitar Usuario](#deshabilitar-usuario)
-	- [Habilitar Usuario](#habilitar-usuario)
-	- [Listar Usuarios](#listar-usuarios)
-	- [Login](#login)
-	- [Logout](#logout)
-	- [Otorga Permisos](#otorga-permisos)
-	- [Registrar Usuario](#registrar-usuario)
-	- [Revoca Permisos](#revoca-permisos)
-	- [Usuario Actual](#usuario-actual)
-	
+**Contact information:**  
+Nestor Marsollier  
+nmarsollier@gmail.com  
 
+---
+### /rabbit/logout
 
-# <a name='rabbitmq_post'></a> RabbitMQ_POST
+#### PUT
+##### Summary
 
-## <a name='invalidar-token'></a> Invalidar Token
-[Back to top](#top)
+Mensage Rabbit
 
-<p>AuthService enviá un broadcast a todos los usuarios cuando un token ha sido invalidado. Los clientes deben eliminar de sus caches las sesiones invalidadas.</p>
+##### Description
 
-	FANOUT auth/fanout
+SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.
 
+##### Parameters
 
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| body | body | Token deshabilitado | Yes | [rabbit.message](#rabbitmessage) |
 
+##### Responses
 
+| Code | Description |
+| ---- | ----------- |
 
-### Success Response
+---
+### /v1/user
 
-Mensaje
+#### POST
+##### Summary
 
-```
-{
-   "type": "logout",
-   "message": "{Token revocado}"
-}
-```
+Registrar Usuario
 
+##### Description
 
-# <a name='seguridad'></a> Seguridad
+Registra un nuevo usuario en el sistema.
 
-## <a name='cambiar-password'></a> Cambiar Password
-[Back to top](#top)
+##### Parameters
 
-<p>Cambia la contraseña del usuario actual.</p>
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| body | body | Informacion de ususario | Yes | [user.SignUpRequest](#usersignuprequest) |
 
-	POST /v1/user/password
+##### Responses
 
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
+### /v1/user/password
 
-### Examples
+#### POST
+##### Summary
 
-Body
+Cambiar Password
 
-```
-{
-  "currentPassword" : "{Contraseña actual}",
-  "newPassword" : "{Nueva Contraseña}",
-}
-```
-Header Autorización
+##### Description
 
-```
-Authorization=bearer {token}
-```
+Cambia la contraseña del usuario actual.
 
+##### Parameters
 
-### Success Response
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| body | body | Passwords | Yes | [rest.changePasswordBody](#restchangepasswordbody) |
+| Authorization | header | bearer {token} | Yes | string |
 
-Respuesta
+##### Responses
 
-```
-HTTP/1.1 200 OK
-```
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | No Content |  |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
+### /v1/user/signin
 
-### Error Response
+#### POST
+##### Summary
 
-401 Unauthorized
+Login
 
-```
-HTTP/1.1 401 Unauthorized
-{
-   "error" : "Unauthorized"
-}
-```
-400 Bad Request
+##### Description
 
-```
-HTTP/1.1 400 Bad Request
-{
-   "messages" : [
-     {
-       "path" : "{Nombre de la propiedad}",
-       "message" : "{Motivo del error}"
-     },
-     ...
-  ]
-}
-```
-500 Server Error
+Loguea un usuario en el sistema.
 
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
-## <a name='deshabilitar-usuario'></a> Deshabilitar Usuario
-[Back to top](#top)
+##### Parameters
 
-<p>Deshabilita un usuario en el sistema.   El usuario logueado debe tener permisos &quot;admin&quot;.</p>
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| body | body | Sign in information | Yes | [user.SignInRequest](#usersigninrequest) |
 
-	POST /v1/users/:userId/disable
+##### Responses
 
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
+### /v1/user/signout
 
-### Examples
+#### GET
+##### Summary
 
-Header Autorización
+Logout
 
-```
-Authorization=bearer {token}
-```
+##### Description
 
+Desloguea un usuario en el sistema, invalida el token.
 
-### Success Response
+##### Parameters
 
-Respuesta
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| Authorization | header | bearer {token} | Yes | string |
 
-```
-HTTP/1.1 200 OK
-```
+##### Responses
 
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | No Content |  |
+| 500 | Error response | [app_errors.OtherErrors](#app_errorsothererrors) |
 
-### Error Response
+### /v1/users
 
-401 Unauthorized
+#### GET
+##### Summary
 
-```
-HTTP/1.1 401 Unauthorized
-{
-   "error" : "Unauthorized"
-}
-```
-400 Bad Request
+Listar Usuarios
 
-```
-HTTP/1.1 400 Bad Request
-{
-   "messages" : [
-     {
-       "path" : "{Nombre de la propiedad}",
-       "message" : "{Motivo del error}"
-     },
-     ...
-  ]
-}
-```
-500 Server Error
+##### Description
 
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
-## <a name='habilitar-usuario'></a> Habilitar Usuario
-[Back to top](#top)
+Obtiene información de todos los usuarios. El usuario logueado debe tener permisos "admin".
 
-<p>Habilita un usuario en el sistema. El usuario logueado debe tener permisos &quot;admin&quot;.</p>
+##### Parameters
 
-	POST /v1/users/:userId/enable
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| Authorization | header | bearer {token} | Yes | string |
 
+##### Responses
 
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Users | [ [rest.UserDataResponse](#restuserdataresponse) ] |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
-### Examples
+### /v1/users/current
 
-Header Autorización
+#### GET
+##### Summary
 
-```
-Authorization=bearer {token}
-```
+Usuario Actual
 
+##### Description
 
-### Success Response
+Obtiene información del usuario actual.
 
-Respuesta
+##### Parameters
 
-```
-HTTP/1.1 200 OK
-```
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| Authorization | header | bearer {token} | Yes | string |
 
+##### Responses
 
-### Error Response
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | User data | [rest.UserResponse](#restuserresponse) |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
-401 Unauthorized
+---
+### /v1/users/:userID/grant
 
-```
-HTTP/1.1 401 Unauthorized
-{
-   "error" : "Unauthorized"
-}
-```
-400 Bad Request
+#### POST
+##### Responses
 
-```
-HTTP/1.1 400 Bad Request
-{
-   "messages" : [
-     {
-       "path" : "{Nombre de la propiedad}",
-       "message" : "{Motivo del error}"
-     },
-     ...
-  ]
-}
-```
-500 Server Error
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
-## <a name='listar-usuarios'></a> Listar Usuarios
-[Back to top](#top)
+### /v1/users/:userID/revoke
 
-<p>Obtiene información de todos los usuarios.</p>
+#### POST
+##### Responses
 
-	GET /v1/users
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | User Token | [rest.revokePermissionBody](#restrevokepermissionbody) |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
+### /v1/users/:userId/disable
 
+#### POST
+##### Responses
 
-### Examples
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
-Header Autorización
+### /v1/users/:userId/enable
 
-```
-Authorization=bearer {token}
-```
+#### POST
+##### Responses
 
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
-### Success Response
+---
+### Models
 
-Respuesta
+#### app_errors.ErrField
 
-```
-    HTTP/1.1 200 OK
-    [{
-       "id": "{Id usuario}",
-       "name": "{Nombre del usuario}",
-       "login": "{Login de usuario}",
-       "permissions": [
-           "{Permission}"
-       ],
-	      "enabled": true|false
-    }, ...]
-```
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| message | string |  | No |
+| path | string |  | No |
 
+#### app_errors.ErrValidation
 
-### Error Response
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| messages | [ [app_errors.ErrField](#app_errorserrfield) ] |  | No |
 
-401 Unauthorized
+#### app_errors.OtherErrors
 
-```
-HTTP/1.1 401 Unauthorized
-{
-   "error" : "Unauthorized"
-}
-```
-500 Server Error
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| error | string |  | No |
 
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
-## <a name='login'></a> Login
-[Back to top](#top)
+#### rabbit.message
 
-<p>Loguea un usuario en el sistema.</p>
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| message | string |  | No |
+| type | string |  | No |
 
-	POST /v1/user/signin
+#### rest.UserDataResponse
 
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| enabled | boolean |  | No |
+| id | string |  | No |
+| login | string |  | No |
+| name | string |  | No |
+| permissions | [ string ] |  | No |
 
+#### rest.UserResponse
 
-### Examples
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| id | string |  | No |
+| login | string |  | No |
+| name | string |  | No |
+| permissions | [ string ] |  | No |
 
-Body
+#### rest.changePasswordBody
 
-```
-{
-  "login": "{Login de usuario}",
-  "password": "{Contraseña}"
-}
-```
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| currentPassword | string |  | Yes |
+| newPassword | string |  | Yes |
 
+#### rest.revokePermissionBody
 
-### Success Response
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| permissions | [ string ] |  | Yes |
+| user | string |  | Yes |
 
-Respuesta
+#### rest.tokenResponse
 
-```
-HTTP/1.1 200 OK
-{
-  "token": "{Token de autorización}"
-}
-```
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| token | string |  | No |
 
+#### user.SignInRequest
 
-### Error Response
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| login | string |  | Yes |
+| password | string |  | Yes |
 
-400 Bad Request
+#### user.SignUpRequest
 
-```
-HTTP/1.1 400 Bad Request
-{
-   "messages" : [
-     {
-       "path" : "{Nombre de la propiedad}",
-       "message" : "{Motivo del error}"
-     },
-     ...
-  ]
-}
-```
-500 Server Error
-
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
-## <a name='logout'></a> Logout
-[Back to top](#top)
-
-<p>desloguea un usuario en el sistema, invalida el token.</p>
-
-	GET /v1/user/signout
-
-
-
-### Examples
-
-Header Autorización
-
-```
-Authorization=bearer {token}
-```
-
-
-### Success Response
-
-Respuesta
-
-```
-HTTP/1.1 200 OK
-```
-
-
-### Error Response
-
-401 Unauthorized
-
-```
-HTTP/1.1 401 Unauthorized
-{
-   "error" : "Unauthorized"
-}
-```
-500 Server Error
-
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
-## <a name='otorga-permisos'></a> Otorga Permisos
-[Back to top](#top)
-
-<p>Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso &quot;admin&quot;.</p>
-
-	POST /v1/users/:userId/grant
-
-
-
-### Examples
-
-Body
-
-```
-{
-  "permissions" : ["permiso", ...],
-}
-```
-Header Autorización
-
-```
-Authorization=bearer {token}
-```
-
-
-### Success Response
-
-Respuesta
-
-```
-HTTP/1.1 200 OK
-```
-
-
-### Error Response
-
-401 Unauthorized
-
-```
-HTTP/1.1 401 Unauthorized
-{
-   "error" : "Unauthorized"
-}
-```
-400 Bad Request
-
-```
-HTTP/1.1 400 Bad Request
-{
-   "messages" : [
-     {
-       "path" : "{Nombre de la propiedad}",
-       "message" : "{Motivo del error}"
-     },
-     ...
-  ]
-}
-```
-500 Server Error
-
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
-## <a name='registrar-usuario'></a> Registrar Usuario
-[Back to top](#top)
-
-<p>Registra un nuevo usuario en el sistema.</p>
-
-	POST /v1/user
-
-
-
-### Examples
-
-Body
-
-```
-{
-  "name": "{Nombre de Usuario}",
-  "login": "{Login de usuario}",
-  "password": "{Contraseña}"
-}
-```
-
-
-### Success Response
-
-Respuesta
-
-```
-HTTP/1.1 200 OK
-{
-  "token": "{Token de autorización}"
-}
-```
-
-
-### Error Response
-
-400 Bad Request
-
-```
-HTTP/1.1 400 Bad Request
-{
-   "messages" : [
-     {
-       "path" : "{Nombre de la propiedad}",
-       "message" : "{Motivo del error}"
-     },
-     ...
-  ]
-}
-```
-500 Server Error
-
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
-## <a name='revoca-permisos'></a> Revoca Permisos
-[Back to top](#top)
-
-<p>Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso &quot;admin&quot;.</p>
-
-	POST /v1/users/:userId/revoke
-
-
-
-### Examples
-
-Body
-
-```
-{
-  "permissions" : ["permiso", ...],
-}
-```
-Header Autorización
-
-```
-Authorization=bearer {token}
-```
-
-
-### Success Response
-
-Respuesta
-
-```
-HTTP/1.1 200 OK
-```
-
-
-### Error Response
-
-401 Unauthorized
-
-```
-HTTP/1.1 401 Unauthorized
-{
-   "error" : "Unauthorized"
-}
-```
-400 Bad Request
-
-```
-HTTP/1.1 400 Bad Request
-{
-   "messages" : [
-     {
-       "path" : "{Nombre de la propiedad}",
-       "message" : "{Motivo del error}"
-     },
-     ...
-  ]
-}
-```
-500 Server Error
-
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
-## <a name='usuario-actual'></a> Usuario Actual
-[Back to top](#top)
-
-<p>Obtiene información del usuario actual.</p>
-
-	GET /v1/users/current
-
-
-
-### Examples
-
-Header Autorización
-
-```
-Authorization=bearer {token}
-```
-
-
-### Success Response
-
-Respuesta
-
-```
-HTTP/1.1 200 OK
-{
-   "id": "{Id usuario}",
-   "name": "{Nombre del usuario}",
-   "login": "{Login de usuario}",
-   "permissions": [
-       "{Permission}"
-   ]
-}
-```
-
-
-### Error Response
-
-401 Unauthorized
-
-```
-HTTP/1.1 401 Unauthorized
-{
-   "error" : "Unauthorized"
-}
-```
-500 Server Error
-
-```
-HTTP/1.1 500 Internal Server Error
-{
-   "error" : "Not Found"
-}
-```
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| login | string |  | Yes |
+| name | string |  | Yes |
+| password | string |  | Yes |

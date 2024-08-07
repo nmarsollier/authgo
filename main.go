@@ -11,8 +11,8 @@ import (
 //	@contact.name	Nestor Marsollier
 //	@contact.email	nmarsollier@gmail.com
 
-//	@host		localhost:3080
-//	@BasePath	/v1
+// @host		localhost:3000
+// @BasePath	/v1
 func main() {
 	routes.Start()
 }

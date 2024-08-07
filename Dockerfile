@@ -1,10 +1,10 @@
 # Docker para desarrollo
-FROM golang:1.14.3-buster
+FROM golang:1.22.6-bullseye
 
 WORKDIR /go/src/github.com/nmarsollier/authgo
 
-ENV MONGO_URL mongodb://host.docker.internal:27017
-ENV RABBIT_URL amqp://host.docker.internal
+ENV MONGO_URL=mongodb://host.docker.internal:27017
+ENV RABBIT_URL=amqp://host.docker.internal
 
 # Puerto de Auth Service y debug
 EXPOSE 3000

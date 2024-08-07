@@ -108,7 +108,7 @@ definitions:
     - name
     - password
     type: object
-host: localhost:3080
+host: localhost:3000
 info:
   contact:
     email: nmarsollier@gmail.com

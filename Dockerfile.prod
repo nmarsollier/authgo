@@ -1,12 +1,12 @@
 # Docker produccion o stage
-FROM golang:1.14.3-buster
+FROM golang:1.22.6-bullseye
 
 WORKDIR /go/src/github.com/nmarsollier/authgo
 RUN curl -L https://github.com/nmarsollier/authgo/tarball/master | tar xz --strip=1
-RUN go install
+RUN go install /go/src/github.com/nmarsollier/authgo
 
-ENV MONGO_URL mongodb://host.docker.internal:27017
-ENV RABBIT_URL amqp://host.docker.internal
+ENV MONGO_URL=mongodb://host.docker.internal:27017
+ENV RABBIT_URL=amqp://host.docker.internal
 
 # Puerto de Auth Service
 EXPOSE 3000
