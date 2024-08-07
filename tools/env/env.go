@@ -10,7 +10,6 @@ type Configuration struct {
 	Port      int    `json:"port"`
 	RabbitURL string `json:"rabbitUrl"`
 	MongoURL  string `json:"mongoUrl"`
-	WWWWPath  string `json:"wwwPath"`
 	JWTSecret string `json:"jwtSecret"`
 }
 
@@ -21,7 +20,6 @@ func new() *Configuration {
 		Port:      3000,
 		RabbitURL: "amqp://localhost",
 		MongoURL:  "mongodb://localhost:27017",
-		WWWWPath:  "www",
 		JWTSecret: "ecb6d3479ac3823f1da7f314d871989b",
 	}
 }
@@ -51,10 +49,6 @@ func load() *Configuration {
 		if intVal, err := strconv.Atoi(value); err != nil {
 			result.Port = intVal
 		}
-	}
-
-	if value := os.Getenv("WWW_PATH"); len(value) > 0 {
-		result.WWWWPath = value
 	}
 
 	if value := os.Getenv("JWT_SECRET"); len(value) > 0 {

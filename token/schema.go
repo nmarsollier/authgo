@@ -9,16 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-/**
- * @apiDefine TokenResponse
- *
- * @apiSuccessExample {json} Respuesta
- *     HTTP/1.1 200 OK
- *     {
- *       "token": "{Token de autorización}"
- *     }
- */
-
 // Token es un objeto valor que representa un token.
 type Token struct {
 	ID      primitive.ObjectID `bson:"_id"`

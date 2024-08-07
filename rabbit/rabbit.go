@@ -61,18 +61,14 @@ func getChannel() (*amqp.Channel, error) {
 }
 
 // SendLogout envía un broadcast a rabbit con logout
-/**
- * @api {fanout} auth/fanout Invalidar Token
- * @apiGroup RabbitMQ POST
- *
- * @apiDescription AuthService enviá un broadcast a todos los usuarios cuando un token ha sido invalidado. Los clientes deben eliminar de sus caches las sesiones invalidadas.
- *
- * @apiSuccessExample {json} Mensaje
- *     {
- *        "type": "logout",
- *        "message": "{Token revocado}"
- *     }
- */
+//
+//	@Summary		Mensage Rabbit
+//	@Description	SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.
+//	@Tags			Rabbit
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body	message	true	"Token deshabilitado"
+//	@Router			/rabbit/logout [put]
 func (r *rabbitImpl) SendLogout(token string) error {
 	send := message{
 		Type:    "logout",

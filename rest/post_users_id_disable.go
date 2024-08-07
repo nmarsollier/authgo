@@ -6,21 +6,25 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-/**
- * @api {post} /v1/users/:userId/disable Deshabilitar Usuario
- * @apiName Deshabilitar Usuario
- * @apiGroup Seguridad
- *
- * @apiDescription Deshabilita un usuario en el sistema.   El usuario logueado debe tener permisos "admin".
- *
- * @apiSuccessExample {json} Respuesta
- *     HTTP/1.1 200 OK
- *
- * @apiUse AuthHeader
- * @apiUse ParamValidationErrors
- * @apiUse OtherErrors
- */
+// Deshabilitar Usuario
+//
+//	@Summary		Deshabilitar Usuario
+//	@Description	Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos "admin".
+//	@Tags			Seguridad
+//	@Accept			json
+//	@Produce		json
+//
+//	@Param			userId			path	string	true	"ID del usuario a deshabilitar"
+//	@Param			Authorization	header	string	true	"bearer {token}"
 
+// @Success	200	{object}	tokenResponse				"User Token"
+//
+// @Failure	400	{object}	app_errors.ErrValidation	"Bad Request"
+// @Failure	401	{object}	app_errors.OtherErrors		"Unauthorized"
+// @Failure	404	{object}	app_errors.OtherErrors		"Not Found"
+// @Failure	500	{object}	app_errors.OtherErrors		"Internal Server Error"
+//
+// @Router		/v1/users/:userId/disable [post]
 func postUsersIdDisableRoute() {
 	engine.Router().POST(
 		"/v1/users/:userID/disable",

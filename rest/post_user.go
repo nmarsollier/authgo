@@ -6,26 +6,24 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-/**
- * @api {post} /v1/user Registrar Usuario
- * @apiName Registrar Usuario
- * @apiGroup Seguridad
- *
- * @apiDescription Registra un nuevo usuario en el sistema.
- *
- * @apiExample {json} Body
- *    {
- *      "name": "{Nombre de Usuario}",
- *      "login": "{Login de usuario}",
- *      "password": "{Contraseña}"
- *    }
- *
- * @apiUse TokenResponse
- *
- * @apiUse ParamValidationErrors
- * @apiUse OtherErrors
- */
-
+// Registra un nuevo usuario en el sistema.
+//
+//	@Summary		Registrar Usuario
+//	@Description	Registra un nuevo usuario en el sistema.
+//	@Tags			Seguridad
+//	@Accept			json
+//	@Produce		json
+//
+//	@Param			body	body		user.SignUpRequest			true	"Informacion de ususario"
+//
+//	@Success		200		{object}	tokenResponse				"User Token"
+//
+//	@Failure		400		{object}	app_errors.ErrValidation	"Bad Request"
+//	@Failure		401		{object}	app_errors.OtherErrors		"Unauthorized"
+//	@Failure		404		{object}	app_errors.OtherErrors		"Not Found"
+//	@Failure		500		{object}	app_errors.OtherErrors		"Internal Server Error"
+//
+//	@Router			/v1/user [post]
 func postUsersRoute() {
 	engine.Router().POST(
 		"/v1/user",

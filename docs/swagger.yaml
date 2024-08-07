@@ -1,0 +1,448 @@
+basePath: /v1
+definitions:
+  app_errors.ErrField:
+    properties:
+      message:
+        type: string
+      path:
+        type: string
+    type: object
+  app_errors.ErrValidation:
+    properties:
+      messages:
+        items:
+          $ref: '#/definitions/app_errors.ErrField'
+        type: array
+    type: object
+  app_errors.OtherErrors:
+    properties:
+      error:
+        type: string
+    type: object
+  rabbit.message:
+    properties:
+      message:
+        type: string
+      type:
+        type: string
+    type: object
+  rest.UserDataResponse:
+    properties:
+      enabled:
+        type: boolean
+      id:
+        type: string
+      login:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+    type: object
+  rest.UserResponse:
+    properties:
+      id:
+        type: string
+      login:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+    type: object
+  rest.changePasswordBody:
+    properties:
+      currentPassword:
+        maxLength: 100
+        minLength: 1
+        type: string
+      newPassword:
+        maxLength: 100
+        minLength: 1
+        type: string
+    required:
+    - currentPassword
+    - newPassword
+    type: object
+  rest.revokePermissionBody:
+    properties:
+      permissions:
+        items:
+          type: string
+        type: array
+      user:
+        type: string
+    required:
+    - permissions
+    - user
+    type: object
+  rest.tokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  user.SignInRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  user.SignUpRequest:
+    properties:
+      login:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - login
+    - name
+    - password
+    type: object
+host: localhost:3080
+info:
+  contact:
+    email: nmarsollier@gmail.com
+    name: Nestor Marsollier
+  description: Microservicio de Autentificación.
+  title: AuthGo
+  version: "1.0"
+paths:
+  /rabbit/logout:
+    put:
+      consumes:
+      - application/json
+      description: SendLogout envía un broadcast a rabbit con logout. Esto no es Rest
+        es RabbitMQ.
+      parameters:
+      - description: Token deshabilitado
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rabbit.message'
+      produces:
+      - application/json
+      responses: {}
+      summary: Mensage Rabbit
+      tags:
+      - Rabbit
+  /v1/user:
+    post:
+      consumes:
+      - application/json
+      description: Registra un nuevo usuario en el sistema.
+      parameters:
+      - description: Informacion de ususario
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Token
+          schema:
+            $ref: '#/definitions/rest.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app_errors.ErrValidation'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+      summary: Registrar Usuario
+      tags:
+      - Seguridad
+  /v1/user/password:
+    post:
+      consumes:
+      - application/json
+      description: Cambia la contraseña del usuario actual.
+      parameters:
+      - description: Passwords
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.changePasswordBody'
+      - description: bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app_errors.ErrValidation'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+      summary: Cambiar Password
+      tags:
+      - Seguridad
+  /v1/user/signin:
+    post:
+      consumes:
+      - application/json
+      description: Loguea un usuario en el sistema.
+      parameters:
+      - description: Sign in information
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Token
+          schema:
+            $ref: '#/definitions/rest.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app_errors.ErrValidation'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+      summary: Login
+      tags:
+      - Seguridad
+  /v1/user/signout:
+    get:
+      consumes:
+      - application/json
+      description: Desloguea un usuario en el sistema, invalida el token.
+      parameters:
+      - description: bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "500":
+          description: Error response
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+      summary: Logout
+      tags:
+      - Seguridad
+  /v1/users:
+    get:
+      consumes:
+      - application/json
+      description: Obtiene información de todos los usuarios. El usuario logueado
+        debe tener permisos "admin".
+      parameters:
+      - description: bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users
+          schema:
+            items:
+              $ref: '#/definitions/rest.UserDataResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app_errors.ErrValidation'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+      summary: Listar Usuarios
+      tags:
+      - Seguridad
+  /v1/users/:userID/grant:
+    post:
+      responses:
+        "200":
+          description: User Token
+          schema:
+            $ref: '#/definitions/rest.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app_errors.ErrValidation'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+  /v1/users/:userID/revoke:
+    post:
+      responses:
+        "200":
+          description: User Token
+          schema:
+            $ref: '#/definitions/rest.revokePermissionBody'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app_errors.ErrValidation'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+  /v1/users/:userId/disable:
+    post:
+      responses:
+        "200":
+          description: User Token
+          schema:
+            $ref: '#/definitions/rest.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app_errors.ErrValidation'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+  /v1/users/:userId/enable:
+    post:
+      responses:
+        "200":
+          description: User Token
+          schema:
+            $ref: '#/definitions/rest.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app_errors.ErrValidation'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+  /v1/users/current:
+    get:
+      consumes:
+      - application/json
+      description: Obtiene información del usuario actual.
+      parameters:
+      - description: bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User data
+          schema:
+            $ref: '#/definitions/rest.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app_errors.ErrValidation'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app_errors.OtherErrors'
+      summary: Usuario Actual
+      tags:
+      - Seguridad
+swagger: "2.0"

@@ -6,31 +6,34 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-/**
- * @api {post} /v1/user/signin Login
- * @apiName Login
- * @apiGroup Seguridad
- *
- * @apiDescription Loguea un usuario en el sistema.
- *
- * @apiExample {json} Body
- *    {
- *      "login": "{Login de usuario}",
- *      "password": "{Contraseña}"
- *    }
- *
- * @apiUse TokenResponse
- *
- * @apiUse ParamValidationErrors
- * @apiUse OtherErrors
- */
-
+// Loguea un usuario en el sistema.
+//
+//	@Summary		Login
+//	@Description	Loguea un usuario en el sistema.
+//	@Tags			Seguridad
+//	@Accept			json
+//	@Produce		json
+//
+//	@Param			body	body		user.SignInRequest			true	"Sign in information"
+//
+//	@Success		200		{object}	tokenResponse				"User Token"
+//
+//	@Failure		400		{object}	app_errors.ErrValidation	"Bad Request"
+//	@Failure		401		{object}	app_errors.OtherErrors		"Unauthorized"
+//	@Failure		404		{object}	app_errors.OtherErrors		"Not Found"
+//	@Failure		500		{object}	app_errors.OtherErrors		"Internal Server Error"
+//
+//	@Router			/v1/user/signin [post]
 func postUserSignInRoute() {
 	engine.Router().POST(
 		"/v1/user/signin",
 		validateSignInBody,
 		signIn,
 	)
+}
+
+type tokenResponse struct {
+	Token string `json:"token"`
 }
 
 func signIn(c *gin.Context) {
@@ -47,8 +50,8 @@ func signIn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"token": tokenString,
+	c.JSON(200, tokenResponse{
+		Token: tokenString,
 	})
 }
 

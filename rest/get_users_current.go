@@ -6,28 +6,29 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-/**
- * @api {get} /v1/users/current Usuario Actual
- * @apiName Usuario Actual
- * @apiGroup Seguridad
- *
- * @apiDescription Obtiene información del usuario actual.
- *
- * @apiSuccessExample {json} Respuesta
- *     HTTP/1.1 200 OK
- *     {
- *        "id": "{Id usuario}",
- *        "name": "{Nombre del usuario}",
- *        "login": "{Login de usuario}",
- *        "permissions": [
- *            "{Permission}"
- *        ]
- *     }
- *
- * @apiUse AuthHeader
- * @apiUse OtherErrors
- */
+type UserResponse struct {
+	Id          string   `json:"id"`
+	Name        string   `json:"name"`
+	Permissions []string `json:"permissions"`
+	Login       string   `json:"login"`
+}
 
+// Obtiene información del usuario actual.
+//
+//	@Summary		Usuario Actual
+//	@Description	Obtiene información del usuario actual.
+//	@Tags			Seguridad
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string						true	"bearer {token}"
+//	@Success		200				{object}	UserResponse				"User data"
+//
+//	@Failure		400				{object}	app_errors.ErrValidation	"Bad Request"
+//	@Failure		401				{object}	app_errors.OtherErrors		"Unauthorized"
+//	@Failure		404				{object}	app_errors.OtherErrors		"Not Found"
+//	@Failure		500				{object}	app_errors.OtherErrors		"Internal Server Error"
+//
+//	@Router			/v1/users/current [get]
 func getUsersCurrentRoute() {
 	engine.Router().GET(
 		"/v1/users/current",
@@ -50,10 +51,10 @@ func currentUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"id":          user.ID.Hex(),
-		"name":        user.Name,
-		"permissions": user.Permissions,
-		"login":       user.Login,
+	c.JSON(200, UserResponse{
+		Id:          user.ID.Hex(),
+		Name:        user.Name,
+		Permissions: user.Permissions,
+		Login:       user.Login,
 	})
 }

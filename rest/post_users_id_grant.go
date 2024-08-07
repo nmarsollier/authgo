@@ -6,26 +6,26 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-/**
- * @api {post} /v1/users/:userId/grant Otorga Permisos
- * @apiName Otorga Permisos
- * @apiGroup Seguridad
- *
- * @apiDescription Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
- *
- * @apiExample {json} Body
- *    {
- *      "permissions" : ["permiso", ...],
- *    }
- *
- * @apiSuccessExample {json} Respuesta
- *     HTTP/1.1 200 OK
- *
- * @apiUse AuthHeader
- * @apiUse ParamValidationErrors
- * @apiUse OtherErrors
- */
+// Otorga permisos al usuario indicado.
+//
+//	@Summary		Haiblitar permisos
+//	@Description	Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
+//	@Tags			Seguridad
+//	@Accept			json
+//	@Produce		json
+//
+//	@Param			userId			path	string				true	"ID del usuario a habilitar permiso"
+//	@Param			Authorization	header	string				true	"bearer {token}"
+//	@Param			body			body	grantPermissionBody	true	"Permisos a Habilitar"
 
+// @Success	200	{object}	tokenResponse				"User Token"
+//
+// @Failure	400	{object}	app_errors.ErrValidation	"Bad Request"
+// @Failure	401	{object}	app_errors.OtherErrors		"Unauthorized"
+// @Failure	404	{object}	app_errors.OtherErrors		"Not Found"
+// @Failure	500	{object}	app_errors.OtherErrors		"Internal Server Error"
+//
+// @Router		/v1/users/:userID/grant [post]
 func postUsersIdGrantRoute() {
 	engine.Router().POST(
 		"/v1/users/:userID/grant",
