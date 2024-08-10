@@ -121,11 +121,15 @@ docker build -t dev-auth-go .
 
 ### El contenedor
 
-```bash
-# Mac | Windows
-docker run -it --name dev-auth-go -p 3000:3000 -v $PWD:/go/src/github.com/nmarsollier/authgo dev-auth-go
+Mac | Windows
 
-# Linux
+```bash
+docker run -it --name dev-auth-go -p 3000:3000 -v $PWD:/go/src/github.com/nmarsollier/authgo dev-auth-go
+```
+
+Linux
+
+```bash
 docker run -it --add-host host.docker.internal:172.17.0.1 --name dev-auth-go -p 3000:3000 -v $PWD:/go/src/github.com/nmarsollier/authgo dev-auth-go
 ```
 
@@ -137,11 +141,13 @@ Existe un archivo Docker.debug, hay que armar la imagen usando ese archivo.
 docker build -t debug-auth-go -f Dockerfile.debug .
 ```
 
+Mac | Windows
 ```bash
-# Mac | Windows
 docker run -it --name debug-auth-go -p 3000:3000 -p 40000:40000 -v $PWD:/go/src/github.com/nmarsollier/authgo debug-auth-go
+```
 
-# Linux
+Linux
+```bash
 docker run -it --add-host host.docker.internal:172.17.0.1 --name debug-auth-go -p 3000:3000 -p 40000:40000 -v $PWD:/go/src/github.com/nmarsollier/authgo debug-auth-go
 ```
 
