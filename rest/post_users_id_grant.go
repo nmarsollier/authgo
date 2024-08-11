@@ -17,15 +17,14 @@ import (
 //	@Param			userId			path	string				true	"ID del usuario a habilitar permiso"
 //	@Param			Authorization	header	string				true	"bearer {token}"
 //	@Param			body			body	grantPermissionBody	true	"Permisos a Habilitar"
-
-// @Success	200	{object}	tokenResponse				"User Token"
+//	@Success		200				"No Content"
 //
-// @Failure	400	{object}	app_errors.ErrValidation	"Bad Request"
-// @Failure	401	{object}	app_errors.OtherErrors		"Unauthorized"
-// @Failure	404	{object}	app_errors.OtherErrors		"Not Found"
-// @Failure	500	{object}	app_errors.OtherErrors		"Internal Server Error"
+//	@Failure		400				{object}	app_errors.ErrValidation	"Bad Request"
+//	@Failure		401				{object}	app_errors.OtherErrors		"Unauthorized"
+//	@Failure		404				{object}	app_errors.OtherErrors		"Not Found"
+//	@Failure		500				{object}	app_errors.OtherErrors		"Internal Server Error"
 //
-// @Router		/v1/users/:userID/grant [post]
+//	@Router			/v1/users/:userID/grant [post]
 func postUsersIdGrantRoute() {
 	engine.Router().POST(
 		"/v1/users/:userID/grant",

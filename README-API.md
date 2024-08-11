@@ -164,6 +164,120 @@ Obtiene información de todos los usuarios. El usuario logueado debe tener permi
 | 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
 | 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
 
+### /v1/users/:userID/grant
+
+#### POST
+##### Summary
+
+Haiblitar permisos
+
+##### Description
+
+Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| userId | path | ID del usuario a habilitar permiso | Yes | string |
+| Authorization | header | bearer {token} | Yes | string |
+| body | body | Permisos a Habilitar | Yes | [rest.grantPermissionBody](#restgrantpermissionbody) |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | No Content |  |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+
+### /v1/users/:userID/revoke
+
+#### POST
+##### Summary
+
+Quitar permisos
+
+##### Description
+
+Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| userId | path | ID del usuario a quitar permiso | Yes | string |
+| Authorization | header | bearer {token} | Yes | string |
+| body | body | Permisos a Qutiar | Yes | [rest.grantPermissionBody](#restgrantpermissionbody) |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | No Content |  |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+
+### /v1/users/:userId/disable
+
+#### POST
+##### Summary
+
+Deshabilitar Usuario
+
+##### Description
+
+Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos "admin".
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| userId | path | ID del usuario a deshabilitar | Yes | string |
+| Authorization | header | bearer {token} | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | No Content |  |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+
+### /v1/users/:userId/enable
+
+#### POST
+##### Summary
+
+Enable User
+
+##### Description
+
+Habilita un usuario en el sistema. El usuario logueado debe tener permisos "admin".
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| userId | path | ID del usuario a habilitar | Yes | string |
+| Authorization | header | bearer {token} | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | No Content |  |
+| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
+| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+
 ### /v1/users/current
 
 #### GET
@@ -186,59 +300,6 @@ Obtiene información del usuario actual.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | User data | [rest.UserResponse](#restuserresponse) |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
-
----
-### /v1/users/:userID/grant
-
-#### POST
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
-
-### /v1/users/:userID/revoke
-
-#### POST
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | User Token | [rest.revokePermissionBody](#restrevokepermissionbody) |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
-
-### /v1/users/:userId/disable
-
-#### POST
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
-
-### /v1/users/:userId/enable
-
-#### POST
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
 | 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
 | 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
 | 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
@@ -299,7 +360,7 @@ Obtiene información del usuario actual.
 | currentPassword | string |  | Yes |
 | newPassword | string |  | Yes |
 
-#### rest.revokePermissionBody
+#### rest.grantPermissionBody
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

@@ -319,12 +319,45 @@ const docTemplate = `{
         },
         "/v1/users/:userID/grant": {
             "post": {
+                "description": "Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso \"admin\".",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Haiblitar permisos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del usuario a habilitar permiso",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Permisos a Habilitar",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.grantPermissionBody"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "User Token",
-                        "schema": {
-                            "$ref": "#/definitions/rest.tokenResponse"
-                        }
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -355,12 +388,45 @@ const docTemplate = `{
         },
         "/v1/users/:userID/revoke": {
             "post": {
+                "description": "Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso \"admin\".",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Quitar permisos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del usuario a quitar permiso",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Permisos a Qutiar",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.grantPermissionBody"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "User Token",
-                        "schema": {
-                            "$ref": "#/definitions/rest.revokePermissionBody"
-                        }
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -391,12 +457,36 @@ const docTemplate = `{
         },
         "/v1/users/:userId/disable": {
             "post": {
+                "description": "Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos \"admin\".",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Deshabilitar Usuario",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del usuario a deshabilitar",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "User Token",
-                        "schema": {
-                            "$ref": "#/definitions/rest.tokenResponse"
-                        }
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -427,12 +517,36 @@ const docTemplate = `{
         },
         "/v1/users/:userId/enable": {
             "post": {
+                "description": "Habilita un usuario en el sistema. El usuario logueado debe tener permisos \"admin\".",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Enable User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del usuario a habilitar",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "User Token",
-                        "schema": {
-                            "$ref": "#/definitions/rest.tokenResponse"
-                        }
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -622,7 +736,7 @@ const docTemplate = `{
                 }
             }
         },
-        "rest.revokePermissionBody": {
+        "rest.grantPermissionBody": {
             "type": "object",
             "required": [
                 "permissions",
