@@ -2,8 +2,8 @@ package rabbit
 
 import (
 	"encoding/json"
-	"log"
 
+	"github.com/golang/glog"
 	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/tools/env"
 	"github.com/streadway/amqp"
@@ -45,11 +45,13 @@ func getChannel() (*amqp.Channel, error) {
 	if channel == nil {
 		conn, err := amqp.Dial(env.Get().RabbitURL)
 		if err != nil {
+			glog.Error(err)
 			return nil, err
 		}
 
 		ch, err := conn.Channel()
 		if err != nil {
+			glog.Error(err)
 			return nil, err
 		}
 		channel = ch
@@ -77,6 +79,7 @@ func (r *rabbitImpl) SendLogout(token string) error {
 
 	chanel, err := getChannel()
 	if err != nil {
+		glog.Error(err)
 		channel = nil
 		return err
 	}
@@ -91,12 +94,14 @@ func (r *rabbitImpl) SendLogout(token string) error {
 		nil,      // arguments
 	)
 	if err != nil {
+		glog.Error(err)
 		channel = nil
 		return err
 	}
 
 	body, err := json.Marshal(send)
 	if err != nil {
+		glog.Error(err)
 		return err
 	}
 
@@ -109,10 +114,11 @@ func (r *rabbitImpl) SendLogout(token string) error {
 			Body: []byte(body),
 		})
 	if err != nil {
+		glog.Error(err)
 		channel = nil
 		return err
 	}
 
-	log.Output(1, "Rabbit logout enviado")
+	glog.Info("Rabbit logout enviado", send)
 	return nil
 }

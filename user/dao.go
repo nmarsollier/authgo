@@ -2,9 +2,9 @@ package user
 
 import (
 	"context"
-	"log"
 	"time"
 
+	"github.com/golang/glog"
 	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/tools/db"
 	"go.mongodb.org/mongo-driver/bson"
@@ -39,6 +39,7 @@ func dbCollection(props ...interface{}) (db.MongoCollection, error) {
 
 	database, err := db.Get()
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -52,7 +53,7 @@ func dbCollection(props ...interface{}) (db.MongoCollection, error) {
 		},
 	)
 	if err != nil {
-		log.Output(1, err.Error())
+		glog.Error(err)
 	}
 
 	collection = db.NewMongoCollection(col)
@@ -61,15 +62,18 @@ func dbCollection(props ...interface{}) (db.MongoCollection, error) {
 
 func insert(user *User, props ...interface{}) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
 	var collection, err = dbCollection(props...)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
 	if _, err := collection.InsertOne(context.Background(), user); err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -78,11 +82,13 @@ func insert(user *User, props ...interface{}) (*User, error) {
 
 func update(user *User, props ...interface{}) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
 	var collection, err = dbCollection(props...)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -102,6 +108,7 @@ func update(user *User, props ...interface{}) (*User, error) {
 	)
 
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -112,12 +119,14 @@ func update(user *User, props ...interface{}) (*User, error) {
 func findAll(props ...interface{}) ([]*User, error) {
 	var collection, err = dbCollection(props...)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
 	filter := bson.D{}
 	cur, err := collection.Find(context.Background(), filter)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 	defer cur.Close(context.Background())
@@ -138,17 +147,20 @@ func findAll(props ...interface{}) ([]*User, error) {
 func findByID(userID string, props ...interface{}) (*User, error) {
 	var collection, err = dbCollection(props...)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
 	_id, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
+		glog.Error(err)
 		return nil, app_errors.ErrID
 	}
 
 	user := &User{}
 	filter := bson.M{"_id": _id}
 	if err = collection.FindOne(context.Background(), filter, user); err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -159,6 +171,7 @@ func findByID(userID string, props ...interface{}) (*User, error) {
 func findByLogin(login string, props ...interface{}) (*User, error) {
 	var collection, err = dbCollection(props...)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -166,6 +179,7 @@ func findByLogin(login string, props ...interface{}) (*User, error) {
 	filter := bson.M{"login": login}
 	err = collection.FindOne(context.Background(), filter, user)
 	if err != nil {
+		glog.Error(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, ErrLogin
 		}

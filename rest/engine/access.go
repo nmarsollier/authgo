@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang/glog"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/user"
@@ -51,11 +52,13 @@ func fetchAuthHeader(c *gin.Context) (*token.Token, error) {
 
 	tokenString, err := RAWHeaderToken(c)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
 	payload, err := token.Validate(tokenString, extraParams...)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 

@@ -3,6 +3,7 @@ package token
 import (
 	"context"
 
+	"github.com/golang/glog"
 	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/tools/db"
 	"go.mongodb.org/mongo-driver/bson"
@@ -35,6 +36,7 @@ func dbCollection(props ...interface{}) (db.MongoCollection, error) {
 
 	database, err := db.Get()
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -49,6 +51,7 @@ func dbCollection(props ...interface{}) (db.MongoCollection, error) {
 		},
 	)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -61,6 +64,7 @@ func dbCollection(props ...interface{}) (db.MongoCollection, error) {
 func insert(userID primitive.ObjectID, props ...interface{}) (*Token, error) {
 	collection, err := dbCollection(props...)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -68,6 +72,7 @@ func insert(userID primitive.ObjectID, props ...interface{}) (*Token, error) {
 
 	_, err = collection.InsertOne(context.Background(), token)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -78,11 +83,13 @@ func insert(userID primitive.ObjectID, props ...interface{}) (*Token, error) {
 func findByID(tokenID string, props ...interface{}) (*Token, error) {
 	collection, err := dbCollection(props...)
 	if err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
 	_id, err := primitive.ObjectIDFromHex(tokenID)
 	if err != nil {
+		glog.Error(err)
 		return nil, app_errors.Unauthorized
 	}
 
@@ -90,6 +97,7 @@ func findByID(tokenID string, props ...interface{}) (*Token, error) {
 	filter := bson.M{"_id": _id}
 
 	if err = collection.FindOne(context.Background(), filter, token); err != nil {
+		glog.Error(err)
 		return nil, err
 	}
 
@@ -100,6 +108,7 @@ func findByID(tokenID string, props ...interface{}) (*Token, error) {
 func delete(tokenID primitive.ObjectID, props ...interface{}) error {
 	collection, err := dbCollection(props...)
 	if err != nil {
+		glog.Error(err)
 		return err
 	}
 

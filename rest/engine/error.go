@@ -1,8 +1,6 @@
 package engine
 
 import (
-	"fmt"
-	"log"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -57,7 +55,6 @@ func handleErrorIfNeeded(c *gin.Context) {
 		if db.IsUniqueKeyError(value) {
 			handleCustom(c, app_errors.AlreadyExist)
 		} else {
-			log.Output(1, fmt.Sprintf("Error DB : %s", value.Error()))
 			handleCustom(c, app_errors.Internal)
 		}
 	case error:

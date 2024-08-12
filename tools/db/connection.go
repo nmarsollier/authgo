@@ -2,8 +2,8 @@ package db
 
 import (
 	"context"
-	"log"
 
+	"github.com/golang/glog"
 	"github.com/nmarsollier/authgo/tools/env"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -18,7 +18,7 @@ func Get() (*mongo.Database, error) {
 
 		client, err := mongo.Connect(context.TODO(), clientOptions)
 		if err != nil {
-			log.Fatal(err)
+			glog.Fatal(err)
 			return nil, err
 		}
 

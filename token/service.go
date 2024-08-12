@@ -1,8 +1,7 @@
 package token
 
 import (
-	"log"
-
+	"github.com/golang/glog"
 	"github.com/nmarsollier/authgo/rabbit"
 	"github.com/nmarsollier/authgo/tools/app_errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -68,7 +67,7 @@ func Invalidate(tokenString string, props ...interface{}) error {
 
 	go func() {
 		if err = rabbit.Get(props...).SendLogout("bearer " + tokenString); err != nil {
-			log.Output(1, "Rabbit logout no se pudo enviar")
+			glog.Info("Rabbit logout no se pudo enviar")
 		}
 	}()
 

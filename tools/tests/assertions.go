@@ -2,7 +2,6 @@ package tests
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,7 +16,6 @@ func AssertUnauthorized(t *testing.T, w *httptest.ResponseRecorder) {
 	var result map[string]interface{}
 	json.Unmarshal(w.Body.Bytes(), &result)
 
-	fmt.Println(result)
 	assert.Equal(t, result["error"], "Unauthorized")
 }
 
