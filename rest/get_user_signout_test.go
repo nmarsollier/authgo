@@ -3,8 +3,10 @@ package rest
 import (
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
+	"github.com/nmarsollier/authgo/rabbit"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/app_errors"
@@ -37,14 +39,19 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
+	rabbitMock := rabbit.NewMockRabbit(ctrl)
+	rabbitMock.EXPECT().SendLogout(gomock.Any()).Return(nil).Times(1)
+
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection), rabbitMock)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
+
+	time.Sleep(50 * time.Millisecond)
 }
 
 func TestGetUserSignOutDbUpdateError(t *testing.T) {

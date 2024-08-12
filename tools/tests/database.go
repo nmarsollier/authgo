@@ -21,6 +21,14 @@ var TestIsUniqueError = mongo.WriteException{
 	},
 }
 
+var TestOtherDbError = mongo.WriteException{
+	WriteErrors: []mongo.WriteError{
+		{
+			Code: 1,
+		},
+	},
+}
+
 // Espect common functions
 func ExpectFindOneError(userCollection *db.MockMongoCollection, err error, times int) {
 	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(

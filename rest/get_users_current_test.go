@@ -14,6 +14,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 func TestGetUserCurrentHappyPath(t *testing.T) {
@@ -119,7 +120,7 @@ func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
 	// User Dao Mocks
 	ctrl := gomock.NewController(t)
 	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(userCollection, app_errors.Internal, 1)
+	tests.ExpectFindOneError(userCollection, topology.ErrServerSelectionTimeout, 1)
 
 	// Token Dao Mocks
 	tokenCollection := db.NewMockMongoCollection(ctrl)

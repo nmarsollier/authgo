@@ -136,12 +136,11 @@ func TestPostSignInMissingLogin(t *testing.T) {
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Password: password}, "")
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
 
-	var result map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &result)
-	assert.Contains(t, result["error"], "Login")
-	assert.Contains(t, result["error"], "required")
+	result := w.Body.String()
+	assert.Contains(t, result, "login")
+	assert.Contains(t, result, "required")
 }
 
 func TestPostSignInMissingPassword(t *testing.T) {
@@ -154,12 +153,11 @@ func TestPostSignInMissingPassword(t *testing.T) {
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login}, "")
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
 
-	var result map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &result)
-	assert.Contains(t, result["error"], "Password")
-	assert.Contains(t, result["error"], "required")
+	result := w.Body.String()
+	assert.Contains(t, result, "password")
+	assert.Contains(t, result, "required")
 }
 
 func TestPostSignInUserDbError(t *testing.T) {

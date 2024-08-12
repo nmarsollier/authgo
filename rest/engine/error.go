@@ -1,10 +1,11 @@
 package engine
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/tools/db"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,14 +29,14 @@ func handleErrorIfNeeded(c *gin.Context) {
 	}
 
 	// Compruebo errores bien conocidos
-	switch err {
-	case topology.ErrServerSelectionTimeout, topology.ErrTopologyClosed:
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		handleCustom(c, app_errors.NotFound)
+		return
+	}
+	if errors.Is(err, topology.ErrServerSelectionTimeout) || errors.Is(err, topology.ErrTopologyClosed) {
 		// Errores de conexión con MongoDB
 		db.CheckError(err)
 		handleCustom(c, app_errors.Internal)
-		return
-	case mongo.ErrNoDocuments:
-		handleCustom(c, app_errors.NotFound)
 		return
 	}
 

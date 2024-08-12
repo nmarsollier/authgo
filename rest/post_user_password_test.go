@@ -79,12 +79,11 @@ func TestPostUserPasswordMissingCurrent(t *testing.T) {
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{New: "456"}, tokenString)
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
 
-	var result map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &result)
-	assert.Contains(t, result["error"], "Current")
-	assert.Contains(t, result["error"], "required")
+	result := w.Body.String()
+	assert.Contains(t, result, "current")
+	assert.Contains(t, result, "required")
 }
 
 func TestPostUserPasswordMissingNew(t *testing.T) {
@@ -102,12 +101,12 @@ func TestPostUserPasswordMissingNew(t *testing.T) {
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123"}, tokenString)
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
 
-	var result map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &result)
-	assert.Contains(t, result["error"], "New")
-	assert.Contains(t, result["error"], "required")
+	result := w.Body.String()
+
+	assert.Contains(t, result, "new")
+	assert.Contains(t, result, "required")
 }
 
 func TestPostUserPasswordWrongCurrent(t *testing.T) {

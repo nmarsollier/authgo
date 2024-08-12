@@ -51,12 +51,12 @@ func TestPostUserMissingLogin(t *testing.T) {
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Password: password}, "")
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
 
-	var result map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &result)
-	assert.Contains(t, result["error"], "SignUpRequest.Name", "")
-	assert.Contains(t, result["error"], "SignUpRequest.Login", "")
+	result := w.Body.String()
+	assert.Contains(t, result, "login")
+	assert.Contains(t, result, "name")
+	assert.Contains(t, result, "required")
 }
 
 func TestPostUserInvalidLoginMinRule(t *testing.T) {
@@ -67,10 +67,11 @@ func TestPostUserInvalidLoginMinRule(t *testing.T) {
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: "a", Name: "b", Password: "c"}, "")
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
 
 	result := w.Body.String()
-	assert.Contains(t, result, "User.Login", "")
+	assert.Contains(t, result, "login")
+	assert.Contains(t, result, "min")
 }
 
 func TestPostUserIvalidPassword(t *testing.T) {
@@ -83,11 +84,11 @@ func TestPostUserIvalidPassword(t *testing.T) {
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Name: userData.Name, Login: userData.Login}, "")
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
 
-	var result map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &result)
-	assert.Contains(t, result["error"], "SignUpRequest.Password", "")
+	result := w.Body.String()
+	assert.Contains(t, result, "password")
+	assert.Contains(t, result, "required")
 }
 
 func TestPostUserDatabaseError(t *testing.T) {
@@ -96,7 +97,7 @@ func TestPostUserDatabaseError(t *testing.T) {
 	// User Dao Mocks
 	ctrl := gomock.NewController(t)
 	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectInsertOneError(userCollection, app_errors.Internal, 1)
+	tests.ExpectInsertOneError(userCollection, tests.TestOtherDbError, 1)
 
 	// REQUEST
 	r := engine.TestRouter(user.NewOptions(userCollection))
@@ -123,10 +124,7 @@ func TestPostUserAlreayExist(t *testing.T) {
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusBadRequest, w.Code)
-
-	body := w.Body.String()
-	assert.Contains(t, body, "exist", "")
+	tests.AssertBadRequestError(t, w)
 }
 
 func TestPostTokenDatabaseError(t *testing.T) {

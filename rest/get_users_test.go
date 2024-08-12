@@ -7,12 +7,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/app_errors"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func TestGetUsersHappyPath(t *testing.T) {
@@ -98,7 +98,7 @@ func TestGetUsersFindError(t *testing.T) {
 	userCollection.EXPECT().Find(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter primitive.D) (db.Cursor, error) {
 			// Asign return values
-			return nil, app_errors.NotFound
+			return nil, mongo.ErrNoDocuments
 		},
 	).Times(1)
 

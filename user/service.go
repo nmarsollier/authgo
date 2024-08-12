@@ -3,7 +3,6 @@ package user
 import (
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/app_errors"
-	"github.com/nmarsollier/authgo/tools/db"
 )
 
 // SignUpRequest es un nuevo usuario
@@ -22,9 +21,6 @@ func SignUp(user *SignUpRequest, options ...interface{}) (string, error) {
 
 	newUser, err := insert(newUser, options...)
 	if err != nil {
-		if db.IsUniqueKeyError(err) {
-			return "", ErrLoginExist
-		}
 		return "", err
 	}
 
