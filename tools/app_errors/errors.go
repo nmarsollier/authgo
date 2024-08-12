@@ -2,7 +2,6 @@ package app_errors
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // - Algunos errors comunes en el sistema -
@@ -69,7 +68,7 @@ type ErrCustom struct {
 }
 
 func (e *ErrCustom) Error() string {
-	return fmt.Sprintf(e.Message)
+	return e.Message
 }
 
 // Status http status code
