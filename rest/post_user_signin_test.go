@@ -45,7 +45,7 @@ func TestPostSignInHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -82,7 +82,7 @@ func TestPostSignInWrongPassword(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewProps(userCollection))
+	r := engine.TestRouter(user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: "wrong"}, "")
@@ -117,7 +117,7 @@ func TestPostSignInUserDisabled(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewProps(userCollection))
+	r := engine.TestRouter(user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -171,7 +171,7 @@ func TestPostSignInUserDbError(t *testing.T) {
 	tests.ExpectFindOneError(userCollection, app_errors.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewProps(userCollection))
+	r := engine.TestRouter(user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -193,7 +193,7 @@ func TestPostSignInUserNotFound(t *testing.T) {
 	tests.ExpectFindOneError(userCollection, mongo.ErrNoDocuments, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewProps(userCollection))
+	r := engine.TestRouter(user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -224,7 +224,7 @@ func TestPostTokenDbError(t *testing.T) {
 	tests.ExpectInsertOneError(tokenCollection, app_errors.ErrID, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")

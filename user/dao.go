@@ -16,19 +16,19 @@ import (
 // Define mongo Collection
 var collection db.MongoCollection
 
-func NewProps(collection db.MongoCollection) UserProps {
-	return UserProps{
+func NewOptions(collection db.MongoCollection) UserOption {
+	return UserOption{
 		Collection: collection,
 	}
 }
 
-type UserProps struct {
+type UserOption struct {
 	Collection db.MongoCollection
 }
 
-func dbCollection(props ...interface{}) (db.MongoCollection, error) {
-	for _, p := range props {
-		if ti, ok := p.(UserProps); ok {
+func dbCollection(ops ...interface{}) (db.MongoCollection, error) {
+	for _, p := range ops {
+		if ti, ok := p.(UserOption); ok {
 			return ti.Collection, nil
 		}
 	}
@@ -60,13 +60,13 @@ func dbCollection(props ...interface{}) (db.MongoCollection, error) {
 	return collection, nil
 }
 
-func insert(user *User, props ...interface{}) (*User, error) {
+func insert(user *User, options ...interface{}) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
 		glog.Error(err)
 		return nil, err
 	}
 
-	var collection, err = dbCollection(props...)
+	var collection, err = dbCollection(options...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -80,13 +80,13 @@ func insert(user *User, props ...interface{}) (*User, error) {
 	return user, nil
 }
 
-func update(user *User, props ...interface{}) (*User, error) {
+func update(user *User, options ...interface{}) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
 		glog.Error(err)
 		return nil, err
 	}
 
-	var collection, err = dbCollection(props...)
+	var collection, err = dbCollection(options...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -116,8 +116,8 @@ func update(user *User, props ...interface{}) (*User, error) {
 }
 
 // FindAll devuelve todos los usuarios
-func findAll(props ...interface{}) ([]*User, error) {
-	var collection, err = dbCollection(props...)
+func findAll(options ...interface{}) ([]*User, error) {
+	var collection, err = dbCollection(options...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -144,8 +144,8 @@ func findAll(props ...interface{}) ([]*User, error) {
 }
 
 // FindByID lee un usuario desde la db
-func findByID(userID string, props ...interface{}) (*User, error) {
-	var collection, err = dbCollection(props...)
+func findByID(userID string, options ...interface{}) (*User, error) {
+	var collection, err = dbCollection(options...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -168,8 +168,8 @@ func findByID(userID string, props ...interface{}) (*User, error) {
 }
 
 // FindByLogin lee un usuario desde la db
-func findByLogin(login string, props ...interface{}) (*User, error) {
-	var collection, err = dbCollection(props...)
+func findByLogin(login string, options ...interface{}) (*User, error) {
+	var collection, err = dbCollection(options...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err

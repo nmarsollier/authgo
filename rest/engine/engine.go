@@ -13,12 +13,12 @@ import (
 
 var engine *gin.Engine = nil
 
-func TestRouter(props ...interface{}) *gin.Engine {
+func TestRouter(options ...interface{}) *gin.Engine {
 	engine = nil
 	Router()
-	if len(props) > 0 {
+	if len(options) > 0 {
 		engine.Use(func(c *gin.Context) {
-			c.Set("mocks", props)
+			c.Set("mocks", options)
 			c.Next()
 		})
 	}

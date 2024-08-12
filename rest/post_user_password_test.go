@@ -55,7 +55,7 @@ func TestPostUserPasswordHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
@@ -73,7 +73,7 @@ func TestPostUserPasswordMissingCurrent(t *testing.T) {
 	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{New: "456"}, tokenString)
@@ -96,7 +96,7 @@ func TestPostUserPasswordMissingNew(t *testing.T) {
 	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123"}, tokenString)
@@ -133,7 +133,7 @@ func TestPostUserPasswordWrongCurrent(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "456", New: "456"}, tokenString)
@@ -162,7 +162,7 @@ func TestPostUserPasswordUserNotFound(t *testing.T) {
 	tests.ExpectFindOneError(userCollection, app_errors.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
@@ -196,7 +196,7 @@ func TestPostUserPasswordUpdateFails(t *testing.T) {
 	tests.ExpectUpdateOneError(userCollection, app_errors.ErrID, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)

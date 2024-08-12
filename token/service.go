@@ -8,8 +8,8 @@ import (
 )
 
 // Create crea un nuevo token y lo almacena en la db
-func Create(userID primitive.ObjectID, props ...interface{}) (*Token, error) {
-	token, err := insert(userID, props...)
+func Create(userID primitive.ObjectID, options ...interface{}) (*Token, error) {
+	token, err := insert(userID, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -20,8 +20,8 @@ func Create(userID primitive.ObjectID, props ...interface{}) (*Token, error) {
 }
 
 // Find busca un token en la db
-func Find(tokenID string, props ...interface{}) (*Token, error) {
-	token, err := findByID(tokenID, props...)
+func Find(tokenID string, options ...interface{}) (*Token, error) {
+	token, err := findByID(tokenID, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func Find(tokenID string, props ...interface{}) (*Token, error) {
 }
 
 // Validate dado un tokenString devuelve el Token asociado
-func Validate(tokenString string, props ...interface{}) (*Token, error) {
+func Validate(tokenString string, options ...interface{}) (*Token, error) {
 	if token, err := cacheGet(tokenString); err == nil {
 		return token, err
 	}
@@ -44,7 +44,7 @@ func Validate(tokenString string, props ...interface{}) (*Token, error) {
 	}
 
 	// Buscamos el token en la db para validarlo
-	token, err := Find(tokenID, props...)
+	token, err := Find(tokenID, options...)
 	if err != nil || !token.Enabled {
 		return nil, app_errors.Unauthorized
 	}
@@ -53,20 +53,20 @@ func Validate(tokenString string, props ...interface{}) (*Token, error) {
 }
 
 // Invalidate invalida un token
-func Invalidate(tokenString string, props ...interface{}) error {
-	token, err := Validate(tokenString, props...)
+func Invalidate(tokenString string, options ...interface{}) error {
+	token, err := Validate(tokenString, options...)
 	if err != nil {
 		return app_errors.Unauthorized
 	}
 
-	if err = delete(token.ID, props...); err != nil {
+	if err = delete(token.ID, options...); err != nil {
 		return err
 	}
 
 	cacheRemove(token)
 
 	go func() {
-		if err = rabbit.Get(props...).SendLogout("bearer " + tokenString); err != nil {
+		if err = rabbit.Get(options...).SendLogout("bearer " + tokenString); err != nil {
 			glog.Info("Rabbit logout no se pudo enviar")
 		}
 	}()

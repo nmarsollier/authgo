@@ -61,7 +61,7 @@ func TestGetUsersHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users", tokenString)
@@ -103,7 +103,7 @@ func TestGetUsersFindError(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users", tokenString)

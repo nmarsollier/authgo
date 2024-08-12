@@ -28,14 +28,14 @@ func getUserSignOutRoute() {
 }
 
 func signOut(c *gin.Context) {
-	var extraParams []interface{}
+	var options []interface{}
 	if mocks, ok := c.Get("mocks"); ok {
-		extraParams = mocks.([]interface{})
+		options = mocks.([]interface{})
 	}
 
 	tokenString, _ := engine.RAWHeaderToken(c)
 
-	if err := token.Invalidate(tokenString, extraParams...); err != nil {
+	if err := token.Invalidate(tokenString, options...); err != nil {
 		engine.AbortWithError(c, err)
 		return
 	}

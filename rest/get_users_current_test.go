@@ -37,7 +37,7 @@ func TestGetUserCurrentHappyPath(t *testing.T) {
 	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
@@ -62,7 +62,7 @@ func TestGetUserCurrentErrorDisabledToken(t *testing.T) {
 	tests.ExpectTokenFinOne(tokenCollection, tokenData, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
@@ -86,7 +86,7 @@ func TestGetUserCurrentErrorDisabledUser(t *testing.T) {
 	tests.ExpectTokenFinOne(tokenCollection, tokenData, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
@@ -104,7 +104,7 @@ func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
 	tests.ExpectFindOneError(tokenCollection, app_errors.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
@@ -126,7 +126,7 @@ func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
 	tests.ExpectTokenFinOne(tokenCollection, tokenData, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)

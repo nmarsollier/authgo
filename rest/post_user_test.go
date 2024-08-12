@@ -28,7 +28,7 @@ func TestPostUserInHappyPath(t *testing.T) {
 	tests.ExpectTokenInsertOne(tokenCollection, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -99,7 +99,7 @@ func TestPostUserDatabaseError(t *testing.T) {
 	tests.ExpectInsertOneError(userCollection, app_errors.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewProps(userCollection))
+	r := engine.TestRouter(user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -117,7 +117,7 @@ func TestPostUserAlreayExist(t *testing.T) {
 	tests.ExpectInsertOneError(userCollection, tests.TestIsUniqueError, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewProps(userCollection))
+	r := engine.TestRouter(user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -141,7 +141,7 @@ func TestPostTokenDatabaseError(t *testing.T) {
 	tests.ExpectInsertOneError(tokenCollection, app_errors.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewProps(userCollection), token.NewProps(tokenCollection))
+	r := engine.TestRouter(user.NewOptions(userCollection), token.NewTokenOption(tokenCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")

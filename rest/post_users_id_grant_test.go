@@ -63,7 +63,7 @@ func TestPostUserGrantHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}, UserId: userData.ID.Hex()}, tokenString)
@@ -86,7 +86,7 @@ func TestPostUserGrantFindUserError_1(t *testing.T) {
 	tests.ExpectFindOneError(userCollection, app_errors.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}, UserId: userData.ID.Hex()}, tokenString)
@@ -122,7 +122,7 @@ func TestPostUserGrantFindUserError_2(t *testing.T) {
 	tests.ExpectFindOneError(userCollection, app_errors.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}, UserId: userData.ID.Hex()}, tokenString)
@@ -154,7 +154,7 @@ func TestPostUserGrantNotAdmin(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}, UserId: userData.ID.Hex()}, tokenString)

@@ -14,13 +14,13 @@ type SignUpRequest struct {
 }
 
 // SignUp is the controller to signup new users
-func SignUp(user *SignUpRequest, props ...interface{}) (string, error) {
+func SignUp(user *SignUpRequest, options ...interface{}) (string, error) {
 	newUser := NewUser()
 	newUser.Login = user.Login
 	newUser.Name = user.Name
 	newUser.SetPasswordText(user.Password)
 
-	newUser, err := insert(newUser, props...)
+	newUser, err := insert(newUser, options...)
 	if err != nil {
 		if db.IsUniqueKeyError(err) {
 			return "", ErrLoginExist
@@ -28,7 +28,7 @@ func SignUp(user *SignUpRequest, props ...interface{}) (string, error) {
 		return "", err
 	}
 
-	newToken, err := token.Create(newUser.ID, props...)
+	newToken, err := token.Create(newUser.ID, options...)
 	if err != nil {
 		return "", app_errors.Internal
 	}
@@ -42,8 +42,8 @@ type SignInRequest struct {
 }
 
 // SignIn is the controller to sign in users
-func SignIn(data SignInRequest, props ...interface{}) (string, error) {
-	user, err := findByLogin(data.Login, props...)
+func SignIn(data SignInRequest, options ...interface{}) (string, error) {
+	user, err := findByLogin(data.Login, options...)
 	if err != nil {
 		return "", err
 	}
@@ -56,7 +56,7 @@ func SignIn(data SignInRequest, props ...interface{}) (string, error) {
 		return "", err
 	}
 
-	newToken, err := token.Create(user.ID, props...)
+	newToken, err := token.Create(user.ID, options...)
 	if err != nil {
 		return "", app_errors.Unauthorized
 	}
@@ -65,8 +65,8 @@ func SignIn(data SignInRequest, props ...interface{}) (string, error) {
 }
 
 // Get wrapper para obtener un usuario
-func Get(userID string, props ...interface{}) (*User, error) {
-	user, err := findByID(userID, props...)
+func Get(userID string, options ...interface{}) (*User, error) {
+	user, err := findByID(userID, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,8 +79,8 @@ func Get(userID string, props ...interface{}) (*User, error) {
 }
 
 // ChangePassword cambiar la contraseña del usuario indicado
-func ChangePassword(userID string, current string, newPassword string, props ...interface{}) error {
-	user, err := findByID(userID, props...)
+func ChangePassword(userID string, current string, newPassword string, options ...interface{}) error {
+	user, err := findByID(userID, options...)
 	if err != nil {
 		return err
 	}
@@ -93,14 +93,14 @@ func ChangePassword(userID string, current string, newPassword string, props ...
 		return err
 	}
 
-	_, err = update(user, props...)
+	_, err = update(user, options...)
 
 	return err
 }
 
 // Grant Le habilita los permisos enviados por parametros
-func Grant(userID string, permissions []string, props ...interface{}) error {
-	user, err := findByID(userID, props...)
+func Grant(userID string, permissions []string, options ...interface{}) error {
+	user, err := findByID(userID, options...)
 	if err != nil {
 		return err
 	}
@@ -108,14 +108,14 @@ func Grant(userID string, permissions []string, props ...interface{}) error {
 	for _, value := range permissions {
 		user.Grant(value)
 	}
-	_, err = update(user, props...)
+	_, err = update(user, options...)
 
 	return err
 }
 
 // Revoke Le revoca los permisos enviados por parametros
-func Revoke(userID string, permissions []string, props ...interface{}) error {
-	user, err := findByID(userID, props...)
+func Revoke(userID string, permissions []string, options ...interface{}) error {
+	user, err := findByID(userID, options...)
 	if err != nil {
 		return err
 	}
@@ -123,14 +123,14 @@ func Revoke(userID string, permissions []string, props ...interface{}) error {
 	for _, value := range permissions {
 		user.Revoke(value)
 	}
-	_, err = update(user, props...)
+	_, err = update(user, options...)
 
 	return err
 }
 
 // Granted verifica si el usuario tiene el permiso
-func Granted(userID string, permission string, props ...interface{}) bool {
-	usr, err := findByID(userID, props...)
+func Granted(userID string, permission string, options ...interface{}) bool {
+	usr, err := findByID(userID, options...)
 	if err != nil {
 		return false
 	}
@@ -139,33 +139,33 @@ func Granted(userID string, permission string, props ...interface{}) bool {
 }
 
 // Disable deshabilita un usuario
-func Disable(userID string, props ...interface{}) error {
-	usr, err := findByID(userID, props...)
+func Disable(userID string, options ...interface{}) error {
+	usr, err := findByID(userID, options...)
 	if err != nil {
 		return err
 	}
 
 	usr.Enabled = false
 
-	_, err = update(usr, props...)
+	_, err = update(usr, options...)
 
 	return err
 }
 
 // Enable habilita un usuario
-func Enable(userID string, props ...interface{}) error {
-	usr, err := findByID(userID, props...)
+func Enable(userID string, options ...interface{}) error {
+	usr, err := findByID(userID, options...)
 	if err != nil {
 		return err
 	}
 
 	usr.Enabled = true
-	_, err = update(usr, props...)
+	_, err = update(usr, options...)
 
 	return err
 }
 
 // Users wrapper para obtener todos los usuarios
-func Users(props ...interface{}) ([]*User, error) {
-	return findAll(props...)
+func Users(options ...interface{}) ([]*User, error) {
+	return findAll(options...)
 }

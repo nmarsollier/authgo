@@ -13,19 +13,19 @@ import (
 
 var collection db.MongoCollection
 
-func NewProps(collection db.MongoCollection) TokenProps {
-	return TokenProps{
+func NewTokenOption(collection db.MongoCollection) TokenOption {
+	return TokenOption{
 		Collection: collection,
 	}
 }
 
-type TokenProps struct {
+type TokenOption struct {
 	Collection db.MongoCollection
 }
 
-func dbCollection(props ...interface{}) (db.MongoCollection, error) {
-	for _, o := range props {
-		if ti, ok := o.(TokenProps); ok {
+func dbCollection(options ...interface{}) (db.MongoCollection, error) {
+	for _, o := range options {
+		if ti, ok := o.(TokenOption); ok {
 			return ti.Collection, nil
 		}
 	}
@@ -61,8 +61,8 @@ func dbCollection(props ...interface{}) (db.MongoCollection, error) {
 }
 
 // insert crea un nuevo token y lo almacena en la db
-func insert(userID primitive.ObjectID, props ...interface{}) (*Token, error) {
-	collection, err := dbCollection(props...)
+func insert(userID primitive.ObjectID, options ...interface{}) (*Token, error) {
+	collection, err := dbCollection(options...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -80,8 +80,8 @@ func insert(userID primitive.ObjectID, props ...interface{}) (*Token, error) {
 }
 
 // findByID busca un token en la db
-func findByID(tokenID string, props ...interface{}) (*Token, error) {
-	collection, err := dbCollection(props...)
+func findByID(tokenID string, options ...interface{}) (*Token, error) {
+	collection, err := dbCollection(options...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -105,8 +105,8 @@ func findByID(tokenID string, props ...interface{}) (*Token, error) {
 }
 
 // delete como deshabilitado un token
-func delete(tokenID primitive.ObjectID, props ...interface{}) error {
-	collection, err := dbCollection(props...)
+func delete(tokenID primitive.ObjectID, options ...interface{}) error {
+	collection, err := dbCollection(options...)
 	if err != nil {
 		glog.Error(err)
 		return err

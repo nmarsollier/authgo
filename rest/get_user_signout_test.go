@@ -38,7 +38,7 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
@@ -62,7 +62,7 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 	tests.ExpectUpdateOneError(tokenCollection, app_errors.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
@@ -95,7 +95,7 @@ func TestGetUserSignOutDbFindError(t *testing.T) {
 	tests.ExpectFindOneError(tokenCollection, app_errors.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewProps(tokenCollection), user.NewProps(userCollection))
+	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
