@@ -6,15 +6,15 @@ import (
 	"github.com/golang/glog"
 )
 
-// SendLogout envía un broadcast a rabbit con logout
+// @Summary		Mensage Rabbit
+// @Description	SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.
+// @Tags			Rabbit
+// @Accept			json
+// @Produce		json
+// @Param			body	body	message	true	"Token deshabilitado"
+// @Router			/rabbit/logout [put]
 //
-//	@Summary		Mensage Rabbit
-//	@Description	SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.
-//	@Tags			Rabbit
-//	@Accept			json
-//	@Produce		json
-//	@Param			body	body	message	true	"Token deshabilitado"
-//	@Router			/rabbit/logout [put]
+// SendLogout envía un broadcast a rabbit con logout
 func SendLogout(token string, ctx ...interface{}) error {
 	send := message{
 		Type:    "logout",
