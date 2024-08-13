@@ -13,20 +13,16 @@ import (
 //	@Tags			Seguridad
 //	@Accept			json
 //	@Produce		json
-//
 //	@Param			body			body	changePasswordBody	true	"Passwords"
-//
 //	@Param			Authorization	header	string				true	"bearer {token}"
-//
 //	@Success		200				"No Content"
-//
 //	@Failure		400				{object}	apperr.ErrValidation	"Bad Request"
-//
-//	@Failure		401				{object}	apperr.OtherErrors		"Unauthorized"
-//	@Failure		404				{object}	apperr.OtherErrors		"Not Found"
-//	@Failure		500				{object}	apperr.OtherErrors		"Internal Server Error"
-//
+//	@Failure		401				{object}	engine.ErrorData		"Unauthorized"
+//	@Failure		404				{object}	engine.ErrorData		"Not Found"
+//	@Failure		500				{object}	engine.ErrorData		"Internal Server Error"
 //	@Router			/v1/user/password [post]
+//
+// Handler function
 func getUserPasswordRoute() {
 	engine.Router().POST(
 		"/v1/user/password",

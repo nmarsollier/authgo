@@ -11,14 +11,22 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type TokenCollection db.MongoCollection
+func TokenCollection(collection db.MongoCollection) TokenColl {
+	return TokenColl{
+		collection: collection,
+	}
+}
+
+type TokenColl struct {
+	collection db.MongoCollection
+}
 
 var collection db.MongoCollection
 
-func dbCollection(ctx ...interface{}) (TokenCollection, error) {
+func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 	for _, o := range ctx {
-		if tc, ok := o.(TokenCollection); ok {
-			return tc, nil
+		if tc, ok := o.(TokenColl); ok {
+			return tc.collection, nil
 		}
 	}
 

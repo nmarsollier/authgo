@@ -7,7 +7,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
@@ -70,7 +69,7 @@ func TestPostUserEnableFindUserError_1(t *testing.T) {
 
 	// User Dao Mocks
 	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(userCollection, apperr.ErrID, 1)
+	tests.ExpectFindOneError(userCollection, user.ErrID, 1)
 
 	// REQUEST
 	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
@@ -103,7 +102,7 @@ func TestPostUserEnableFindUserError_2(t *testing.T) {
 			return nil
 		},
 	).Times(1)
-	tests.ExpectFindOneError(userCollection, apperr.ErrID, 1)
+	tests.ExpectFindOneError(userCollection, user.ErrID, 1)
 
 	// REQUEST
 	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))

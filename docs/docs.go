@@ -85,19 +85,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -147,19 +147,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -205,19 +205,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -252,7 +252,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Error response",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -299,19 +299,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -368,19 +368,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -437,19 +437,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -497,19 +497,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -557,19 +557,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -613,19 +613,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/apperr.OtherErrors"
+                            "$ref": "#/definitions/engine.ErrorData"
                         }
                     }
                 }
@@ -655,7 +655,7 @@ const docTemplate = `{
                 }
             }
         },
-        "apperr.OtherErrors": {
+        "engine.ErrorData": {
             "type": "object",
             "properties": {
                 "error": {

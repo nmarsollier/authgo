@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,14 +13,22 @@ import (
 )
 
 // Define mongo Collection
-type UserCollection db.MongoCollection
+func UserCollection(collection db.MongoCollection) UserColl {
+	return UserColl{
+		collection: collection,
+	}
+}
+
+type UserColl struct {
+	collection db.MongoCollection
+}
 
 var collection db.MongoCollection
 
-func dbCollection(ctx ...interface{}) (UserCollection, error) {
+func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 	for _, p := range ctx {
-		if coll, ok := p.(UserCollection); ok {
-			return coll, nil
+		if coll, ok := p.(UserColl); ok {
+			return coll.collection, nil
 		}
 	}
 
@@ -146,7 +153,7 @@ func findByID(userID string, ctx ...interface{}) (*User, error) {
 	_id, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		glog.Error(err)
-		return nil, apperr.ErrID
+		return nil, ErrID
 	}
 
 	user := &User{}

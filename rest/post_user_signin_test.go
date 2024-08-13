@@ -219,7 +219,7 @@ func TestPostTokenDbError(t *testing.T) {
 
 	// Token Dao Mocks
 	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectInsertOneError(tokenCollection, apperr.ErrID, 1)
+	tests.ExpectInsertOneError(tokenCollection, user.ErrID, 1)
 
 	// REQUEST
 	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))

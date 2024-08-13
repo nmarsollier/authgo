@@ -54,9 +54,9 @@ Registra un nuevo usuario en el sistema.
 | ---- | ----------- | ------ |
 | 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
 | 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
-| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
-| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
-| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
+| 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
+| 404 | Not Found | [engine.ErrorData](#engineerrordata) |
+| 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
 
 ### /v1/user/password
 
@@ -82,9 +82,9 @@ Cambia la contraseña del usuario actual.
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
-| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
-| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
-| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
+| 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
+| 404 | Not Found | [engine.ErrorData](#engineerrordata) |
+| 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
 
 ### /v1/user/signin
 
@@ -109,9 +109,9 @@ Loguea un usuario en el sistema.
 | ---- | ----------- | ------ |
 | 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
 | 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
-| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
-| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
-| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
+| 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
+| 404 | Not Found | [engine.ErrorData](#engineerrordata) |
+| 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
 
 ### /v1/user/signout
 
@@ -135,7 +135,7 @@ Desloguea un usuario en el sistema, invalida el token.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 500 | Error response | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Error response | [engine.ErrorData](#engineerrordata) |
 
 ### /v1/users
 
@@ -160,9 +160,9 @@ Obtiene información de todos los usuarios. El usuario logueado debe tener permi
 | ---- | ----------- | ------ |
 | 200 | Users | [ [rest.UserDataResponse](#restuserdataresponse) ] |
 | 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
-| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
-| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
-| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
+| 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
+| 404 | Not Found | [engine.ErrorData](#engineerrordata) |
+| 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
 
 ### /v1/users/:userID/grant
 
@@ -189,9 +189,9 @@ Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
-| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
-| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
-| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
+| 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
+| 404 | Not Found | [engine.ErrorData](#engineerrordata) |
+| 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
 
 ### /v1/users/:userID/revoke
 
@@ -218,9 +218,9 @@ Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso 
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
-| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
-| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
-| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
+| 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
+| 404 | Not Found | [engine.ErrorData](#engineerrordata) |
+| 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
 
 ### /v1/users/:userId/disable
 
@@ -246,9 +246,9 @@ Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos "a
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
-| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
-| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
-| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
+| 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
+| 404 | Not Found | [engine.ErrorData](#engineerrordata) |
+| 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
 
 ### /v1/users/:userId/enable
 
@@ -274,9 +274,9 @@ Habilita un usuario en el sistema. El usuario logueado debe tener permisos "admi
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
-| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
-| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
-| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
+| 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
+| 404 | Not Found | [engine.ErrorData](#engineerrordata) |
+| 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
 
 ### /v1/users/current
 
@@ -301,9 +301,9 @@ Obtiene información del usuario actual.
 | ---- | ----------- | ------ |
 | 200 | User data | [rest.UserResponse](#restuserresponse) |
 | 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
-| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
-| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
-| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
+| 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
+| 404 | Not Found | [engine.ErrorData](#engineerrordata) |
+| 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
 
 ---
 ### Models
@@ -321,7 +321,7 @@ Obtiene información del usuario actual.
 | ---- | ---- | ----------- | -------- |
 | messages | [ [apperr.ErrField](#apperrerrfield) ] |  | No |
 
-#### apperr.OtherErrors
+#### engine.ErrorData
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

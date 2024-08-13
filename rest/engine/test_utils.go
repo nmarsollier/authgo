@@ -1,8 +1,6 @@
 package engine
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,8 +15,6 @@ func TestRouter(ctx ...interface{}) *gin.Engine {
 			c.Next()
 		})
 	}
-	fmt.Println("Paso 0")
-
 	return engine
 }
 
@@ -26,7 +22,6 @@ func TestRouter(ctx ...interface{}) *gin.Engine {
 // En prod este contexto esta vacio.
 func TestCtx(c *gin.Context) []interface{} {
 	var ctx []interface{}
-	fmt.Println("Paso 1")
 	if mocks, ok := c.Get("mock_ctx"); ok {
 		ctx = mocks.([]interface{})
 	}

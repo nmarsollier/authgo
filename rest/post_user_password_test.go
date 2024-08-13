@@ -192,7 +192,7 @@ func TestPostUserPasswordUpdateFails(t *testing.T) {
 		},
 	).Times(1)
 
-	tests.ExpectUpdateOneError(userCollection, apperr.ErrID, 1)
+	tests.ExpectUpdateOneError(userCollection, user.ErrID, 1)
 
 	// REQUEST
 	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))

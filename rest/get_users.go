@@ -23,13 +23,13 @@ type UserDataResponse struct {
 //	@Produce		json
 //	@Param			Authorization	header		string					true	"bearer {token}"
 //	@Success		200				{array}		UserDataResponse		"Users"
-//
 //	@Failure		400				{object}	apperr.ErrValidation	"Bad Request"
-//	@Failure		401				{object}	apperr.OtherErrors		"Unauthorized"
-//	@Failure		404				{object}	apperr.OtherErrors		"Not Found"
-//	@Failure		500				{object}	apperr.OtherErrors		"Internal Server Error"
-//
+//	@Failure		401				{object}	engine.ErrorData		"Unauthorized"
+//	@Failure		404				{object}	engine.ErrorData		"Not Found"
+//	@Failure		500				{object}	engine.ErrorData		"Internal Server Error"
 //	@Router			/v1/users [get]
+//
+// Handler function
 func getUsersRoute() {
 	engine.Router().GET(
 		"/v1/users",

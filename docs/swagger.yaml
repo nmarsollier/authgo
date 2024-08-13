@@ -14,7 +14,7 @@ definitions:
           $ref: '#/definitions/apperr.ErrField'
         type: array
     type: object
-  apperr.OtherErrors:
+  engine.ErrorData:
     properties:
       error:
         type: string
@@ -159,15 +159,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Registrar Usuario
       tags:
       - Seguridad
@@ -200,15 +200,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Cambiar Password
       tags:
       - Seguridad
@@ -238,15 +238,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Login
       tags:
       - Seguridad
@@ -269,7 +269,7 @@ paths:
         "500":
           description: Error response
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Logout
       tags:
       - Seguridad
@@ -301,15 +301,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Listar Usuarios
       tags:
       - Seguridad
@@ -348,15 +348,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Haiblitar permisos
       tags:
       - Seguridad
@@ -395,15 +395,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Quitar permisos
       tags:
       - Seguridad
@@ -436,15 +436,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Deshabilitar Usuario
       tags:
       - Seguridad
@@ -477,15 +477,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Enable User
       tags:
       - Seguridad
@@ -514,15 +514,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/apperr.OtherErrors'
+            $ref: '#/definitions/engine.ErrorData'
       summary: Usuario Actual
       tags:
       - Seguridad

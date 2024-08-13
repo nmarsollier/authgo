@@ -1,8 +1,6 @@
 package rest
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
@@ -19,7 +17,7 @@ import (
 //
 //	@Success		200				"No Content"
 //
-//	@Failure		500				{object}	apperr.OtherErrors	"Error response"
+//	@Failure		500				{object}	engine.ErrorData	"Error response"
 //	@Router			/v1/user/signout [get]
 func getUserSignOutRoute() {
 	engine.Router().GET(
@@ -30,7 +28,6 @@ func getUserSignOutRoute() {
 }
 
 func signOut(c *gin.Context) {
-	fmt.Println("Paso 2")
 	tokenString, _ := engine.HeaderAuthorization(c)
 
 	ctx := engine.TestCtx(c)
