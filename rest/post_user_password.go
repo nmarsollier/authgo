@@ -20,18 +20,17 @@ import (
 //
 //	@Success		200				"No Content"
 //
-//	@Failure		400				{object}	app_errors.ErrValidation	"Bad Request"
+//	@Failure		400				{object}	apperr.ErrValidation	"Bad Request"
 //
-//	@Failure		401				{object}	app_errors.OtherErrors		"Unauthorized"
-//	@Failure		404				{object}	app_errors.OtherErrors		"Not Found"
-//	@Failure		500				{object}	app_errors.OtherErrors		"Internal Server Error"
+//	@Failure		401				{object}	apperr.OtherErrors		"Unauthorized"
+//	@Failure		404				{object}	apperr.OtherErrors		"Not Found"
+//	@Failure		500				{object}	apperr.OtherErrors		"Internal Server Error"
 //
 //	@Router			/v1/user/password [post]
 func getUserPasswordRoute() {
 	engine.Router().POST(
 		"/v1/user/password",
 		engine.ValidateLoggedIn,
-		validateChangePasswordBody,
 		changePassword,
 	)
 }
@@ -42,27 +41,16 @@ type changePasswordBody struct {
 }
 
 func changePassword(c *gin.Context) {
-	body := c.MustGet("data").(changePasswordBody)
-
-	var extraParams []interface{}
-	if mocks, ok := c.Get("mocks"); ok {
-		extraParams = mocks.([]interface{})
-	}
-
-	payload := engine.HeaderToken(c)
-	if err := user.ChangePassword(payload.UserID.Hex(), body.Current, body.New, extraParams...); err != nil {
-		engine.AbortWithError(c, err)
-		return
-	}
-}
-
-func validateChangePasswordBody(c *gin.Context) {
 	body := changePasswordBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
 		engine.AbortWithError(c, err)
 		return
 	}
+	token := engine.HeaderToken(c)
 
-	c.Set("data", body)
-	c.Next()
+	ctx := engine.TestCtx(c)
+	if err := user.ChangePassword(token.UserID.Hex(), body.Current, body.New, ctx...); err != nil {
+		engine.AbortWithError(c, err)
+		return
+	}
 }

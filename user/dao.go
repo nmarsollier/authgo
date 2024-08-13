@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,22 +14,14 @@ import (
 )
 
 // Define mongo Collection
+type UserCollection db.MongoCollection
+
 var collection db.MongoCollection
 
-func NewOptions(collection db.MongoCollection) UserOption {
-	return UserOption{
-		Collection: collection,
-	}
-}
-
-type UserOption struct {
-	Collection db.MongoCollection
-}
-
-func dbCollection(ops ...interface{}) (db.MongoCollection, error) {
-	for _, p := range ops {
-		if ti, ok := p.(UserOption); ok {
-			return ti.Collection, nil
+func dbCollection(ctx ...interface{}) (UserCollection, error) {
+	for _, p := range ctx {
+		if coll, ok := p.(UserCollection); ok {
+			return coll, nil
 		}
 	}
 
@@ -60,13 +52,13 @@ func dbCollection(ops ...interface{}) (db.MongoCollection, error) {
 	return collection, nil
 }
 
-func insert(user *User, options ...interface{}) (*User, error) {
+func insert(user *User, ctx ...interface{}) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
 		glog.Error(err)
 		return nil, err
 	}
 
-	var collection, err = dbCollection(options...)
+	var collection, err = dbCollection(ctx...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -80,13 +72,13 @@ func insert(user *User, options ...interface{}) (*User, error) {
 	return user, nil
 }
 
-func update(user *User, options ...interface{}) (*User, error) {
+func update(user *User, ctx ...interface{}) (*User, error) {
 	if err := user.ValidateSchema(); err != nil {
 		glog.Error(err)
 		return nil, err
 	}
 
-	var collection, err = dbCollection(options...)
+	var collection, err = dbCollection(ctx...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -116,8 +108,8 @@ func update(user *User, options ...interface{}) (*User, error) {
 }
 
 // FindAll devuelve todos los usuarios
-func findAll(options ...interface{}) ([]*User, error) {
-	var collection, err = dbCollection(options...)
+func findAll(ctx ...interface{}) ([]*User, error) {
+	var collection, err = dbCollection(ctx...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -144,8 +136,8 @@ func findAll(options ...interface{}) ([]*User, error) {
 }
 
 // FindByID lee un usuario desde la db
-func findByID(userID string, options ...interface{}) (*User, error) {
-	var collection, err = dbCollection(options...)
+func findByID(userID string, ctx ...interface{}) (*User, error) {
+	var collection, err = dbCollection(ctx...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -154,7 +146,7 @@ func findByID(userID string, options ...interface{}) (*User, error) {
 	_id, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		glog.Error(err)
-		return nil, app_errors.ErrID
+		return nil, apperr.ErrID
 	}
 
 	user := &User{}
@@ -168,8 +160,8 @@ func findByID(userID string, options ...interface{}) (*User, error) {
 }
 
 // FindByLogin lee un usuario desde la db
-func findByLogin(login string, options ...interface{}) (*User, error) {
-	var collection, err = dbCollection(options...)
+func findByLogin(login string, ctx ...interface{}) (*User, error) {
+	var collection, err = dbCollection(ctx...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err

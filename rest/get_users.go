@@ -21,13 +21,13 @@ type UserDataResponse struct {
 //	@Tags			Seguridad
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string						true	"bearer {token}"
-//	@Success		200				{array}		UserDataResponse			"Users"
+//	@Param			Authorization	header		string					true	"bearer {token}"
+//	@Success		200				{array}		UserDataResponse		"Users"
 //
-//	@Failure		400				{object}	app_errors.ErrValidation	"Bad Request"
-//	@Failure		401				{object}	app_errors.OtherErrors		"Unauthorized"
-//	@Failure		404				{object}	app_errors.OtherErrors		"Not Found"
-//	@Failure		500				{object}	app_errors.OtherErrors		"Internal Server Error"
+//	@Failure		400				{object}	apperr.ErrValidation	"Bad Request"
+//	@Failure		401				{object}	apperr.OtherErrors		"Unauthorized"
+//	@Failure		404				{object}	apperr.OtherErrors		"Not Found"
+//	@Failure		500				{object}	apperr.OtherErrors		"Internal Server Error"
 //
 //	@Router			/v1/users [get]
 func getUsersRoute() {
@@ -39,12 +39,8 @@ func getUsersRoute() {
 }
 
 func users(c *gin.Context) {
-	var extraParams []interface{}
-	if mocks, ok := c.Get("mocks"); ok {
-		extraParams = mocks.([]interface{})
-	}
-
-	user, err := user.Users(extraParams...)
+	ctx := engine.TestCtx(c)
+	user, err := user.Users(ctx...)
 
 	if err != nil {
 		engine.AbortWithError(c, err)

@@ -8,7 +8,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
@@ -55,7 +55,7 @@ func TestPostUserPasswordHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
@@ -73,7 +73,7 @@ func TestPostUserPasswordMissingCurrent(t *testing.T) {
 	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{New: "456"}, tokenString)
@@ -95,7 +95,7 @@ func TestPostUserPasswordMissingNew(t *testing.T) {
 	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123"}, tokenString)
@@ -132,7 +132,7 @@ func TestPostUserPasswordWrongCurrent(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "456", New: "456"}, tokenString)
@@ -158,10 +158,10 @@ func TestPostUserPasswordUserNotFound(t *testing.T) {
 
 	// User Dao Mocks
 	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(userCollection, app_errors.NotFound, 1)
+	tests.ExpectFindOneError(userCollection, apperr.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
@@ -192,10 +192,10 @@ func TestPostUserPasswordUpdateFails(t *testing.T) {
 		},
 	).Times(1)
 
-	tests.ExpectUpdateOneError(userCollection, app_errors.ErrID, 1)
+	tests.ExpectUpdateOneError(userCollection, apperr.ErrID, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)

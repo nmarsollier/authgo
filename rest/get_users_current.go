@@ -20,13 +20,13 @@ type UserResponse struct {
 //	@Tags			Seguridad
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string						true	"bearer {token}"
-//	@Success		200				{object}	UserResponse				"User data"
+//	@Param			Authorization	header		string					true	"bearer {token}"
+//	@Success		200				{object}	UserResponse			"User data"
 //
-//	@Failure		400				{object}	app_errors.ErrValidation	"Bad Request"
-//	@Failure		401				{object}	app_errors.OtherErrors		"Unauthorized"
-//	@Failure		404				{object}	app_errors.OtherErrors		"Not Found"
-//	@Failure		500				{object}	app_errors.OtherErrors		"Internal Server Error"
+//	@Failure		400				{object}	apperr.ErrValidation	"Bad Request"
+//	@Failure		401				{object}	apperr.OtherErrors		"Unauthorized"
+//	@Failure		404				{object}	apperr.OtherErrors		"Not Found"
+//	@Failure		500				{object}	apperr.OtherErrors		"Internal Server Error"
 //
 //	@Router			/v1/users/current [get]
 func getUsersCurrentRoute() {
@@ -38,14 +38,10 @@ func getUsersCurrentRoute() {
 }
 
 func currentUser(c *gin.Context) {
-	var extraParams []interface{}
-	if mocks, ok := c.Get("mocks"); ok {
-		extraParams = mocks.([]interface{})
-	}
-
 	token := engine.HeaderToken(c)
 
-	user, err := user.Get(token.UserID.Hex(), extraParams...)
+	ctx := engine.TestCtx(c)
+	user, err := user.Get(token.UserID.Hex(), ctx...)
 	if err != nil {
 		engine.AbortWithError(c, err)
 		return

@@ -14,33 +14,32 @@ import (
 //	@Accept			json
 //	@Produce		json
 //
-//	@Param			body	body		user.SignUpRequest			true	"Informacion de ususario"
+//	@Param			body	body		user.SignUpRequest		true	"Informacion de ususario"
 //
-//	@Success		200		{object}	tokenResponse				"User Token"
+//	@Success		200		{object}	tokenResponse			"User Token"
 //
-//	@Failure		400		{object}	app_errors.ErrValidation	"Bad Request"
-//	@Failure		401		{object}	app_errors.OtherErrors		"Unauthorized"
-//	@Failure		404		{object}	app_errors.OtherErrors		"Not Found"
-//	@Failure		500		{object}	app_errors.OtherErrors		"Internal Server Error"
+//	@Failure		400		{object}	apperr.ErrValidation	"Bad Request"
+//	@Failure		401		{object}	apperr.OtherErrors		"Unauthorized"
+//	@Failure		404		{object}	apperr.OtherErrors		"Not Found"
+//	@Failure		500		{object}	apperr.OtherErrors		"Internal Server Error"
 //
 //	@Router			/v1/user [post]
 func postUsersRoute() {
 	engine.Router().POST(
 		"/v1/user",
-		validateSignUpBody,
 		signUp,
 	)
 }
 
 func signUp(c *gin.Context) {
-	body := c.MustGet("data").(user.SignUpRequest)
-
-	var extraParams []interface{}
-	if mocks, ok := c.Get("mocks"); ok {
-		extraParams = mocks.([]interface{})
+	body := user.SignUpRequest{}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		engine.AbortWithError(c, err)
+		return
 	}
 
-	token, err := user.SignUp(&body, extraParams...)
+	ctx := engine.TestCtx(c)
+	token, err := user.SignUp(&body, ctx...)
 	if err != nil {
 		engine.AbortWithError(c, err)
 		return
@@ -49,15 +48,4 @@ func signUp(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"token": token,
 	})
-}
-
-func validateSignUpBody(c *gin.Context) {
-	body := user.SignUpRequest{}
-	if err := c.ShouldBindJSON(&body); err != nil {
-		engine.AbortWithError(c, err)
-		return
-	}
-
-	c.Set("data", body)
-	c.Next()
 }

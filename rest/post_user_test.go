@@ -8,7 +8,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
@@ -28,7 +28,7 @@ func TestPostUserInHappyPath(t *testing.T) {
 	tests.ExpectTokenInsertOne(tokenCollection, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -100,7 +100,7 @@ func TestPostUserDatabaseError(t *testing.T) {
 	tests.ExpectInsertOneError(userCollection, tests.TestOtherDbError, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewOptions(userCollection))
+	r := engine.TestRouter(user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -118,7 +118,7 @@ func TestPostUserAlreayExist(t *testing.T) {
 	tests.ExpectInsertOneError(userCollection, tests.TestIsUniqueError, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewOptions(userCollection))
+	r := engine.TestRouter(user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -136,10 +136,10 @@ func TestPostTokenDatabaseError(t *testing.T) {
 	tests.ExpectUserInsertOne(userCollection, 1)
 
 	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectInsertOneError(tokenCollection, app_errors.Internal, 1)
+	tests.ExpectInsertOneError(tokenCollection, apperr.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewOptions(userCollection), token.NewTokenOption(tokenCollection))
+	r := engine.TestRouter(user.UserCollection(userCollection), token.TokenCollection(tokenCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")

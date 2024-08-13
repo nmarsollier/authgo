@@ -7,7 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
@@ -63,10 +63,10 @@ func TestPostUserGrantHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}, UserId: userData.ID.Hex()}, tokenString)
+	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -83,13 +83,13 @@ func TestPostUserGrantFindUserError_1(t *testing.T) {
 
 	// User Dao Mocks
 	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(userCollection, app_errors.NotFound, 1)
+	tests.ExpectFindOneError(userCollection, apperr.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}, UserId: userData.ID.Hex()}, tokenString)
+	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
 	tests.AssertUnauthorized(t, w)
@@ -119,13 +119,13 @@ func TestPostUserGrantFindUserError_2(t *testing.T) {
 		},
 	).Times(1)
 
-	tests.ExpectFindOneError(userCollection, app_errors.NotFound, 1)
+	tests.ExpectFindOneError(userCollection, apperr.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}, UserId: userData.ID.Hex()}, tokenString)
+	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
 	tests.AssertDocumentNotFound(t, w)
@@ -154,10 +154,10 @@ func TestPostUserGrantNotAdmin(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}, UserId: userData.ID.Hex()}, tokenString)
+	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
 	tests.AssertUnauthorized(t, w)

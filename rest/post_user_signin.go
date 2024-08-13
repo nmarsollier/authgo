@@ -14,20 +14,19 @@ import (
 //	@Accept			json
 //	@Produce		json
 //
-//	@Param			body	body		user.SignInRequest			true	"Sign in information"
+//	@Param			body	body		user.SignInRequest		true	"Sign in information"
 //
-//	@Success		200		{object}	tokenResponse				"User Token"
+//	@Success		200		{object}	tokenResponse			"User Token"
 //
-//	@Failure		400		{object}	app_errors.ErrValidation	"Bad Request"
-//	@Failure		401		{object}	app_errors.OtherErrors		"Unauthorized"
-//	@Failure		404		{object}	app_errors.OtherErrors		"Not Found"
-//	@Failure		500		{object}	app_errors.OtherErrors		"Internal Server Error"
+//	@Failure		400		{object}	apperr.ErrValidation	"Bad Request"
+//	@Failure		401		{object}	apperr.OtherErrors		"Unauthorized"
+//	@Failure		404		{object}	apperr.OtherErrors		"Not Found"
+//	@Failure		500		{object}	apperr.OtherErrors		"Internal Server Error"
 //
 //	@Router			/v1/user/signin [post]
 func postUserSignInRoute() {
 	engine.Router().POST(
 		"/v1/user/signin",
-		validateSignInBody,
 		signIn,
 	)
 }
@@ -37,14 +36,14 @@ type tokenResponse struct {
 }
 
 func signIn(c *gin.Context) {
-	login := c.MustGet("data").(user.SignInRequest)
-
-	var extraParams []interface{}
-	if mocks, ok := c.Get("mocks"); ok {
-		extraParams = mocks.([]interface{})
+	login := user.SignInRequest{}
+	if err := c.ShouldBindJSON(&login); err != nil {
+		engine.AbortWithError(c, err)
+		return
 	}
 
-	tokenString, err := user.SignIn(login, extraParams...)
+	ctx := engine.TestCtx(c)
+	tokenString, err := user.SignIn(login, ctx...)
 	if err != nil {
 		engine.AbortWithError(c, err)
 		return
@@ -53,15 +52,4 @@ func signIn(c *gin.Context) {
 	c.JSON(200, tokenResponse{
 		Token: tokenString,
 	})
-}
-
-func validateSignInBody(c *gin.Context) {
-	login := user.SignInRequest{}
-	if err := c.ShouldBindJSON(&login); err != nil {
-		engine.AbortWithError(c, err)
-		return
-	}
-
-	c.Set("data", login)
-	c.Next()
 }

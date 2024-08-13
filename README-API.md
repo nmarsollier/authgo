@@ -53,10 +53,10 @@ Registra un nuevo usuario en el sistema.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
+| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
+| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
 
 ### /v1/user/password
 
@@ -81,10 +81,10 @@ Cambia la contraseña del usuario actual.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
+| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
+| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
 
 ### /v1/user/signin
 
@@ -108,10 +108,10 @@ Loguea un usuario en el sistema.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
+| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
+| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
 
 ### /v1/user/signout
 
@@ -135,7 +135,7 @@ Desloguea un usuario en el sistema, invalida el token.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 500 | Error response | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 500 | Error response | [apperr.OtherErrors](#apperrothererrors) |
 
 ### /v1/users
 
@@ -159,10 +159,10 @@ Obtiene información de todos los usuarios. El usuario logueado debe tener permi
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | Users | [ [rest.UserDataResponse](#restuserdataresponse) ] |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
+| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
+| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
 
 ### /v1/users/:userID/grant
 
@@ -188,10 +188,10 @@ Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
+| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
+| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
 
 ### /v1/users/:userID/revoke
 
@@ -217,10 +217,10 @@ Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
+| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
+| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
 
 ### /v1/users/:userId/disable
 
@@ -245,10 +245,10 @@ Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos "a
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
+| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
+| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
 
 ### /v1/users/:userId/enable
 
@@ -273,10 +273,10 @@ Habilita un usuario en el sistema. El usuario logueado debe tener permisos "admi
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
+| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
+| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
 
 ### /v1/users/current
 
@@ -300,28 +300,28 @@ Obtiene información del usuario actual.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | User data | [rest.UserResponse](#restuserresponse) |
-| 400 | Bad Request | [app_errors.ErrValidation](#app_errorserrvalidation) |
-| 401 | Unauthorized | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 404 | Not Found | [app_errors.OtherErrors](#app_errorsothererrors) |
-| 500 | Internal Server Error | [app_errors.OtherErrors](#app_errorsothererrors) |
+| 400 | Bad Request | [apperr.ErrValidation](#apperrerrvalidation) |
+| 401 | Unauthorized | [apperr.OtherErrors](#apperrothererrors) |
+| 404 | Not Found | [apperr.OtherErrors](#apperrothererrors) |
+| 500 | Internal Server Error | [apperr.OtherErrors](#apperrothererrors) |
 
 ---
 ### Models
 
-#### app_errors.ErrField
+#### apperr.ErrField
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | message | string |  | No |
 | path | string |  | No |
 
-#### app_errors.ErrValidation
+#### apperr.ErrValidation
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| messages | [ [app_errors.ErrField](#app_errorserrfield) ] |  | No |
+| messages | [ [apperr.ErrField](#apperrerrfield) ] |  | No |
 
-#### app_errors.OtherErrors
+#### apperr.OtherErrors
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -365,7 +365,6 @@ Obtiene información del usuario actual.
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | permissions | [ string ] |  | Yes |
-| user | string |  | Yes |
 
 #### rest.tokenResponse
 

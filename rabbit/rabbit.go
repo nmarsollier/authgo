@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 
 	"github.com/golang/glog"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/env"
 	"github.com/streadway/amqp"
 )
 
 // ErrChannelNotInitialized Rabbit channel could not be initialized
-var ErrChannelNotInitialized = app_errors.NewCustom(400, "Channel not initialized")
+var ErrChannelNotInitialized = apperr.NewCustom(400, "Channel not initialized")
 
 var channel *amqp.Channel
 
@@ -23,8 +23,8 @@ type rabbitImpl struct {
 
 var currentRabbit Rabbit
 
-func Get(options ...interface{}) Rabbit {
-	for _, o := range options {
+func Get(ctx ...interface{}) Rabbit {
+	for _, o := range ctx {
 		if ti, ok := o.(Rabbit); ok {
 			return ti
 		}

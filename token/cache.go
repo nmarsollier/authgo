@@ -3,7 +3,7 @@ package token
 import (
 	"time"
 
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	gocache "github.com/patrickmn/go-cache"
 )
 
@@ -27,7 +27,7 @@ func cacheGet(tokenString string) (*Token, error) {
 		}
 	}
 
-	return nil, app_errors.NotFound
+	return nil, apperr.NotFound
 }
 
 // Remove elimia un token del cache

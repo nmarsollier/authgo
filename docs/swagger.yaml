@@ -1,20 +1,20 @@
 basePath: /v1
 definitions:
-  app_errors.ErrField:
+  apperr.ErrField:
     properties:
       message:
         type: string
       path:
         type: string
     type: object
-  app_errors.ErrValidation:
+  apperr.ErrValidation:
     properties:
       messages:
         items:
-          $ref: '#/definitions/app_errors.ErrField'
+          $ref: '#/definitions/apperr.ErrField'
         type: array
     type: object
-  app_errors.OtherErrors:
+  apperr.OtherErrors:
     properties:
       error:
         type: string
@@ -74,11 +74,8 @@ definitions:
         items:
           type: string
         type: array
-      user:
-        type: string
     required:
     - permissions
-    - user
     type: object
   rest.tokenResponse:
     properties:
@@ -158,19 +155,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/app_errors.ErrValidation'
+            $ref: '#/definitions/apperr.ErrValidation'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Registrar Usuario
       tags:
       - Seguridad
@@ -199,19 +196,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/app_errors.ErrValidation'
+            $ref: '#/definitions/apperr.ErrValidation'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Cambiar Password
       tags:
       - Seguridad
@@ -237,19 +234,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/app_errors.ErrValidation'
+            $ref: '#/definitions/apperr.ErrValidation'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Login
       tags:
       - Seguridad
@@ -272,7 +269,7 @@ paths:
         "500":
           description: Error response
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Logout
       tags:
       - Seguridad
@@ -300,19 +297,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/app_errors.ErrValidation'
+            $ref: '#/definitions/apperr.ErrValidation'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Listar Usuarios
       tags:
       - Seguridad
@@ -347,19 +344,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/app_errors.ErrValidation'
+            $ref: '#/definitions/apperr.ErrValidation'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Haiblitar permisos
       tags:
       - Seguridad
@@ -394,19 +391,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/app_errors.ErrValidation'
+            $ref: '#/definitions/apperr.ErrValidation'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Quitar permisos
       tags:
       - Seguridad
@@ -435,19 +432,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/app_errors.ErrValidation'
+            $ref: '#/definitions/apperr.ErrValidation'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Deshabilitar Usuario
       tags:
       - Seguridad
@@ -476,19 +473,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/app_errors.ErrValidation'
+            $ref: '#/definitions/apperr.ErrValidation'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Enable User
       tags:
       - Seguridad
@@ -513,19 +510,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/app_errors.ErrValidation'
+            $ref: '#/definitions/apperr.ErrValidation'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/app_errors.OtherErrors'
+            $ref: '#/definitions/apperr.OtherErrors'
       summary: Usuario Actual
       tags:
       - Seguridad

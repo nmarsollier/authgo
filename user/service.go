@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 )
 
 // SignUpRequest es un nuevo usuario
@@ -13,20 +13,20 @@ type SignUpRequest struct {
 }
 
 // SignUp is the controller to signup new users
-func SignUp(user *SignUpRequest, options ...interface{}) (string, error) {
+func SignUp(user *SignUpRequest, ctx ...interface{}) (string, error) {
 	newUser := NewUser()
 	newUser.Login = user.Login
 	newUser.Name = user.Name
 	newUser.SetPasswordText(user.Password)
 
-	newUser, err := insert(newUser, options...)
+	newUser, err := insert(newUser, ctx...)
 	if err != nil {
 		return "", err
 	}
 
-	newToken, err := token.Create(newUser.ID, options...)
+	newToken, err := token.Create(newUser.ID, ctx...)
 	if err != nil {
-		return "", app_errors.Internal
+		return "", apperr.Internal
 	}
 
 	return token.Encode(newToken)
@@ -38,45 +38,45 @@ type SignInRequest struct {
 }
 
 // SignIn is the controller to sign in users
-func SignIn(data SignInRequest, options ...interface{}) (string, error) {
-	user, err := findByLogin(data.Login, options...)
+func SignIn(data SignInRequest, ctx ...interface{}) (string, error) {
+	user, err := findByLogin(data.Login, ctx...)
 	if err != nil {
 		return "", err
 	}
 
 	if !user.Enabled {
-		return "", app_errors.Unauthorized
+		return "", apperr.Unauthorized
 	}
 
 	if err = user.ValidatePassword(data.Password); err != nil {
 		return "", err
 	}
 
-	newToken, err := token.Create(user.ID, options...)
+	newToken, err := token.Create(user.ID, ctx...)
 	if err != nil {
-		return "", app_errors.Unauthorized
+		return "", apperr.Unauthorized
 	}
 
 	return token.Encode(newToken)
 }
 
 // Get wrapper para obtener un usuario
-func Get(userID string, options ...interface{}) (*User, error) {
-	user, err := findByID(userID, options...)
+func Get(userID string, ctx ...interface{}) (*User, error) {
+	user, err := findByID(userID, ctx...)
 	if err != nil {
 		return nil, err
 	}
 
 	if !user.Enabled {
-		return nil, app_errors.NotFound
+		return nil, apperr.NotFound
 	}
 
 	return user, err
 }
 
 // ChangePassword cambiar la contraseña del usuario indicado
-func ChangePassword(userID string, current string, newPassword string, options ...interface{}) error {
-	user, err := findByID(userID, options...)
+func ChangePassword(userID string, current string, newPassword string, ctx ...interface{}) error {
+	user, err := findByID(userID, ctx...)
 	if err != nil {
 		return err
 	}
@@ -89,14 +89,14 @@ func ChangePassword(userID string, current string, newPassword string, options .
 		return err
 	}
 
-	_, err = update(user, options...)
+	_, err = update(user, ctx...)
 
 	return err
 }
 
 // Grant Le habilita los permisos enviados por parametros
-func Grant(userID string, permissions []string, options ...interface{}) error {
-	user, err := findByID(userID, options...)
+func Grant(userID string, permissions []string, ctx ...interface{}) error {
+	user, err := findByID(userID, ctx...)
 	if err != nil {
 		return err
 	}
@@ -104,14 +104,14 @@ func Grant(userID string, permissions []string, options ...interface{}) error {
 	for _, value := range permissions {
 		user.Grant(value)
 	}
-	_, err = update(user, options...)
+	_, err = update(user, ctx...)
 
 	return err
 }
 
 // Revoke Le revoca los permisos enviados por parametros
-func Revoke(userID string, permissions []string, options ...interface{}) error {
-	user, err := findByID(userID, options...)
+func Revoke(userID string, permissions []string, ctx ...interface{}) error {
+	user, err := findByID(userID, ctx...)
 	if err != nil {
 		return err
 	}
@@ -119,14 +119,14 @@ func Revoke(userID string, permissions []string, options ...interface{}) error {
 	for _, value := range permissions {
 		user.Revoke(value)
 	}
-	_, err = update(user, options...)
+	_, err = update(user, ctx...)
 
 	return err
 }
 
 // Granted verifica si el usuario tiene el permiso
-func Granted(userID string, permission string, options ...interface{}) bool {
-	usr, err := findByID(userID, options...)
+func Granted(userID string, permission string, ctx ...interface{}) bool {
+	usr, err := findByID(userID, ctx...)
 	if err != nil {
 		return false
 	}
@@ -135,33 +135,33 @@ func Granted(userID string, permission string, options ...interface{}) bool {
 }
 
 // Disable deshabilita un usuario
-func Disable(userID string, options ...interface{}) error {
-	usr, err := findByID(userID, options...)
+func Disable(userID string, ctx ...interface{}) error {
+	usr, err := findByID(userID, ctx...)
 	if err != nil {
 		return err
 	}
 
 	usr.Enabled = false
 
-	_, err = update(usr, options...)
+	_, err = update(usr, ctx...)
 
 	return err
 }
 
 // Enable habilita un usuario
-func Enable(userID string, options ...interface{}) error {
-	usr, err := findByID(userID, options...)
+func Enable(userID string, ctx ...interface{}) error {
+	usr, err := findByID(userID, ctx...)
 	if err != nil {
 		return err
 	}
 
 	usr.Enabled = true
-	_, err = update(usr, options...)
+	_, err = update(usr, ctx...)
 
 	return err
 }
 
 // Users wrapper para obtener todos los usuarios
-func Users(options ...interface{}) ([]*User, error) {
-	return findAll(options...)
+func Users(ctx ...interface{}) ([]*User, error) {
+	return findAll(ctx...)
 }

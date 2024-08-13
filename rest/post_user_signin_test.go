@@ -8,7 +8,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
@@ -45,7 +45,7 @@ func TestPostSignInHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -82,7 +82,7 @@ func TestPostSignInWrongPassword(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewOptions(userCollection))
+	r := engine.TestRouter(user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: "wrong"}, "")
@@ -117,7 +117,7 @@ func TestPostSignInUserDisabled(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewOptions(userCollection))
+	r := engine.TestRouter(user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -166,10 +166,10 @@ func TestPostSignInUserDbError(t *testing.T) {
 	// User Dao Mocks
 	ctrl := gomock.NewController(t)
 	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(userCollection, app_errors.Internal, 1)
+	tests.ExpectFindOneError(userCollection, apperr.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewOptions(userCollection))
+	r := engine.TestRouter(user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -191,7 +191,7 @@ func TestPostSignInUserNotFound(t *testing.T) {
 	tests.ExpectFindOneError(userCollection, mongo.ErrNoDocuments, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.NewOptions(userCollection))
+	r := engine.TestRouter(user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -219,10 +219,10 @@ func TestPostTokenDbError(t *testing.T) {
 
 	// Token Dao Mocks
 	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectInsertOneError(tokenCollection, app_errors.ErrID, 1)
+	tests.ExpectInsertOneError(tokenCollection, apperr.ErrID, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")

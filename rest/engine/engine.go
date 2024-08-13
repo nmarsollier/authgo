@@ -7,24 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
 	_ "github.com/nmarsollier/authgo/docs"
-	"github.com/swaggo/files"
+	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 var engine *gin.Engine = nil
-
-func TestRouter(options ...interface{}) *gin.Engine {
-	engine = nil
-	Router()
-	if len(options) > 0 {
-		engine.Use(func(c *gin.Context) {
-			c.Set("mocks", options)
-			c.Next()
-		})
-	}
-
-	return engine
-}
 
 func Router() *gin.Engine {
 	if engine == nil {
@@ -48,4 +35,9 @@ func Router() *gin.Engine {
 	}
 
 	return engine
+}
+
+func AbortWithError(c *gin.Context, err error) {
+	c.Error(err)
+	c.Abort()
 }

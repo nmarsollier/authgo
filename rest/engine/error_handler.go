@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
@@ -17,11 +17,6 @@ func ErrorHandler(c *gin.Context) {
 	handleErrorIfNeeded(c)
 }
 
-func AbortWithError(c *gin.Context, err error) {
-	c.Error(err)
-	c.Abort()
-}
-
 func handleErrorIfNeeded(c *gin.Context) {
 	err := c.Errors.Last()
 	if err == nil {
@@ -30,22 +25,22 @@ func handleErrorIfNeeded(c *gin.Context) {
 
 	// Compruebo errores bien conocidos
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		handleCustom(c, app_errors.NotFound)
+		setError(c, apperr.NotFound)
 		return
 	}
 	if errors.Is(err, topology.ErrServerSelectionTimeout) || errors.Is(err, topology.ErrTopologyClosed) {
 		// Errores de conexión con MongoDB
 		db.CheckError(err)
-		handleCustom(c, app_errors.Internal)
+		setError(c, apperr.Internal)
 		return
 	}
 
 	// Compruebo tipos de errores conocidos
 	switch value := err.Err.(type) {
-	case app_errors.Custom:
+	case apperr.Custom:
 		// Son validaciones hechas con NewCustom
-		handleCustom(c, value)
-	case app_errors.Validation:
+		setError(c, value)
+	case apperr.Validation:
 		// Son validaciones hechas con NewValidation
 		c.JSON(400, err)
 	case validator.ValidationErrors:
@@ -54,23 +49,23 @@ func handleErrorIfNeeded(c *gin.Context) {
 	case mongo.WriteException:
 		// Errores de mongo
 		if db.IsUniqueKeyError(value) {
-			handleCustom(c, app_errors.AlreadyExist)
+			setError(c, apperr.AlreadyExist)
 		} else {
-			handleCustom(c, app_errors.Internal)
+			setError(c, apperr.Internal)
 		}
 	case error:
 		// Otros errores
-		c.JSON(500, app_errors.OtherErrors{
+		c.JSON(500, apperr.OtherErrors{
 			Error: value.Error(),
 		})
 	default:
 		// No se sabe que es, devolvemos internal
-		handleCustom(c, app_errors.Internal)
+		setError(c, apperr.Internal)
 	}
 }
 
 func handleValidationError(c *gin.Context, validationErrors validator.ValidationErrors) {
-	err := app_errors.NewValidation()
+	err := apperr.NewValidation()
 
 	for _, e := range validationErrors {
 		err.Add(strings.ToLower(e.Field()), e.Tag())
@@ -79,6 +74,6 @@ func handleValidationError(c *gin.Context, validationErrors validator.Validation
 	c.JSON(400, err)
 }
 
-func handleCustom(c *gin.Context, err app_errors.Custom) {
+func setError(c *gin.Context, err apperr.Custom) {
 	c.JSON(err.Status(), err)
 }

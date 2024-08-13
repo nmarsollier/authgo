@@ -4,29 +4,21 @@ import (
 	"context"
 
 	"github.com/golang/glog"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type TokenCollection db.MongoCollection
+
 var collection db.MongoCollection
 
-func NewTokenOption(collection db.MongoCollection) TokenOption {
-	return TokenOption{
-		Collection: collection,
-	}
-}
-
-type TokenOption struct {
-	Collection db.MongoCollection
-}
-
-func dbCollection(options ...interface{}) (db.MongoCollection, error) {
-	for _, o := range options {
-		if ti, ok := o.(TokenOption); ok {
-			return ti.Collection, nil
+func dbCollection(ctx ...interface{}) (TokenCollection, error) {
+	for _, o := range ctx {
+		if tc, ok := o.(TokenCollection); ok {
+			return tc, nil
 		}
 	}
 
@@ -61,8 +53,8 @@ func dbCollection(options ...interface{}) (db.MongoCollection, error) {
 }
 
 // insert crea un nuevo token y lo almacena en la db
-func insert(userID primitive.ObjectID, options ...interface{}) (*Token, error) {
-	collection, err := dbCollection(options...)
+func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) {
+	collection, err := dbCollection(ctx...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -80,8 +72,8 @@ func insert(userID primitive.ObjectID, options ...interface{}) (*Token, error) {
 }
 
 // findByID busca un token en la db
-func findByID(tokenID string, options ...interface{}) (*Token, error) {
-	collection, err := dbCollection(options...)
+func findByID(tokenID string, ctx ...interface{}) (*Token, error) {
+	collection, err := dbCollection(ctx...)
 	if err != nil {
 		glog.Error(err)
 		return nil, err
@@ -90,7 +82,7 @@ func findByID(tokenID string, options ...interface{}) (*Token, error) {
 	_id, err := primitive.ObjectIDFromHex(tokenID)
 	if err != nil {
 		glog.Error(err)
-		return nil, app_errors.Unauthorized
+		return nil, apperr.Unauthorized
 	}
 
 	token := &Token{}
@@ -105,8 +97,8 @@ func findByID(tokenID string, options ...interface{}) (*Token, error) {
 }
 
 // delete como deshabilitado un token
-func delete(tokenID primitive.ObjectID, options ...interface{}) error {
-	collection, err := dbCollection(options...)
+func delete(tokenID primitive.ObjectID, ctx ...interface{}) error {
+	collection, err := dbCollection(ctx...)
 	if err != nil {
 		glog.Error(err)
 		return err

@@ -9,7 +9,7 @@ import (
 	"github.com/nmarsollier/authgo/rabbit"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/app_errors"
+	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
@@ -43,7 +43,7 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	rabbitMock.EXPECT().SendLogout(gomock.Any()).Return(nil).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection), rabbitMock)
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection), rabbitMock)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
@@ -66,10 +66,10 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
 
 	// Database Mocks
-	tests.ExpectUpdateOneError(tokenCollection, app_errors.NotFound, 1)
+	tests.ExpectUpdateOneError(tokenCollection, apperr.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
@@ -79,7 +79,6 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 }
 
 func TestGetUserSignOutInvalidToken(t *testing.T) {
-
 	// REQUEST
 	r := engine.TestRouter()
 	InitRoutes()
@@ -99,10 +98,10 @@ func TestGetUserSignOutDbFindError(t *testing.T) {
 
 	// Token Dao Mocks
 	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(tokenCollection, app_errors.NotFound, 1)
+	tests.ExpectFindOneError(tokenCollection, apperr.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.NewTokenOption(tokenCollection), user.NewOptions(userCollection))
+	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
