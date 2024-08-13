@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/rabbit"
 	"github.com/nmarsollier/authgo/rest/engine"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/apperr"
@@ -39,8 +38,18 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
-	rabbitMock := rabbit.NewMockRabbit(ctrl)
-	rabbitMock.EXPECT().SendLogout(gomock.Any()).Return(nil).Times(1)
+	rabbitMock := tests.MockRabbitChannel(ctrl, 1)
+	rabbitMock.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+		func(exchange string, routingKey string, body []byte) error {
+			assert.Equal(t, "auth", exchange)
+			assert.Equal(t, "", routingKey)
+			bodyStr := string(body)
+			assert.Contains(t, bodyStr, "logout")
+			assert.Contains(t, bodyStr, "bearer")
+
+			return nil
+		},
+	).Times(1)
 
 	// REQUEST
 	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection), rabbitMock)

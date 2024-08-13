@@ -30,7 +30,7 @@ func handleErrorIfNeeded(c *gin.Context) {
 	}
 	if errors.Is(err, topology.ErrServerSelectionTimeout) || errors.Is(err, topology.ErrTopologyClosed) {
 		// Errores de conexión con MongoDB
-		db.CheckError(err)
+		db.IsDbTimeoutError(err)
 		setError(c, apperr.Internal)
 		return
 	}
@@ -48,7 +48,7 @@ func handleErrorIfNeeded(c *gin.Context) {
 		handleValidationError(c, value)
 	case mongo.WriteException:
 		// Errores de mongo
-		if db.IsUniqueKeyError(value) {
+		if db.IsDbUniqueKeyError(value) {
 			setError(c, apperr.AlreadyExist)
 		} else {
 			setError(c, apperr.Internal)

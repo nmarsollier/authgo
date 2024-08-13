@@ -1,2 +1,2 @@
-mockgen -source=./rabbit/rabbit.go -destination=./rabbit/mocks.go -package=rabbit
-mockgen -source=./tools/db/mongo_collection.go -destination=./tools/db/mocks.go -package=db
+mockgen -source=./rabbit/rabbit_channel.go -destination=./rabbit/rabbit_channel_mocks.go -package=rabbit
+mockgen -source=./tools/db/mongo_collection.go -destination=./tools/db/mongo_collection_mocks.go -package=db
