@@ -6,22 +6,20 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
+// @Summary		Login
+// @Description	Loguea un usuario en el sistema.
+// @Tags			Seguridad
+// @Accept			json
+// @Produce		json
+// @Param			body	body		user.SignInRequest		true	"Sign in information"
+// @Success		200		{object}	tokenResponse			"User Token"
+// @Failure		400		{object}	apperr.ValidationErr	"Bad Request"
+// @Failure		401		{object}	engine.ErrorData		"Unauthorized"
+// @Failure		404		{object}	engine.ErrorData		"Not Found"
+// @Failure		500		{object}	engine.ErrorData		"Internal Server Error"
+// @Router			/v1/user/signin [post]
+//
 // Loguea un usuario en el sistema.
-//
-//	@Summary		Login
-//	@Description	Loguea un usuario en el sistema.
-//	@Tags			Seguridad
-//	@Accept			json
-//	@Produce		json
-//	@Param			body	body		user.SignInRequest		true	"Sign in information"
-//	@Success		200		{object}	tokenResponse			"User Token"
-//	@Failure		400		{object}	apperr.ValidationErr	"Bad Request"
-//	@Failure		401		{object}	engine.ErrorData		"Unauthorized"
-//	@Failure		404		{object}	engine.ErrorData		"Not Found"
-//	@Failure		500		{object}	engine.ErrorData		"Internal Server Error"
-//	@Router			/v1/user/signin [post]
-//
-// Handler function
 func postUserSignInRoute() {
 	engine.Router().POST(
 		"/v1/user/signin",

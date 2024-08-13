@@ -6,23 +6,21 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
+// @Summary		Cambiar Password
+// @Description	Cambia la contraseña del usuario actual.
+// @Tags			Seguridad
+// @Accept			json
+// @Produce		json
+// @Param			body			body	changePasswordBody	true	"Passwords"
+// @Param			Authorization	header	string				true	"bearer {token}"
+// @Success		200				"No Content"
+// @Failure		400				{object}	apperr.ValidationErr	"Bad Request"
+// @Failure		401				{object}	engine.ErrorData		"Unauthorized"
+// @Failure		404				{object}	engine.ErrorData		"Not Found"
+// @Failure		500				{object}	engine.ErrorData		"Internal Server Error"
+// @Router			/v1/user/password [post]
+//
 // Cambia la contraseña del usuario actual.
-//
-//	@Summary		Cambiar Password
-//	@Description	Cambia la contraseña del usuario actual.
-//	@Tags			Seguridad
-//	@Accept			json
-//	@Produce		json
-//	@Param			body			body	changePasswordBody	true	"Passwords"
-//	@Param			Authorization	header	string				true	"bearer {token}"
-//	@Success		200				"No Content"
-//	@Failure		400				{object}	apperr.ValidationErr	"Bad Request"
-//	@Failure		401				{object}	engine.ErrorData		"Unauthorized"
-//	@Failure		404				{object}	engine.ErrorData		"Not Found"
-//	@Failure		500				{object}	engine.ErrorData		"Internal Server Error"
-//	@Router			/v1/user/password [post]
-//
-// Handler function
 func getUserPasswordRoute() {
 	engine.Router().POST(
 		"/v1/user/password",
