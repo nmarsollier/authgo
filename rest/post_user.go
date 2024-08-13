@@ -15,7 +15,7 @@ import (
 //	@Produce		json
 //	@Param			body	body		user.SignUpRequest		true	"Informacion de ususario"
 //	@Success		200		{object}	tokenResponse			"User Token"
-//	@Failure		400		{object}	apperr.ErrValidation	"Bad Request"
+//	@Failure		400		{object}	apperr.ValidationErr	"Bad Request"
 //	@Failure		401		{object}	engine.ErrorData		"Unauthorized"
 //	@Failure		404		{object}	engine.ErrorData		"Not Found"
 //	@Failure		500		{object}	engine.ErrorData		"Internal Server Error"

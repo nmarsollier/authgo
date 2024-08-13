@@ -15,16 +15,16 @@ type Validation interface {
 }
 
 func NewValidation() Validation {
-	return &validation{
+	return &ValidationErr{
 		Messages: []errField{},
 	}
 }
 
-type validation struct {
+type ValidationErr struct {
 	Messages []errField `json:"messages"`
 }
 
-func (e *validation) Error() string {
+func (e *ValidationErr) Error() string {
 	body, err := json.Marshal(e)
 	if err != nil {
 		glog.Error(err)
@@ -34,7 +34,7 @@ func (e *validation) Error() string {
 }
 
 // Add agrega errores a un validation error
-func (e *validation) Add(path string, message string) Validation {
+func (e *ValidationErr) Add(path string, message string) Validation {
 	err := errField{
 		Path:    path,
 		Message: message,
@@ -44,7 +44,7 @@ func (e *validation) Add(path string, message string) Validation {
 }
 
 // Size devuelve la cantidad de errores
-func (e *validation) Size() int {
+func (e *ValidationErr) Size() int {
 	return len(e.Messages)
 }
 

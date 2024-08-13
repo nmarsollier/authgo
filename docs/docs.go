@@ -79,7 +79,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ErrValidation"
+                            "$ref": "#/definitions/apperr.ValidationErr"
                         }
                     },
                     "401": {
@@ -141,7 +141,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ErrValidation"
+                            "$ref": "#/definitions/apperr.ValidationErr"
                         }
                     },
                     "401": {
@@ -199,7 +199,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ErrValidation"
+                            "$ref": "#/definitions/apperr.ValidationErr"
                         }
                     },
                     "401": {
@@ -293,7 +293,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ErrValidation"
+                            "$ref": "#/definitions/apperr.ValidationErr"
                         }
                     },
                     "401": {
@@ -362,7 +362,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ErrValidation"
+                            "$ref": "#/definitions/apperr.ValidationErr"
                         }
                     },
                     "401": {
@@ -431,7 +431,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ErrValidation"
+                            "$ref": "#/definitions/apperr.ValidationErr"
                         }
                     },
                     "401": {
@@ -491,7 +491,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ErrValidation"
+                            "$ref": "#/definitions/apperr.ValidationErr"
                         }
                     },
                     "401": {
@@ -551,7 +551,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ErrValidation"
+                            "$ref": "#/definitions/apperr.ValidationErr"
                         }
                     },
                     "401": {
@@ -607,7 +607,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ErrValidation"
+                            "$ref": "#/definitions/apperr.ValidationErr"
                         }
                     },
                     "401": {
@@ -633,7 +633,18 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "apperr.ErrField": {
+        "apperr.ValidationErr": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/apperr.errField"
+                    }
+                }
+            }
+        },
+        "apperr.errField": {
             "type": "object",
             "properties": {
                 "message": {
@@ -641,17 +652,6 @@ const docTemplate = `{
                 },
                 "path": {
                     "type": "string"
-                }
-            }
-        },
-        "apperr.ErrValidation": {
-            "type": "object",
-            "properties": {
-                "messages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/apperr.ErrField"
-                    }
                 }
             }
         },
