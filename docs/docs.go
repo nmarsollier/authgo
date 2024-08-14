@@ -79,7 +79,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ValidationErr"
+                            "$ref": "#/definitions/errs.ValidationErr"
                         }
                     },
                     "401": {
@@ -141,7 +141,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ValidationErr"
+                            "$ref": "#/definitions/errs.ValidationErr"
                         }
                     },
                     "401": {
@@ -199,7 +199,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ValidationErr"
+                            "$ref": "#/definitions/errs.ValidationErr"
                         }
                     },
                     "401": {
@@ -293,7 +293,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ValidationErr"
+                            "$ref": "#/definitions/errs.ValidationErr"
                         }
                     },
                     "401": {
@@ -362,7 +362,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ValidationErr"
+                            "$ref": "#/definitions/errs.ValidationErr"
                         }
                     },
                     "401": {
@@ -431,7 +431,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ValidationErr"
+                            "$ref": "#/definitions/errs.ValidationErr"
                         }
                     },
                     "401": {
@@ -491,7 +491,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ValidationErr"
+                            "$ref": "#/definitions/errs.ValidationErr"
                         }
                     },
                     "401": {
@@ -551,7 +551,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ValidationErr"
+                            "$ref": "#/definitions/errs.ValidationErr"
                         }
                     },
                     "401": {
@@ -607,7 +607,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/apperr.ValidationErr"
+                            "$ref": "#/definitions/errs.ValidationErr"
                         }
                     },
                     "401": {
@@ -633,32 +633,32 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "apperr.ValidationErr": {
+        "engine.ErrorData": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "errs.ValidationErr": {
             "type": "object",
             "properties": {
                 "messages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/apperr.errField"
+                        "$ref": "#/definitions/errs.errField"
                     }
                 }
             }
         },
-        "apperr.errField": {
+        "errs.errField": {
             "type": "object",
             "properties": {
                 "message": {
                     "type": "string"
                 },
                 "path": {
-                    "type": "string"
-                }
-            }
-        },
-        "engine.ErrorData": {
-            "type": "object",
-            "properties": {
-                "error": {
                     "type": "string"
                 }
             }

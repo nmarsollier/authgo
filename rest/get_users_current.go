@@ -13,18 +13,18 @@ type UserResponse struct {
 	Login       string   `json:"login"`
 }
 
-// @Summary		Usuario Actual
-// @Description	Obtiene información del usuario actual.
-// @Tags			Seguridad
-// @Accept			json
-// @Produce		json
-// @Param			Authorization	header		string					true	"bearer {token}"
-// @Success		200				{object}	UserResponse			"User data"
-// @Failure		400				{object}	apperr.ValidationErr	"Bad Request"
-// @Failure		401				{object}	engine.ErrorData		"Unauthorized"
-// @Failure		404				{object}	engine.ErrorData		"Not Found"
-// @Failure		500				{object}	engine.ErrorData		"Internal Server Error"
-// @Router			/v1/users/current [get]
+//	@Summary		Usuario Actual
+//	@Description	Obtiene información del usuario actual.
+//	@Tags			Seguridad
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string				true	"bearer {token}"
+//	@Success		200				{object}	UserResponse		"User data"
+//	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
+//	@Failure		401				{object}	engine.ErrorData	"Unauthorized"
+//	@Failure		404				{object}	engine.ErrorData	"Not Found"
+//	@Failure		500				{object}	engine.ErrorData	"Internal Server Error"
+//	@Router			/v1/users/current [get]
 //
 // Obtiene información del usuario actual.
 func getUsersCurrentRoute() {

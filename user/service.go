@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/apperr"
+	"github.com/nmarsollier/authgo/tools/errs"
 )
 
 // SignUpRequest es un nuevo usuario
@@ -26,7 +26,7 @@ func SignUp(user *SignUpRequest, ctx ...interface{}) (string, error) {
 
 	newToken, err := token.Create(newUser.ID, ctx...)
 	if err != nil {
-		return "", apperr.Internal
+		return "", errs.Internal
 	}
 
 	return token.Encode(newToken)
@@ -45,7 +45,7 @@ func SignIn(data SignInRequest, ctx ...interface{}) (string, error) {
 	}
 
 	if !user.Enabled {
-		return "", apperr.Unauthorized
+		return "", errs.Unauthorized
 	}
 
 	if err = user.ValidatePassword(data.Password); err != nil {
@@ -54,7 +54,7 @@ func SignIn(data SignInRequest, ctx ...interface{}) (string, error) {
 
 	newToken, err := token.Create(user.ID, ctx...)
 	if err != nil {
-		return "", apperr.Unauthorized
+		return "", errs.Unauthorized
 	}
 
 	return token.Encode(newToken)
@@ -68,7 +68,7 @@ func Get(userID string, ctx ...interface{}) (*User, error) {
 	}
 
 	if !user.Enabled {
-		return nil, apperr.NotFound
+		return nil, errs.NotFound
 	}
 
 	return user, err

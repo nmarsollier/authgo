@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
-	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -65,7 +65,7 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 	tests.ExpectFindOneForToken(t, mongo, tokenData)
-	tests.ExpectUpdateOneError(mongo, apperr.NotFound, 1)
+	tests.ExpectUpdateOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
 	r := engine.TestRouter(mongo)
@@ -95,7 +95,7 @@ func TestGetUserSignOutDbFindError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneError(mongo, apperr.NotFound, 1)
+	tests.ExpectFindOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
 	r := engine.TestRouter(mongo)

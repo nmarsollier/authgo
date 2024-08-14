@@ -1,22 +1,22 @@
 basePath: /v1
 definitions:
-  apperr.ValidationErr:
+  engine.ErrorData:
+    properties:
+      error:
+        type: string
+    type: object
+  errs.ValidationErr:
     properties:
       messages:
         items:
-          $ref: '#/definitions/apperr.errField'
+          $ref: '#/definitions/errs.errField'
         type: array
     type: object
-  apperr.errField:
+  errs.errField:
     properties:
       message:
         type: string
       path:
-        type: string
-    type: object
-  engine.ErrorData:
-    properties:
-      error:
         type: string
     type: object
   rabbit.message:
@@ -157,7 +157,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperr.ValidationErr'
+            $ref: '#/definitions/errs.ValidationErr'
         "401":
           description: Unauthorized
           schema:
@@ -198,7 +198,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperr.ValidationErr'
+            $ref: '#/definitions/errs.ValidationErr'
         "401":
           description: Unauthorized
           schema:
@@ -236,7 +236,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperr.ValidationErr'
+            $ref: '#/definitions/errs.ValidationErr'
         "401":
           description: Unauthorized
           schema:
@@ -299,7 +299,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperr.ValidationErr'
+            $ref: '#/definitions/errs.ValidationErr'
         "401":
           description: Unauthorized
           schema:
@@ -346,7 +346,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperr.ValidationErr'
+            $ref: '#/definitions/errs.ValidationErr'
         "401":
           description: Unauthorized
           schema:
@@ -393,7 +393,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperr.ValidationErr'
+            $ref: '#/definitions/errs.ValidationErr'
         "401":
           description: Unauthorized
           schema:
@@ -434,7 +434,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperr.ValidationErr'
+            $ref: '#/definitions/errs.ValidationErr'
         "401":
           description: Unauthorized
           schema:
@@ -475,7 +475,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperr.ValidationErr'
+            $ref: '#/definitions/errs.ValidationErr'
         "401":
           description: Unauthorized
           schema:
@@ -512,7 +512,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/apperr.ValidationErr'
+            $ref: '#/definitions/errs.ValidationErr'
         "401":
           description: Unauthorized
           schema:

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/golang/glog"
-	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -80,7 +80,7 @@ func findByID(tokenID string, ctx ...interface{}) (*Token, error) {
 	_id, err := primitive.ObjectIDFromHex(tokenID)
 	if err != nil {
 		glog.Error(err)
-		return nil, apperr.Unauthorized
+		return nil, errs.Unauthorized
 	}
 
 	token := &Token{}

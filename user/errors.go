@@ -1,15 +1,15 @@
 package user
 
-import "github.com/nmarsollier/authgo/tools/apperr"
+import "github.com/nmarsollier/authgo/tools/errs"
 
 // ErrID el id del documento es invalido
-var ErrID = apperr.NewValidation().Add("id", "Invalid")
+var ErrID = errs.NewValidation().Add("id", "Invalid")
 
 // ErrLogin el login es invalido
-var ErrLogin = apperr.NewValidation().Add("login", "invalid")
+var ErrLogin = errs.NewValidation().Add("login", "invalid")
 
 // ErrLoginExist el login ya existe
-var ErrLoginExist = apperr.NewValidation().Add("login", "exist")
+var ErrLoginExist = errs.NewValidation().Add("login", "exist")
 
 // ErrPassword el password es invalido
-var ErrPassword = apperr.NewValidation().Add("password", "invalid")
+var ErrPassword = errs.NewValidation().Add("password", "invalid")

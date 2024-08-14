@@ -1,4 +1,4 @@
-package apperr
+package errs
 
 import (
 	"encoding/json"
@@ -10,7 +10,6 @@ import (
 // Validation es un error de validaciones de parameteros o de campos
 type Validation interface {
 	Add(path string, message string) Validation
-	Size() int
 	Error() string
 }
 
@@ -41,11 +40,6 @@ func (e *ValidationErr) Add(path string, message string) Validation {
 	}
 	e.Messages = append(e.Messages, err)
 	return e
-}
-
-// Size devuelve la cantidad de errores
-func (e *ValidationErr) Size() int {
-	return len(e.Messages)
 }
 
 // errField define un campo inválido. path y mensaje de error

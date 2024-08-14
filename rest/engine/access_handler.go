@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/apperr"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/user"
 )
 
@@ -16,13 +16,13 @@ func ValidateAdmin(c *gin.Context) {
 
 	payload, err := fetchAuthHeader(c)
 	if err != nil {
-		c.Error(apperr.Unauthorized)
+		c.Error(errs.Unauthorized)
 		c.Abort()
 		return
 	}
 
 	if !user.Granted(payload.UserID.Hex(), "admin", ctx...) {
-		c.Error(apperr.Unauthorized)
+		c.Error(errs.Unauthorized)
 		c.Abort()
 	}
 }
@@ -31,7 +31,7 @@ func ValidateAdmin(c *gin.Context) {
 func ValidateLoggedIn(c *gin.Context) {
 	_, err := fetchAuthHeader(c)
 	if err != nil {
-		c.Error(apperr.Unauthorized)
+		c.Error(errs.Unauthorized)
 		c.Abort()
 	}
 }
@@ -40,7 +40,7 @@ func ValidateLoggedIn(c *gin.Context) {
 func HeaderAuthorization(c *gin.Context) (string, error) {
 	tokenString := c.GetHeader("Authorization")
 	if strings.Index(tokenString, "bearer ") != 0 {
-		return "", apperr.Unauthorized
+		return "", errs.Unauthorized
 	}
 	return tokenString[7:], nil
 }

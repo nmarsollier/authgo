@@ -6,8 +6,8 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
-	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
@@ -80,7 +80,7 @@ func TestPostUserGrantFindUserError_1(t *testing.T) {
 
 	tests.ExpectFindOneForToken(t, mongodb, tokenData)
 
-	tests.ExpectFindOneError(mongodb, apperr.NotFound, 1)
+	tests.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
 	r := engine.TestRouter(mongodb)
@@ -115,7 +115,7 @@ func TestPostUserGrantFindUserError_2(t *testing.T) {
 		},
 	).Times(1)
 
-	tests.ExpectFindOneError(mongodb, apperr.NotFound, 1)
+	tests.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
 	r := engine.TestRouter(mongodb)

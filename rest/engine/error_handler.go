@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
@@ -25,22 +25,22 @@ func handleErrorIfNeeded(c *gin.Context) {
 
 	// Compruebo errores bien conocidos
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		setError(c, apperr.NotFound)
+		setError(c, errs.NotFound)
 		return
 	}
 	if errors.Is(err, topology.ErrServerSelectionTimeout) || errors.Is(err, topology.ErrTopologyClosed) {
 		// Errores de conexión con MongoDB
 		db.IsDbTimeoutError(err)
-		setError(c, apperr.Internal)
+		setError(c, errs.Internal)
 		return
 	}
 
 	// Compruebo tipos de errores conocidos
 	switch value := err.Err.(type) {
-	case apperr.RestError:
+	case errs.RestError:
 		// Son validaciones hechas con NewCustom
 		setError(c, value)
-	case apperr.Validation:
+	case errs.Validation:
 		// Son validaciones hechas con NewValidation
 		c.JSON(400, err)
 	case validator.ValidationErrors:
@@ -49,9 +49,9 @@ func handleErrorIfNeeded(c *gin.Context) {
 	case mongo.WriteException:
 		// Errores de mongo
 		if db.IsDbUniqueKeyError(value) {
-			setError(c, apperr.AlreadyExist)
+			setError(c, errs.AlreadyExist)
 		} else {
-			setError(c, apperr.Internal)
+			setError(c, errs.Internal)
 		}
 	case error:
 		// Otros errores
@@ -60,12 +60,12 @@ func handleErrorIfNeeded(c *gin.Context) {
 		})
 	default:
 		// No se sabe que es, devolvemos internal
-		setError(c, apperr.Internal)
+		setError(c, errs.Internal)
 	}
 }
 
 func handleValidationError(c *gin.Context, validationErrors validator.ValidationErrors) {
-	err := apperr.NewValidation()
+	err := errs.NewValidation()
 
 	for _, e := range validationErrors {
 		err.Add(strings.ToLower(e.Field()), e.Tag())
@@ -74,7 +74,7 @@ func handleValidationError(c *gin.Context, validationErrors validator.Validation
 	c.JSON(400, err)
 }
 
-func setError(c *gin.Context, err apperr.RestError) {
+func setError(c *gin.Context, err errs.RestError) {
 	c.JSON(err.Status(), err)
 }
 

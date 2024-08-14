@@ -1,4 +1,4 @@
-package apperr
+package errs
 
 // Unauthorized el usuario no esta autorizado al recurso
 var Unauthorized = NewRestError(401, "Unauthorized")

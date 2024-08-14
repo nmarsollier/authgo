@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
-	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
@@ -136,7 +136,7 @@ func TestPostTokenDatabaseError(t *testing.T) {
 
 	tests.ExpectUserInsertOne(mongodb, 1)
 
-	tests.ExpectInsertOneError(mongodb, apperr.Internal, 1)
+	tests.ExpectInsertOneError(mongodb, errs.Internal, 1)
 
 	// REQUEST
 	r := engine.TestRouter(mongodb)

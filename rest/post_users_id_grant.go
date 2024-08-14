@@ -6,20 +6,20 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-// @Summary		Haiblitar permisos
-// @Description	Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
-// @Tags			Seguridad
-// @Accept			json
-// @Produce		json
-// @Param			userId			path	string				true	"ID del usuario a habilitar permiso"
-// @Param			Authorization	header	string				true	"bearer {token}"
-// @Param			body			body	grantPermissionBody	true	"Permisos a Habilitar"
-// @Success		200				"No Content"
-// @Failure		400				{object}	apperr.ValidationErr	"Bad Request"
-// @Failure		401				{object}	engine.ErrorData		"Unauthorized"
-// @Failure		404				{object}	engine.ErrorData		"Not Found"
-// @Failure		500				{object}	engine.ErrorData		"Internal Server Error"
-// @Router			/v1/users/:userID/grant [post]
+//	@Summary		Haiblitar permisos
+//	@Description	Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
+//	@Tags			Seguridad
+//	@Accept			json
+//	@Produce		json
+//	@Param			userId			path	string				true	"ID del usuario a habilitar permiso"
+//	@Param			Authorization	header	string				true	"bearer {token}"
+//	@Param			body			body	grantPermissionBody	true	"Permisos a Habilitar"
+//	@Success		200				"No Content"
+//	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
+//	@Failure		401				{object}	engine.ErrorData	"Unauthorized"
+//	@Failure		404				{object}	engine.ErrorData	"Not Found"
+//	@Failure		500				{object}	engine.ErrorData	"Internal Server Error"
+//	@Router			/v1/users/:userID/grant [post]
 //
 // Otorga permisos al usuario indicado.
 func postUsersIdGrantRoute() {

@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
-	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
@@ -101,7 +101,7 @@ func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneError(mongo, apperr.Internal, 1)
+	tests.ExpectFindOneError(mongo, errs.Internal, 1)
 
 	// REQUEST
 	r := engine.TestRouter(mongo)

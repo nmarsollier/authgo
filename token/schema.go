@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go/v4"
-	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/env"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -52,13 +52,13 @@ func ExtractPayload(tokenString string) (string, string, error) {
 	})
 
 	if err != nil || !token.Valid {
-		return "", "", apperr.Unauthorized
+		return "", "", errs.Unauthorized
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if !ok {
-		return "", "", apperr.Unauthorized
+		return "", "", errs.Unauthorized
 	}
 
 	tokenID := claims["tokenID"].(string)

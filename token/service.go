@@ -3,7 +3,7 @@ package token
 import (
 	"github.com/golang/glog"
 	"github.com/nmarsollier/authgo/rabbit"
-	"github.com/nmarsollier/authgo/tools/apperr"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -46,7 +46,7 @@ func Validate(tokenString string, ctx ...interface{}) (*Token, error) {
 	// Buscamos el token en la db para validarlo
 	token, err := Find(tokenID, ctx...)
 	if err != nil || !token.Enabled {
-		return nil, apperr.Unauthorized
+		return nil, errs.Unauthorized
 	}
 
 	return token, nil
@@ -56,7 +56,7 @@ func Validate(tokenString string, ctx ...interface{}) (*Token, error) {
 func Invalidate(tokenString string, ctx ...interface{}) error {
 	token, err := Validate(tokenString, ctx...)
 	if err != nil {
-		return apperr.Unauthorized
+		return errs.Unauthorized
 	}
 
 	if err = delete(token.ID, ctx...); err != nil {

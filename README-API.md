@@ -53,7 +53,7 @@ Registra un nuevo usuario en el sistema.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
-| 400 | Bad Request | [apperr.ValidationErr](#apperrvalidationerr) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
 | 404 | Not Found | [engine.ErrorData](#engineerrordata) |
 | 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
@@ -81,7 +81,7 @@ Cambia la contraseña del usuario actual.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [apperr.ValidationErr](#apperrvalidationerr) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
 | 404 | Not Found | [engine.ErrorData](#engineerrordata) |
 | 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
@@ -108,7 +108,7 @@ Loguea un usuario en el sistema.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
-| 400 | Bad Request | [apperr.ValidationErr](#apperrvalidationerr) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
 | 404 | Not Found | [engine.ErrorData](#engineerrordata) |
 | 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
@@ -159,7 +159,7 @@ Obtiene información de todos los usuarios. El usuario logueado debe tener permi
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | Users | [ [rest.UserDataResponse](#restuserdataresponse) ] |
-| 400 | Bad Request | [apperr.ValidationErr](#apperrvalidationerr) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
 | 404 | Not Found | [engine.ErrorData](#engineerrordata) |
 | 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
@@ -188,7 +188,7 @@ Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [apperr.ValidationErr](#apperrvalidationerr) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
 | 404 | Not Found | [engine.ErrorData](#engineerrordata) |
 | 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
@@ -217,7 +217,7 @@ Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [apperr.ValidationErr](#apperrvalidationerr) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
 | 404 | Not Found | [engine.ErrorData](#engineerrordata) |
 | 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
@@ -245,7 +245,7 @@ Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos "a
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [apperr.ValidationErr](#apperrvalidationerr) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
 | 404 | Not Found | [engine.ErrorData](#engineerrordata) |
 | 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
@@ -273,7 +273,7 @@ Habilita un usuario en el sistema. El usuario logueado debe tener permisos "admi
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 400 | Bad Request | [apperr.ValidationErr](#apperrvalidationerr) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
 | 404 | Not Found | [engine.ErrorData](#engineerrordata) |
 | 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
@@ -300,7 +300,7 @@ Obtiene información del usuario actual.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | User data | [rest.UserResponse](#restuserresponse) |
-| 400 | Bad Request | [apperr.ValidationErr](#apperrvalidationerr) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [engine.ErrorData](#engineerrordata) |
 | 404 | Not Found | [engine.ErrorData](#engineerrordata) |
 | 500 | Internal Server Error | [engine.ErrorData](#engineerrordata) |
@@ -308,24 +308,24 @@ Obtiene información del usuario actual.
 ---
 ### Models
 
-#### apperr.ValidationErr
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| messages | [ [apperr.errField](#apperrerrfield) ] |  | No |
-
-#### apperr.errField
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| message | string |  | No |
-| path | string |  | No |
-
 #### engine.ErrorData
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | error | string |  | No |
+
+#### errs.ValidationErr
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| messages | [ [errs.errField](#errserrfield) ] |  | No |
+
+#### errs.errField
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| message | string |  | No |
+| path | string |  | No |
 
 #### rabbit.message
 
