@@ -6,11 +6,6 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type message struct {
-	Type    string `json:"type"`
-	Message string `json:"message"`
-}
-
 func getChannel(ctx ...interface{}) (RabbitChannel, error) {
 	for _, o := range ctx {
 		if ti, ok := o.(RabbitChannel); ok {
