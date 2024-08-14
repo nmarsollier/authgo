@@ -39,14 +39,6 @@ cd $GOPATH/src/github.com/nmarsollier/authgo
 
 ## Instalar Librerías requeridas
 
-
-```bash
-go mod download
-```
-
-Build y ejecución
--
-
 ```bash
 go install
 authgo
@@ -97,6 +89,14 @@ y ejecutamos
 ```bash
 npx swagger-markdown -i ./docs/swagger.yaml -o README-API.md
 ```
+
+## Tests 
+
+```bash
+go install github.com/golang/mock/mockgen@v1.6.0
+```
+
+Y ejecutamos el script generate_mock.sh
 
 ## Configuración del servidor
 
