@@ -6,7 +6,6 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
-	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
@@ -20,14 +19,13 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 	userData, _ := tests.TestUser()
 	tokenData, tokenString := tests.TestToken()
 
-	// Token Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
+	mongodb := db.NewMockMongoCollection(ctrl)
 
-	// User Dao Mocks
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+
+	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, tokenData.UserID, params["_id"])
@@ -38,7 +36,7 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, userData.ID, params["_id"])
@@ -49,7 +47,7 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
-	userCollection.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	mongodb.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter primitive.M, update primitive.M) (int64, error) {
 			// Check parameters
 			assert.Equal(t, userData.ID, filter["_id"])
@@ -63,7 +61,7 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"user"}}, tokenString)
@@ -76,17 +74,16 @@ func TestPostUserRevokeFindUserError_1(t *testing.T) {
 	userData, _ := tests.TestUser()
 	tokenData, tokenString := tests.TestToken()
 
-	// Token Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
+	mongodb := db.NewMockMongoCollection(ctrl)
 
-	// User Dao Mocks
-	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(userCollection, apperr.NotFound, 1)
+	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+
+	tests.ExpectFindOneError(mongodb, apperr.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
@@ -101,14 +98,13 @@ func TestPostUserRevokeFindUserError_2(t *testing.T) {
 	userData, _ := tests.TestUser()
 	tokenData, tokenString := tests.TestToken()
 
-	// Token Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
+	mongodb := db.NewMockMongoCollection(ctrl)
 
-	// User Dao Mocks
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+
+	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, tokenData.UserID, params["_id"])
@@ -119,10 +115,10 @@ func TestPostUserRevokeFindUserError_2(t *testing.T) {
 		},
 	).Times(1)
 
-	tests.ExpectFindOneError(userCollection, apperr.NotFound, 1)
+	tests.ExpectFindOneError(mongodb, apperr.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
@@ -135,14 +131,13 @@ func TestPostUserRevokeNotAdmin(t *testing.T) {
 	userData, _ := tests.TestUser()
 	tokenData, tokenString := tests.TestToken()
 
-	// Token Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
+	mongodb := db.NewMockMongoCollection(ctrl)
 
-	// User Dao Mocks
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+
+	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, tokenData.UserID, params["_id"])
@@ -154,7 +149,7 @@ func TestPostUserRevokeNotAdmin(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)

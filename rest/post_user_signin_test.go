@@ -20,10 +20,11 @@ import (
 func TestPostSignInHappyPath(t *testing.T) {
 	userData, password := tests.TestUser()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	mongodb := db.NewMockMongoCollection(ctrl)
+
+	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, userData.Login, params["login"])
@@ -34,9 +35,7 @@ func TestPostSignInHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
-	// Token Dao Mocks
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tokenCollection.EXPECT().InsertOne(gomock.Any(), gomock.Any()).DoAndReturn(
+	mongodb.EXPECT().InsertOne(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, token *token.Token) (string, error) {
 			assert.Equal(t, true, token.Enabled)
 			assert.Equal(t, userData.ID, token.UserID)
@@ -45,7 +44,7 @@ func TestPostSignInHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -67,10 +66,11 @@ func TestPostSignInHappyPath(t *testing.T) {
 func TestPostSignInWrongPassword(t *testing.T) {
 	userData, _ := tests.TestUser()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	mongodb := db.NewMockMongoCollection(ctrl)
+
+	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, userData.Login, params["login"])
@@ -82,7 +82,7 @@ func TestPostSignInWrongPassword(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: "wrong"}, "")
@@ -102,10 +102,11 @@ func TestPostSignInUserDisabled(t *testing.T) {
 	userData, password := tests.TestUser()
 	userData.Enabled = false
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	mongodb := db.NewMockMongoCollection(ctrl)
+
+	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, userData.Login, params["login"])
@@ -117,7 +118,7 @@ func TestPostSignInUserDisabled(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -163,13 +164,14 @@ func TestPostSignInMissingPassword(t *testing.T) {
 func TestPostSignInUserDbError(t *testing.T) {
 	userData, password := tests.TestUser()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(userCollection, apperr.Internal, 1)
+	mongodb := db.NewMockMongoCollection(ctrl)
+
+	tests.ExpectFindOneError(mongodb, apperr.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -185,13 +187,14 @@ func TestPostSignInUserDbError(t *testing.T) {
 func TestPostSignInUserNotFound(t *testing.T) {
 	userData, password := tests.TestUser()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(userCollection, mongo.ErrNoDocuments, 1)
+	mongodb := db.NewMockMongoCollection(ctrl)
+
+	tests.ExpectFindOneError(mongodb, mongo.ErrNoDocuments, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -203,10 +206,13 @@ func TestPostSignInUserNotFound(t *testing.T) {
 func TestPostTokenDbError(t *testing.T) {
 	userData, password := tests.TestUser()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	mongodb := db.NewMockMongoCollection(ctrl)
+
+	tests.ExpectInsertOneError(mongodb, user.ErrID, 1)
+
+	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, userData.Login, params["login"])
@@ -217,12 +223,8 @@ func TestPostTokenDbError(t *testing.T) {
 		},
 	).Times(1)
 
-	// Token Dao Mocks
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectInsertOneError(tokenCollection, user.ErrID, 1)
-
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")

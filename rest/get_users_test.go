@@ -6,7 +6,6 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
-	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
@@ -19,14 +18,13 @@ func TestGetUsersHappyPath(t *testing.T) {
 	userData, _ := tests.TestAdminUser()
 	tokenData, tokenString := tests.TestToken()
 
-	// Token Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
+	mongo := db.NewMockMongoCollection(ctrl)
 
-	// User Dao Mocks
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	tests.ExpectFindOneForToken(t, mongo, tokenData)
+
+	mongo.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, tokenData.UserID, params["_id"])
@@ -37,7 +35,7 @@ func TestGetUsersHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
-	userCollection.EXPECT().Find(gomock.Any(), gomock.Any()).DoAndReturn(
+	mongo.EXPECT().Find(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter primitive.D) (db.Cursor, error) {
 			data := db.NewMockCursor(ctrl)
 			data.EXPECT().Next(gomock.Any()).Return(true).Times(2)
@@ -61,7 +59,7 @@ func TestGetUsersHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users", tokenString)
@@ -77,14 +75,13 @@ func TestGetUsersFindError(t *testing.T) {
 	userData, _ := tests.TestAdminUser()
 	tokenData, tokenString := tests.TestToken()
 
-	// Token Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
+	mongodb := db.NewMockMongoCollection(ctrl)
 
-	// User Dao Mocks
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+
+	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			// Check parameters
 			assert.Equal(t, tokenData.UserID, params["_id"])
@@ -95,7 +92,7 @@ func TestGetUsersFindError(t *testing.T) {
 		},
 	).Times(1)
 
-	userCollection.EXPECT().Find(gomock.Any(), gomock.Any()).DoAndReturn(
+	mongodb.EXPECT().Find(gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter primitive.D) (db.Cursor, error) {
 			// Asign return values
 			return nil, mongo.ErrNoDocuments
@@ -103,7 +100,7 @@ func TestGetUsersFindError(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users", tokenString)

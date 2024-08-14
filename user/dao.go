@@ -12,23 +12,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Define mongo Collection
-func UserCollection(collection db.MongoCollection) UserColl {
-	return UserColl{
-		collection: collection,
-	}
-}
-
-type UserColl struct {
-	collection db.MongoCollection
-}
-
 var collection db.MongoCollection
 
 func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 	for _, p := range ctx {
-		if coll, ok := p.(UserColl); ok {
-			return coll.collection, nil
+		if coll, ok := p.(db.MongoCollection); ok {
+			return coll, nil
 		}
 	}
 

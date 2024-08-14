@@ -7,7 +7,6 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
-	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
@@ -18,17 +17,16 @@ import (
 func TestPostUserInHappyPath(t *testing.T) {
 	userData, password := tests.TestUser()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectUserInsertOne(userCollection, 1)
+	mongodb := db.NewMockMongoCollection(ctrl)
 
-	// Token Dao Mocks
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectTokenInsertOne(tokenCollection, 1)
+	tests.ExpectTokenInsertOne(mongodb, 1)
+
+	tests.ExpectUserInsertOne(mongodb, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -94,13 +92,14 @@ func TestPostUserIvalidPassword(t *testing.T) {
 func TestPostUserDatabaseError(t *testing.T) {
 	userData, password := tests.TestUser()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectInsertOneError(userCollection, tests.TestOtherDbError, 1)
+	mongodb := db.NewMockMongoCollection(ctrl)
+
+	tests.ExpectInsertOneError(mongodb, tests.TestOtherDbError, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -112,13 +111,14 @@ func TestPostUserDatabaseError(t *testing.T) {
 func TestPostUserAlreayExist(t *testing.T) {
 	userData, password := tests.TestUser()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectInsertOneError(userCollection, tests.TestIsUniqueError, 1)
+	mongodb := db.NewMockMongoCollection(ctrl)
+
+	tests.ExpectInsertOneError(mongodb, tests.TestIsUniqueError, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.UserCollection(userCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -130,16 +130,16 @@ func TestPostUserAlreayExist(t *testing.T) {
 func TestPostTokenDatabaseError(t *testing.T) {
 	userData, password := tests.TestUser()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectUserInsertOne(userCollection, 1)
+	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectInsertOneError(tokenCollection, apperr.Internal, 1)
+	tests.ExpectUserInsertOne(mongodb, 1)
+
+	tests.ExpectInsertOneError(mongodb, apperr.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(user.UserCollection(userCollection), token.TokenCollection(tokenCollection))
+	r := engine.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")

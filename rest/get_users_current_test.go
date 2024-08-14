@@ -7,7 +7,6 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
-	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
@@ -21,10 +20,13 @@ func TestGetUserCurrentHappyPath(t *testing.T) {
 	userData, _ := tests.TestUser()
 	tokenData, tokenString := tests.TestToken()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	mongo := db.NewMockMongoCollection(ctrl)
+
+	tests.ExpectFindOneForToken(t, mongo, tokenData)
+
+	mongo.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, params primitive.M, updated *user.User) error {
 			assert.Equal(t, tokenData.UserID, params["_id"])
 
@@ -33,12 +35,8 @@ func TestGetUserCurrentHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
-	// Token Dao Mocks
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
-
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
@@ -57,13 +55,14 @@ func TestGetUserCurrentErrorDisabledToken(t *testing.T) {
 	tokenData, tokenString := tests.TestToken()
 	tokenData.Enabled = false
 
-	// Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectTokenFinOne(tokenCollection, tokenData, 1)
+	mongo := db.NewMockMongoCollection(ctrl)
+
+	tests.ExpectTokenFinOne(mongo, tokenData, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection))
+	r := engine.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
@@ -77,17 +76,16 @@ func TestGetUserCurrentErrorDisabledUser(t *testing.T) {
 	userData.Enabled = false
 	tokenData, tokenString := tests.TestToken()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectUserFindOne(userCollection, userData, 1)
+	mongo := db.NewMockMongoCollection(ctrl)
 
-	// Token Dao Mocks
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectTokenFinOne(tokenCollection, tokenData, 1)
+	tests.ExpectTokenFinOne(mongo, tokenData, 1)
+
+	tests.ExpectUserFindOne(mongo, userData, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
@@ -99,13 +97,14 @@ func TestGetUserCurrentErrorDisabledUser(t *testing.T) {
 func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
 	_, tokenString := tests.TestToken()
 
-	// Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(tokenCollection, apperr.Internal, 1)
+	mongo := db.NewMockMongoCollection(ctrl)
+
+	tests.ExpectFindOneError(mongo, apperr.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection))
+	r := engine.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
@@ -117,17 +116,16 @@ func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
 func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
 	tokenData, tokenString := tests.TestToken()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(userCollection, topology.ErrServerSelectionTimeout, 1)
+	mongo := db.NewMockMongoCollection(ctrl)
 
-	// Token Dao Mocks
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectTokenFinOne(tokenCollection, tokenData, 1)
+	tests.ExpectTokenFinOne(mongo, tokenData, 1)
+
+	tests.ExpectFindOneError(mongo, topology.ErrServerSelectionTimeout, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users/current", tokenString)

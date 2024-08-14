@@ -7,11 +7,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
-	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/apperr"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
-	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -19,16 +17,13 @@ import (
 func TestGetUserSignOutHappyPath(t *testing.T) {
 	tokenData, tokenString := tests.TestToken()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
+	mongo := db.NewMockMongoCollection(ctrl)
 
-	// Token Dao Mocks
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
+	tests.ExpectFindOneForToken(t, mongo, tokenData)
 
-	// Database Mocks
-	tokenCollection.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+	mongo.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter primitive.M, update primitive.M) (int64, error) {
 			assert.Equal(t, tokenData.ID, filter["_id"].(primitive.ObjectID))
 
@@ -52,7 +47,7 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection), rabbitMock)
+	r := engine.TestRouter(mongo, rabbitMock)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
@@ -66,19 +61,14 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 func TestGetUserSignOutDbUpdateError(t *testing.T) {
 	tokenData, tokenString := tests.TestToken()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
-
-	// Token Dao Mocks
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, tokenCollection, tokenData)
-
-	// Database Mocks
-	tests.ExpectUpdateOneError(tokenCollection, apperr.NotFound, 1)
+	mongo := db.NewMockMongoCollection(ctrl)
+	tests.ExpectFindOneForToken(t, mongo, tokenData)
+	tests.ExpectUpdateOneError(mongo, apperr.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
@@ -101,16 +91,14 @@ func TestGetUserSignOutInvalidToken(t *testing.T) {
 func TestGetUserSignOutDbFindError(t *testing.T) {
 	_, tokenString := tests.TestToken()
 
-	// User Dao Mocks
+	// Db Mocks
 	ctrl := gomock.NewController(t)
-	userCollection := db.NewMockMongoCollection(ctrl)
+	mongo := db.NewMockMongoCollection(ctrl)
 
-	// Token Dao Mocks
-	tokenCollection := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneError(tokenCollection, apperr.NotFound, 1)
+	tests.ExpectFindOneError(mongo, apperr.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(token.TokenCollection(tokenCollection), user.UserCollection(userCollection))
+	r := engine.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
