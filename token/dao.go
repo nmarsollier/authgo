@@ -84,7 +84,7 @@ func findByID(tokenID string, ctx ...interface{}) (*Token, error) {
 	}
 
 	token := &Token{}
-	filter := bson.M{"_id": _id}
+	filter := DbTokenIdFilter{ID: _id}
 
 	if err = collection.FindOne(context.Background(), filter, token); err != nil {
 		glog.Error(err)
@@ -103,11 +103,21 @@ func delete(tokenID primitive.ObjectID, ctx ...interface{}) error {
 	}
 
 	_, err = collection.UpdateOne(context.Background(),
-		bson.M{"_id": tokenID},
-		bson.M{"$set": bson.M{
-			"enabled": false,
-		}},
+		DbTokenIdFilter{ID: tokenID},
+		DbDeleteTokenDocument{Set: DbDeleteTokenBody{Enabled: false}},
 	)
 
 	return err
+}
+
+type DbDeleteTokenBody struct {
+	Enabled bool `bson:"enabled"`
+}
+
+type DbDeleteTokenDocument struct {
+	Set DbDeleteTokenBody `bson:"$set"`
+}
+
+type DbTokenIdFilter struct {
+	ID primitive.ObjectID `bson:"_id"`
 }

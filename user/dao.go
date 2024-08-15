@@ -14,6 +14,25 @@ import (
 
 var collection db.MongoCollection
 
+type DbUserUpdateDocumentBody struct {
+	Name        string    `bson:"name" validate:"required,min=1,max=100"`
+	Password    string    `bson:"password" validate:"required"`
+	Permissions []string  `bson:"permissions"`
+	Enabled     bool      `bson:"enabled"`
+	Updated     time.Time `bson:"updated"`
+}
+
+type DbUserUpdateDocument struct {
+	Set DbUserUpdateDocumentBody `bson:"$set"`
+}
+
+type DbUserIdFilter struct {
+	ID primitive.ObjectID `bson:"_id"`
+}
+type DbUserLoginFilter struct {
+	Login string `bson:"login"`
+}
+
 func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 	for _, p := range ctx {
 		if coll, ok := p.(db.MongoCollection); ok {
@@ -36,7 +55,7 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 	_, err = col.Indexes().CreateOne(
 		context.Background(),
 		mongo.IndexModel{
-			Keys:    bson.M{"login": ""},
+			Keys:    DbUserLoginFilter{Login: ""},
 			Options: options.Index().SetUnique(true),
 		},
 	)
@@ -83,14 +102,14 @@ func update(user *User, ctx ...interface{}) (*User, error) {
 	user.Updated = time.Now()
 
 	_, err = collection.UpdateOne(context.Background(),
-		bson.M{"_id": user.ID},
-		bson.M{
-			"$set": bson.M{
-				"password":    user.Password,
-				"name":        user.Name,
-				"enabled":     user.Enabled,
-				"updated":     user.Updated,
-				"permissions": user.Permissions,
+		DbUserIdFilter{ID: user.ID},
+		DbUserUpdateDocument{
+			Set: DbUserUpdateDocumentBody{
+				Password:    user.Password,
+				Name:        user.Name,
+				Enabled:     user.Enabled,
+				Updated:     user.Updated,
+				Permissions: user.Permissions,
 			},
 		},
 	)
@@ -146,7 +165,7 @@ func findByID(userID string, ctx ...interface{}) (*User, error) {
 	}
 
 	user := &User{}
-	filter := bson.M{"_id": _id}
+	filter := DbUserIdFilter{ID: _id}
 	if err = collection.FindOne(context.Background(), filter, user); err != nil {
 		glog.Error(err)
 		return nil, err
@@ -164,7 +183,7 @@ func findByLogin(login string, ctx ...interface{}) (*User, error) {
 	}
 
 	user := &User{}
-	filter := bson.M{"login": login}
+	filter := DbUserLoginFilter{Login: login}
 	err = collection.FindOne(context.Background(), filter, user)
 	if err != nil {
 		glog.Error(err)

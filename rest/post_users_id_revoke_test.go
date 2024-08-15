@@ -11,7 +11,6 @@ import (
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestPostUserRevokeHappyPath(t *testing.T) {
@@ -26,9 +25,9 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 	tests.ExpectFindOneForToken(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, tokenData.UserID, params["_id"])
+			assert.Equal(t, tokenData.UserID, filter.ID)
 
 			// Asign return values
 			*updated = *adminUserData
@@ -37,9 +36,9 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 	).Times(1)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, userData.ID, params["_id"])
+			assert.Equal(t, userData.ID, filter.ID)
 
 			// Asign return values
 			*updated = *userData
@@ -48,12 +47,11 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 	).Times(1)
 
 	mongodb.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, filter primitive.M, update primitive.M) (int64, error) {
+		func(arg1 interface{}, filter user.DbUserIdFilter, update user.DbUserUpdateDocument) (int64, error) {
 			// Check parameters
-			assert.Equal(t, userData.ID, filter["_id"])
+			assert.Equal(t, userData.ID, filter.ID)
 
-			userP := update["$set"].(primitive.M)
-			assert.NotContains(t, userP["permissions"], "user")
+			assert.NotContains(t, update.Set.Permissions, "user")
 
 			// Asign return values
 			return 1, nil
@@ -105,9 +103,9 @@ func TestPostUserRevokeFindUserError_2(t *testing.T) {
 	tests.ExpectFindOneForToken(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, tokenData.UserID, params["_id"])
+			assert.Equal(t, tokenData.UserID, filter.ID)
 
 			// Asign return values
 			*updated = *adminUserData
@@ -138,9 +136,9 @@ func TestPostUserRevokeNotAdmin(t *testing.T) {
 	tests.ExpectFindOneForToken(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, tokenData.UserID, params["_id"])
+			assert.Equal(t, tokenData.UserID, filter.ID)
 
 			// Asign return values
 			*updated = *userData

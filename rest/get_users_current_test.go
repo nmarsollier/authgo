@@ -12,7 +12,6 @@ import (
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
@@ -27,8 +26,8 @@ func TestGetUserCurrentHappyPath(t *testing.T) {
 	tests.ExpectFindOneForToken(t, mongo, tokenData)
 
 	mongo.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
-			assert.Equal(t, tokenData.UserID, params["_id"])
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
+			assert.Equal(t, tokenData.UserID, filter.ID)
 
 			*updated = *userData
 			return nil

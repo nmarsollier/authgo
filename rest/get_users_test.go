@@ -10,7 +10,6 @@ import (
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -25,9 +24,9 @@ func TestGetUsersHappyPath(t *testing.T) {
 	tests.ExpectFindOneForToken(t, mongo, tokenData)
 
 	mongo.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, tokenData.UserID, params["_id"])
+			assert.Equal(t, tokenData.UserID, filter.ID)
 
 			// Asign return values
 			*updated = *userData
@@ -36,7 +35,7 @@ func TestGetUsersHappyPath(t *testing.T) {
 	).Times(1)
 
 	mongo.EXPECT().Find(gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, filter primitive.D) (db.Cursor, error) {
+		func(arg1 interface{}, filter interface{}) (db.Cursor, error) {
 			data := db.NewMockCursor(ctrl)
 			data.EXPECT().Next(gomock.Any()).Return(true).Times(2)
 			data.EXPECT().Next(gomock.Any()).Return(false).Times(1)
@@ -82,9 +81,9 @@ func TestGetUsersFindError(t *testing.T) {
 	tests.ExpectFindOneForToken(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, tokenData.UserID, params["_id"])
+			assert.Equal(t, tokenData.UserID, filter.ID)
 
 			// Asign return values
 			*updated = *userData
@@ -93,7 +92,7 @@ func TestGetUsersFindError(t *testing.T) {
 	).Times(1)
 
 	mongodb.EXPECT().Find(gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, filter primitive.D) (db.Cursor, error) {
+		func(arg1 interface{}, filter interface{}) (db.Cursor, error) {
 			// Asign return values
 			return nil, mongo.ErrNoDocuments
 		},

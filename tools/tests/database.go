@@ -8,7 +8,6 @@ import (
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -43,7 +42,7 @@ func ExpectInsertOneError(userCollection *db.MockMongoCollection, err error, tim
 
 func ExpectUserFindOne(userCollection *db.MockMongoCollection, userData *user.User, times int) {
 	userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, update *user.User) error {
+		func(arg1 interface{}, params user.DbUserIdFilter, update *user.User) error {
 			*update = *userData
 			return nil
 		},
@@ -59,7 +58,7 @@ func ExpectUpdateOneError(userCollection *db.MockMongoCollection, err error, tim
 
 func ExpectTokenFinOne(tokenCollection *db.MockMongoCollection, tokenData *token.Token, times int) {
 	tokenCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, token *token.Token) error {
+		func(arg1 interface{}, params token.DbTokenIdFilter, token *token.Token) error {
 			// Asign return values
 			*token = *tokenData
 			return nil
@@ -73,8 +72,8 @@ func ExpectTokenInsertOne(tokenCollection *db.MockMongoCollection, times int) {
 
 func ExpectFindOneForToken(t *testing.T, tokenCollection *db.MockMongoCollection, tokenData *token.Token) {
 	tokenCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, token *token.Token) error {
-			assert.Equal(t, tokenData.ID, params["_id"])
+		func(arg1 interface{}, tokenIdUpdate token.DbTokenIdFilter, token *token.Token) error {
+			assert.Equal(t, tokenData.ID, tokenIdUpdate.ID)
 
 			*token = *tokenData
 			return nil

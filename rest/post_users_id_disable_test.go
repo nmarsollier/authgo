@@ -10,7 +10,6 @@ import (
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestPostUserDisableHappyPath(t *testing.T) {
@@ -25,9 +24,9 @@ func TestPostUserDisableHappyPath(t *testing.T) {
 
 	// User Dao Mocks
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, tokenData.UserID, params["_id"])
+			assert.Equal(t, tokenData.UserID, filter.ID)
 
 			// Asign return values
 			*updated = *userData
@@ -36,12 +35,11 @@ func TestPostUserDisableHappyPath(t *testing.T) {
 	).Times(2)
 
 	mongodb.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, filter primitive.M, update primitive.M) (int64, error) {
+		func(arg1 interface{}, filter user.DbUserIdFilter, update user.DbUserUpdateDocument) (int64, error) {
 			// Check parameters
-			assert.Equal(t, userData.ID, filter["_id"])
+			assert.Equal(t, userData.ID, filter.ID)
 
-			userP := update["$set"].(primitive.M)
-			assert.Equal(t, false, userP["enabled"])
+			assert.Equal(t, false, update.Set.Enabled)
 
 			// Asign return values
 			return 1, nil
@@ -90,9 +88,9 @@ func TestPostUserDisableFindUserError_2(t *testing.T) {
 	tests.ExpectFindOneForToken(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, tokenData.UserID, params["_id"])
+			assert.Equal(t, tokenData.UserID, filter.ID)
 
 			// Asign return values
 			*updated = *userData
@@ -122,9 +120,9 @@ func TestPostUserDisableNotAdmin(t *testing.T) {
 	tests.ExpectFindOneForToken(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, tokenData.UserID, params["_id"])
+			assert.Equal(t, tokenData.UserID, filter.ID)
 
 			// Asign return values
 			*updated = *userData

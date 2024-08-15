@@ -7,11 +7,11 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestGetUserSignOutHappyPath(t *testing.T) {
@@ -24,10 +24,10 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	tests.ExpectFindOneForToken(t, mongo, tokenData)
 
 	mongo.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, filter primitive.M, update primitive.M) (int64, error) {
-			assert.Equal(t, tokenData.ID, filter["_id"].(primitive.ObjectID))
+		func(arg1 interface{}, filter token.DbTokenIdFilter, update token.DbDeleteTokenDocument) (int64, error) {
+			assert.Equal(t, tokenData.ID, filter.ID)
 
-			assert.Equal(t, false, update["$set"].(primitive.M)["enabled"])
+			assert.Equal(t, false, update.Set.Enabled)
 
 			return 1, nil
 		},

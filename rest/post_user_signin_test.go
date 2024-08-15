@@ -13,7 +13,6 @@ import (
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -25,9 +24,9 @@ func TestPostSignInHappyPath(t *testing.T) {
 	mongodb := db.NewMockMongoCollection(ctrl)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserLoginFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, userData.Login, params["login"])
+			assert.Equal(t, userData.Login, filter.Login)
 
 			// Asign return values
 			*updated = *userData
@@ -71,9 +70,9 @@ func TestPostSignInWrongPassword(t *testing.T) {
 	mongodb := db.NewMockMongoCollection(ctrl)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserLoginFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, userData.Login, params["login"])
+			assert.Equal(t, userData.Login, filter.Login)
 
 			// Asign return values
 			*updated = *userData
@@ -107,9 +106,9 @@ func TestPostSignInUserDisabled(t *testing.T) {
 	mongodb := db.NewMockMongoCollection(ctrl)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserLoginFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, userData.Login, params["login"])
+			assert.Equal(t, userData.Login, filter.Login)
 
 			// Asign return values
 			*updated = *userData
@@ -213,9 +212,9 @@ func TestPostTokenDbError(t *testing.T) {
 	tests.ExpectInsertOneError(mongodb, user.ErrID, 1)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params primitive.M, updated *user.User) error {
+		func(arg1 interface{}, filter user.DbUserLoginFilter, updated *user.User) error {
 			// Check parameters
-			assert.Equal(t, userData.Login, params["login"])
+			assert.Equal(t, userData.Login, filter.Login)
 
 			// Asign return values
 			*updated = *userData
