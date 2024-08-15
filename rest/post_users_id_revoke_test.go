@@ -6,23 +6,23 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/server"
+	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
-	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPostUserRevokeHappyPath(t *testing.T) {
-	adminUserData, _ := tests.TestAdminUser()
-	userData, _ := tests.TestUser()
-	tokenData, tokenString := tests.TestToken()
+	adminUserData, _ := user.TestAdminUser()
+	userData, _ := user.TestUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -62,45 +62,45 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"user"}}, tokenString)
+	req, w := server.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"user"}}, tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestPostUserRevokeFindUserError_1(t *testing.T) {
-	userData, _ := tests.TestUser()
-	tokenData, tokenString := tests.TestToken()
+	userData, _ := user.TestUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
-	tests.ExpectFindOneError(mongodb, errs.NotFound, 1)
+	db.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
+	req, w := server.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertUnauthorized(t, w)
+	server.AssertUnauthorized(t, w)
 
 }
 
 func TestPostUserRevokeFindUserError_2(t *testing.T) {
-	adminUserData, _ := tests.TestAdminUser()
-	userData, _ := tests.TestUser()
-	tokenData, tokenString := tests.TestToken()
+	adminUserData, _ := user.TestAdminUser()
+	userData, _ := user.TestUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -113,27 +113,27 @@ func TestPostUserRevokeFindUserError_2(t *testing.T) {
 		},
 	).Times(1)
 
-	tests.ExpectFindOneError(mongodb, errs.NotFound, 1)
+	db.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
+	req, w := server.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertDocumentNotFound(t, w)
+	server.AssertDocumentNotFound(t, w)
 }
 
 func TestPostUserRevokeNotAdmin(t *testing.T) {
-	userData, _ := tests.TestUser()
-	tokenData, tokenString := tests.TestToken()
+	userData, _ := user.TestUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -150,10 +150,10 @@ func TestPostUserRevokeNotAdmin(t *testing.T) {
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
+	req, w := server.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertUnauthorized(t, w)
+	server.AssertUnauthorized(t, w)
 }
 
 func TestGetUserSignOutMissingTokenHeader(t *testing.T) {
@@ -162,8 +162,8 @@ func TestGetUserSignOutMissingTokenHeader(t *testing.T) {
 	r := server.TestRouter()
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/123/revoke", revokePermissionBody{Permissions: []string{"people"}}, "")
+	req, w := server.TestPostRequest("/v1/users/123/revoke", revokePermissionBody{Permissions: []string{"people"}}, "")
 	r.ServeHTTP(w, req)
 
-	tests.AssertUnauthorized(t, w)
+	server.AssertUnauthorized(t, w)
 }

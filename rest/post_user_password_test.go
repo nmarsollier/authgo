@@ -7,22 +7,22 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/server"
+	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
-	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPostUserPasswordHappyPath(t *testing.T) {
-	userData, _ := tests.TestUser()
-	tokenData, tokenString := tests.TestToken()
+	userData, _ := user.TestUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -55,26 +55,26 @@ func TestPostUserPasswordHappyPath(t *testing.T) {
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
+	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestPostUserPasswordMissingCurrent(t *testing.T) {
-	tokenData, tokenString := tests.TestToken()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	// REQUEST
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{New: "456"}, tokenString)
+	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{New: "456"}, tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -85,19 +85,19 @@ func TestPostUserPasswordMissingCurrent(t *testing.T) {
 }
 
 func TestPostUserPasswordMissingNew(t *testing.T) {
-	tokenData, tokenString := tests.TestToken()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	// REQUEST
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123"}, tokenString)
+	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123"}, tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -109,14 +109,14 @@ func TestPostUserPasswordMissingNew(t *testing.T) {
 }
 
 func TestPostUserPasswordWrongCurrent(t *testing.T) {
-	userData, _ := tests.TestUser()
-	tokenData, tokenString := tests.TestToken()
+	userData, _ := user.TestUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -133,7 +133,7 @@ func TestPostUserPasswordWrongCurrent(t *testing.T) {
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "456", New: "456"}, tokenString)
+	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "456", New: "456"}, tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -147,35 +147,35 @@ func TestPostUserPasswordWrongCurrent(t *testing.T) {
 }
 
 func TestPostUserPasswordUserNotFound(t *testing.T) {
-	tokenData, tokenString := tests.TestToken()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
-	tests.ExpectFindOneError(mongodb, errs.NotFound, 1)
+	db.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
+	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertDocumentNotFound(t, w)
+	server.AssertDocumentNotFound(t, w)
 }
 
 func TestPostUserPasswordUpdateFails(t *testing.T) {
-	userData, _ := tests.TestUser()
-	tokenData, tokenString := tests.TestToken()
+	userData, _ := user.TestUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -188,13 +188,13 @@ func TestPostUserPasswordUpdateFails(t *testing.T) {
 		},
 	).Times(1)
 
-	tests.ExpectUpdateOneError(mongodb, user.ErrID, 1)
+	db.ExpectUpdateOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
+	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)

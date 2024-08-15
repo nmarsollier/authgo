@@ -6,22 +6,22 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
+	"github.com/nmarsollier/authgo/rabbit"
 	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
-	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetUserSignOutHappyPath(t *testing.T) {
-	tokenData, tokenString := tests.TestToken()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongo, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongo, tokenData)
 
 	mongo.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter token.DbTokenIdFilter, update token.DbDeleteTokenDocument) (int64, error) {
@@ -33,7 +33,7 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
-	rabbitMock := tests.MockRabbitChannel(ctrl, 1)
+	rabbitMock := rabbit.DefaultMockRabbitChannel(ctrl, 1)
 	rabbitMock.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(exchange string, routingKey string, body []byte) error {
 			assert.Equal(t, "auth", exchange)
@@ -50,7 +50,7 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	r := server.TestRouter(mongo, rabbitMock)
 	InitRoutes()
 
-	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
+	req, w := server.TestGetRequest("/v1/user/signout", tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -59,22 +59,22 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 }
 
 func TestGetUserSignOutDbUpdateError(t *testing.T) {
-	tokenData, tokenString := tests.TestToken()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
-	tests.ExpectFindOneForToken(t, mongo, tokenData)
-	tests.ExpectUpdateOneError(mongo, errs.NotFound, 1)
+	token.ExpectTokenAuthFindOne(t, mongo, tokenData)
+	db.ExpectUpdateOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongo)
 	InitRoutes()
 
-	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
+	req, w := server.TestGetRequest("/v1/user/signout", tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertDocumentNotFound(t, w)
+	server.AssertDocumentNotFound(t, w)
 }
 
 func TestGetUserSignOutInvalidToken(t *testing.T) {
@@ -82,27 +82,27 @@ func TestGetUserSignOutInvalidToken(t *testing.T) {
 	r := server.TestRouter()
 	InitRoutes()
 
-	req, w := tests.TestGetRequest("/v1/user/signout", "123")
+	req, w := server.TestGetRequest("/v1/user/signout", "123")
 	r.ServeHTTP(w, req)
 
-	tests.AssertUnauthorized(t, w)
+	server.AssertUnauthorized(t, w)
 }
 
 func TestGetUserSignOutDbFindError(t *testing.T) {
-	_, tokenString := tests.TestToken()
+	_, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneError(mongo, errs.NotFound, 1)
+	db.ExpectFindOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongo)
 	InitRoutes()
 
-	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
+	req, w := server.TestGetRequest("/v1/user/signout", tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertUnauthorized(t, w)
+	server.AssertUnauthorized(t, w)
 }

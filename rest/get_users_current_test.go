@@ -7,23 +7,23 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/server"
+	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
-	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 func TestGetUserCurrentHappyPath(t *testing.T) {
-	userData, _ := tests.TestUser()
-	tokenData, tokenString := tests.TestToken()
+	userData, _ := user.TestUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongo, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongo, tokenData)
 
 	mongo.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -38,7 +38,7 @@ func TestGetUserCurrentHappyPath(t *testing.T) {
 	r := server.TestRouter(mongo)
 	InitRoutes()
 
-	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
+	req, w := server.TestGetRequest("/v1/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -51,84 +51,84 @@ func TestGetUserCurrentHappyPath(t *testing.T) {
 }
 
 func TestGetUserCurrentErrorDisabledToken(t *testing.T) {
-	tokenData, tokenString := tests.TestToken()
+	tokenData, tokenString := token.TestToken()
 	tokenData.Enabled = false
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectTokenFinOne(mongo, tokenData, 1)
+	token.ExpectTokenFindOne(mongo, tokenData, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongo)
 	InitRoutes()
 
-	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
+	req, w := server.TestGetRequest("/v1/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertUnauthorized(t, w)
+	server.AssertUnauthorized(t, w)
 }
 
 func TestGetUserCurrentErrorDisabledUser(t *testing.T) {
-	userData, _ := tests.TestUser()
+	userData, _ := user.TestUser()
 	userData.Enabled = false
-	tokenData, tokenString := tests.TestToken()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectTokenFinOne(mongo, tokenData, 1)
+	token.ExpectTokenFindOne(mongo, tokenData, 1)
 
-	tests.ExpectUserFindOne(mongo, userData, 1)
+	user.ExpectUserFindOne(mongo, userData, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongo)
 	InitRoutes()
 
-	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
+	req, w := server.TestGetRequest("/v1/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertDocumentNotFound(t, w)
+	server.AssertDocumentNotFound(t, w)
 }
 
 func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
-	_, tokenString := tests.TestToken()
+	_, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneError(mongo, errs.Internal, 1)
+	db.ExpectFindOneError(mongo, errs.Internal, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongo)
 	InitRoutes()
 
-	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
+	req, w := server.TestGetRequest("/v1/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertUnauthorized(t, w)
+	server.AssertUnauthorized(t, w)
 }
 
 func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
-	tokenData, tokenString := tests.TestToken()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectTokenFinOne(mongo, tokenData, 1)
+	token.ExpectTokenFindOne(mongo, tokenData, 1)
 
-	tests.ExpectFindOneError(mongo, topology.ErrServerSelectionTimeout, 1)
+	db.ExpectFindOneError(mongo, topology.ErrServerSelectionTimeout, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongo)
 	InitRoutes()
 
-	req, w := tests.TestGetRequest("/v1/users/current", tokenString)
+	req, w := server.TestGetRequest("/v1/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertInternalServerError(t, w)
+	server.AssertInternalServerError(t, w)
 }

@@ -6,21 +6,21 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/rest/server"
+	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
-	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPostUserEnableHappyPath(t *testing.T) {
-	userData, _ := tests.TestAdminUser()
-	tokenData, tokenString := tests.TestToken()
+	userData, _ := user.TestAdminUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -49,42 +49,42 @@ func TestPostUserEnableHappyPath(t *testing.T) {
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
+	req, w := server.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestPostUserEnableFindUserError_1(t *testing.T) {
-	tokenData, tokenString := tests.TestToken()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
-	tests.ExpectFindOneError(mongodb, user.ErrID, 1)
+	db.ExpectFindOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
+	req, w := server.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertUnauthorized(t, w)
+	server.AssertUnauthorized(t, w)
 }
 
 func TestPostUserEnableFindUserError_2(t *testing.T) {
-	userData, _ := tests.TestAdminUser()
-	tokenData, tokenString := tests.TestToken()
+	userData, _ := user.TestAdminUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -96,27 +96,27 @@ func TestPostUserEnableFindUserError_2(t *testing.T) {
 			return nil
 		},
 	).Times(1)
-	tests.ExpectFindOneError(mongodb, user.ErrID, 1)
+	db.ExpectFindOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
+	req, w := server.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertBadRequestError(t, w)
+	server.AssertBadRequestError(t, w)
 }
 
 func TestPostUserEnableNotAdmin(t *testing.T) {
-	userData, _ := tests.TestUser()
-	tokenData, tokenString := tests.TestToken()
+	userData, _ := user.TestUser()
+	tokenData, tokenString := token.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongodb := db.NewMockMongoCollection(ctrl)
 
-	tests.ExpectFindOneForToken(t, mongodb, tokenData)
+	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	mongodb.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter user.DbUserIdFilter, updated *user.User) error {
@@ -133,8 +133,8 @@ func TestPostUserEnableNotAdmin(t *testing.T) {
 	r := server.TestRouter(mongodb)
 	InitRoutes()
 
-	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
+	req, w := server.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
 	r.ServeHTTP(w, req)
 
-	tests.AssertUnauthorized(t, w)
+	server.AssertUnauthorized(t, w)
 }
