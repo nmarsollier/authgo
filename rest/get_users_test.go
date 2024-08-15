@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
@@ -58,7 +58,7 @@ func TestGetUsersHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(mongo)
+	r := server.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users", tokenString)
@@ -99,7 +99,7 @@ func TestGetUsersFindError(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/users", tokenString)

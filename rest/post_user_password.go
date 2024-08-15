@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/user"
 )
 
@@ -15,16 +15,16 @@ import (
 //	@Param			Authorization	header	string				true	"bearer {token}"
 //	@Success		200				"No Content"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
-//	@Failure		401				{object}	engine.ErrorData	"Unauthorized"
-//	@Failure		404				{object}	engine.ErrorData	"Not Found"
-//	@Failure		500				{object}	engine.ErrorData	"Internal Server Error"
+//	@Failure		401				{object}	server.ErrorData	"Unauthorized"
+//	@Failure		404				{object}	server.ErrorData	"Not Found"
+//	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
 //	@Router			/v1/user/password [post]
 //
 // Cambia la contraseña del usuario actual.
 func getUserPasswordRoute() {
-	engine.Router().POST(
+	server.Router().POST(
 		"/v1/user/password",
-		engine.ValidateLoggedIn,
+		server.ValidateLoggedIn,
 		changePassword,
 	)
 }
@@ -37,14 +37,14 @@ type changePasswordBody struct {
 func changePassword(c *gin.Context) {
 	body := changePasswordBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		engine.AbortWithError(c, err)
+		server.AbortWithError(c, err)
 		return
 	}
-	token := engine.HeaderToken(c)
+	token := server.HeaderToken(c)
 
-	ctx := engine.TestCtx(c)
+	ctx := server.TestCtx(c)
 	if err := user.ChangePassword(token.UserID.Hex(), body.Current, body.New, ctx...); err != nil {
-		engine.AbortWithError(c, err)
+		server.AbortWithError(c, err)
 		return
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/tests"
 	"github.com/nmarsollier/authgo/user"
@@ -47,7 +47,7 @@ func TestPostUserDisableHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/disable", "", tokenString)
@@ -68,7 +68,7 @@ func TestPostUserDisableFindUserError_1(t *testing.T) {
 	tests.ExpectFindOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/disable", "", tokenString)
@@ -100,7 +100,7 @@ func TestPostUserDisableFindUserError_2(t *testing.T) {
 	tests.ExpectFindOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/disable", "", tokenString)
@@ -131,7 +131,7 @@ func TestPostUserDisableNotAdmin(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+tokenData.UserID.Hex()+"/disable", "", tokenString)

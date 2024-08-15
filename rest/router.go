@@ -3,14 +3,14 @@ package rest
 import (
 	"fmt"
 
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/tools/env"
 )
 
 // Start this server
 func Start() {
 	InitRoutes()
-	engine.Router().Run(fmt.Sprintf(":%d", env.Get().Port))
+	server.Router().Run(fmt.Sprintf(":%d", env.Get().Port))
 }
 
 func InitRoutes() {

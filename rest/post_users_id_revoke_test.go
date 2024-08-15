@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/tools/tests"
@@ -59,7 +59,7 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"user"}}, tokenString)
@@ -81,7 +81,7 @@ func TestPostUserRevokeFindUserError_1(t *testing.T) {
 	tests.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
@@ -116,7 +116,7 @@ func TestPostUserRevokeFindUserError_2(t *testing.T) {
 	tests.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
@@ -147,7 +147,7 @@ func TestPostUserRevokeNotAdmin(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/revoke", revokePermissionBody{Permissions: []string{"people"}}, tokenString)
@@ -159,7 +159,7 @@ func TestPostUserRevokeNotAdmin(t *testing.T) {
 func TestGetUserSignOutMissingTokenHeader(t *testing.T) {
 
 	// REQUEST
-	r := engine.TestRouter()
+	r := server.TestRouter()
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/users/123/revoke", revokePermissionBody{Permissions: []string{"people"}}, "")

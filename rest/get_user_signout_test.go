@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
@@ -47,7 +47,7 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := engine.TestRouter(mongo, rabbitMock)
+	r := server.TestRouter(mongo, rabbitMock)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
@@ -68,7 +68,7 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 	tests.ExpectUpdateOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongo)
+	r := server.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)
@@ -79,7 +79,7 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 
 func TestGetUserSignOutInvalidToken(t *testing.T) {
 	// REQUEST
-	r := engine.TestRouter()
+	r := server.TestRouter()
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", "123")
@@ -98,7 +98,7 @@ func TestGetUserSignOutDbFindError(t *testing.T) {
 	tests.ExpectFindOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongo)
+	r := server.TestRouter(mongo)
 	InitRoutes()
 
 	req, w := tests.TestGetRequest("/v1/user/signout", tokenString)

@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/user"
 )
 
@@ -15,25 +15,25 @@ import (
 //	@Param			Authorization	header	string	true	"bearer {token}"
 //	@Success		200				"No Content"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
-//	@Failure		401				{object}	engine.ErrorData	"Unauthorized"
-//	@Failure		404				{object}	engine.ErrorData	"Not Found"
-//	@Failure		500				{object}	engine.ErrorData	"Internal Server Error"
+//	@Failure		401				{object}	server.ErrorData	"Unauthorized"
+//	@Failure		404				{object}	server.ErrorData	"Not Found"
+//	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
 //	@Router			/v1/users/:userId/enable [post]
 //
 // Habilita un usuario en el sistema.
 func postUsersIdEnableRoute() {
-	engine.Router().POST(
+	server.Router().POST(
 		"/v1/users/:userID/enable",
-		engine.ValidateAdmin,
+		server.ValidateAdmin,
 		enable,
 	)
 }
 
 func enable(c *gin.Context) {
 	userId := c.Param("userID")
-	ctx := engine.TestCtx(c)
+	ctx := server.TestCtx(c)
 
 	if err := user.Enable(userId, ctx...); err != nil {
-		engine.AbortWithError(c, err)
+		server.AbortWithError(c, err)
 	}
 }

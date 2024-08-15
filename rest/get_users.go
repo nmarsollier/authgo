@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/user"
 )
 
@@ -22,26 +22,26 @@ type UserDataResponse struct {
 //	@Param			Authorization	header		string				true	"bearer {token}"
 //	@Success		200				{array}		UserDataResponse	"Users"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
-//	@Failure		401				{object}	engine.ErrorData	"Unauthorized"
-//	@Failure		404				{object}	engine.ErrorData	"Not Found"
-//	@Failure		500				{object}	engine.ErrorData	"Internal Server Error"
+//	@Failure		401				{object}	server.ErrorData	"Unauthorized"
+//	@Failure		404				{object}	server.ErrorData	"Not Found"
+//	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
 //	@Router			/v1/users [get]
 //
 // Obtiene información de todos los usuarios.
 func getUsersRoute() {
-	engine.Router().GET(
+	server.Router().GET(
 		"/v1/users",
-		engine.ValidateAdmin,
+		server.ValidateAdmin,
 		users,
 	)
 }
 
 func users(c *gin.Context) {
-	ctx := engine.TestCtx(c)
+	ctx := server.TestCtx(c)
 	user, err := user.Users(ctx...)
 
 	if err != nil {
-		engine.AbortWithError(c, err)
+		server.AbortWithError(c, err)
 		return
 	}
 	result := []UserDataResponse{}

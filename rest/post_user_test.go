@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/tools/tests"
@@ -26,7 +26,7 @@ func TestPostUserInHappyPath(t *testing.T) {
 	tests.ExpectUserInsertOne(mongodb, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -43,7 +43,7 @@ func TestPostUserMissingLogin(t *testing.T) {
 	_, password := tests.TestUser()
 
 	// REQUEST
-	r := engine.TestRouter()
+	r := server.TestRouter()
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Password: password}, "")
@@ -59,7 +59,7 @@ func TestPostUserMissingLogin(t *testing.T) {
 
 func TestPostUserInvalidLoginMinRule(t *testing.T) {
 	// REQUEST
-	r := engine.TestRouter()
+	r := server.TestRouter()
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: "a", Name: "b", Password: "c"}, "")
@@ -76,7 +76,7 @@ func TestPostUserIvalidPassword(t *testing.T) {
 	userData, _ := tests.TestUser()
 
 	// REQUEST
-	r := engine.TestRouter()
+	r := server.TestRouter()
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Name: userData.Name, Login: userData.Login}, "")
@@ -99,7 +99,7 @@ func TestPostUserDatabaseError(t *testing.T) {
 	tests.ExpectInsertOneError(mongodb, tests.TestOtherDbError, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -118,7 +118,7 @@ func TestPostUserAlreayExist(t *testing.T) {
 	tests.ExpectInsertOneError(mongodb, tests.TestIsUniqueError, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
@@ -139,7 +139,7 @@ func TestPostTokenDatabaseError(t *testing.T) {
 	tests.ExpectInsertOneError(mongodb, errs.Internal, 1)
 
 	// REQUEST
-	r := engine.TestRouter(mongodb)
+	r := server.TestRouter(mongodb)
 	InitRoutes()
 
 	req, w := tests.TestPostRequest("/v1/user", user.SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")

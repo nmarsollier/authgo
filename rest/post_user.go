@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/rest/engine"
+	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/user"
 )
 
@@ -14,14 +14,14 @@ import (
 //	@Param			body	body		user.SignUpRequest	true	"Informacion de ususario"
 //	@Success		200		{object}	tokenResponse		"User Token"
 //	@Failure		400		{object}	errs.ValidationErr	"Bad Request"
-//	@Failure		401		{object}	engine.ErrorData	"Unauthorized"
-//	@Failure		404		{object}	engine.ErrorData	"Not Found"
-//	@Failure		500		{object}	engine.ErrorData	"Internal Server Error"
+//	@Failure		401		{object}	server.ErrorData	"Unauthorized"
+//	@Failure		404		{object}	server.ErrorData	"Not Found"
+//	@Failure		500		{object}	server.ErrorData	"Internal Server Error"
 //	@Router			/v1/user [post]
 //
 // Registra un nuevo usuario en el sistema.
 func postUsersRoute() {
-	engine.Router().POST(
+	server.Router().POST(
 		"/v1/user",
 		signUp,
 	)
@@ -30,14 +30,14 @@ func postUsersRoute() {
 func signUp(c *gin.Context) {
 	body := user.SignUpRequest{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		engine.AbortWithError(c, err)
+		server.AbortWithError(c, err)
 		return
 	}
 
-	ctx := engine.TestCtx(c)
+	ctx := server.TestCtx(c)
 	token, err := user.SignUp(&body, ctx...)
 	if err != nil {
-		engine.AbortWithError(c, err)
+		server.AbortWithError(c, err)
 		return
 	}
 
