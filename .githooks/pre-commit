@@ -39,6 +39,6 @@ if ! go test -v ./...; then
     exit 1
 fi
 
-./run_test_report.sh
+./run_test_report.sh quiet
 
 echo "Build and tests passed. Proceeding with commit."
