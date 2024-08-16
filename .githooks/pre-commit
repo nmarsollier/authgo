@@ -1,0 +1,44 @@
+#!/usr/bin/env zsh
+
+# Source zshrc to ensure PATH is set correctly
+if [ -f ~/.zshrc ]; then
+    source ~/.zshrc
+fi
+
+NPM_GLOBAL_DIR="/usr"
+npm config set prefix "$NPM_GLOBAL_DIR"
+export PATH="$NPM_GLOBAL_DIR/bin:$PATH"
+
+# Optional: Source your zshrc if you need your zsh configuration
+# source ~/.zshrc
+
+# Ejecutar el build
+echo "Building the project..."
+
+if ! ./generate_mocks.sh; then
+    echo "Build failed generating mocks."
+    exit 1
+fi
+
+if ! ./generate_doc.sh; then
+    echo "Build failed generating docs."
+    exit 1
+fi
+
+if ! go build ; then
+    echo "Build failed building."
+    exit 1
+fi
+
+rm authgo
+
+# Ejecutar las pruebas
+echo "Running tests..."
+if ! go test -v ./...; then
+    echo "Tests failed. "
+    exit 1
+fi
+
+./run_test_report.sh
+
+echo "Build and tests passed. Proceeding with commit."
