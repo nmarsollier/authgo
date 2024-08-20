@@ -37,7 +37,7 @@ func getUsersRoute() {
 }
 
 func users(c *gin.Context) {
-	ctx := server.TestCtx(c)
+	ctx := server.GinCtx(c)
 	user, err := user.Users(ctx...)
 
 	if err != nil {

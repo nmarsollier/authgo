@@ -42,7 +42,7 @@ func grantPermission(c *gin.Context) {
 	}
 	userId := c.Param("userID")
 
-	ctx := server.TestCtx(c)
+	ctx := server.GinCtx(c)
 	if err := user.Grant(userId, body.Permissions, ctx...); err != nil {
 		server.AbortWithError(c, err)
 		return

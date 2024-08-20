@@ -1,7 +1,7 @@
 package rabbit
 
 import (
-	"github.com/golang/glog"
+	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/tools/env"
 	"github.com/streadway/amqp"
 )
@@ -15,13 +15,13 @@ func getChannel(ctx ...interface{}) (RabbitChannel, error) {
 
 	conn, err := amqp.Dial(env.Get().RabbitURL)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 
 	channel, err := conn.Channel()
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 

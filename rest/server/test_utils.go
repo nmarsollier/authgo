@@ -25,16 +25,6 @@ func TestRouter(ctx ...interface{}) *gin.Engine {
 	return engine
 }
 
-// Obtiene el contexto de interfaces mockeadas a serivcios externos
-// En prod este contexto esta vacio.
-func TestCtx(c *gin.Context) []interface{} {
-	var ctx []interface{}
-	if mocks, ok := c.Get("mock_ctx"); ok {
-		ctx = mocks.([]interface{})
-	}
-	return ctx
-}
-
 // Requests Test functions
 
 func TestGetRequest(url string, tokenString string) (*http.Request, *httptest.ResponseRecorder) {

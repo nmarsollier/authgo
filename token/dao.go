@@ -3,7 +3,7 @@ package token
 import (
 	"context"
 
-	"github.com/golang/glog"
+	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,9 +24,9 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 		return collection, nil
 	}
 
-	database, err := db.Get()
+	database, err := db.Get(ctx...)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 
@@ -41,7 +41,7 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 		},
 	)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 
@@ -54,7 +54,7 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) {
 	collection, err := dbCollection(ctx...)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 
@@ -62,7 +62,7 @@ func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) {
 
 	_, err = collection.InsertOne(context.Background(), token)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 
@@ -73,13 +73,13 @@ func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) {
 func findByID(tokenID string, ctx ...interface{}) (*Token, error) {
 	collection, err := dbCollection(ctx...)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 
 	_id, err := primitive.ObjectIDFromHex(tokenID)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, errs.Unauthorized
 	}
 
@@ -87,7 +87,7 @@ func findByID(tokenID string, ctx ...interface{}) (*Token, error) {
 	filter := DbTokenIdFilter{ID: _id}
 
 	if err = collection.FindOne(context.Background(), filter, token); err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 
@@ -98,7 +98,7 @@ func findByID(tokenID string, ctx ...interface{}) (*Token, error) {
 func delete(tokenID primitive.ObjectID, ctx ...interface{}) error {
 	collection, err := dbCollection(ctx...)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return err
 	}
 

@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang/glog"
+	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/user"
@@ -12,16 +12,20 @@ import (
 
 // Gin middleware to validate user token and Admin Access
 func ValidateAdmin(c *gin.Context) {
-	ctx := TestCtx(c)
-
 	payload, err := fetchAuthHeader(c)
+
 	if err != nil {
 		c.Error(errs.Unauthorized)
 		c.Abort()
 		return
 	}
 
+	ctx := GinCtx(c)
+	c.Set("logger", log.Get(ctx...).WithField("UserId", payload.UserID.Hex()))
+	ctx = GinCtx(c)
+
 	if !user.Granted(payload.UserID.Hex(), "admin", ctx...) {
+		log.Get(ctx...).Warn("Unauthorized")
 		c.Error(errs.Unauthorized)
 		c.Abort()
 	}
@@ -29,11 +33,15 @@ func ValidateAdmin(c *gin.Context) {
 
 // Gin middleware to validate logged in user token
 func ValidateLoggedIn(c *gin.Context) {
-	_, err := fetchAuthHeader(c)
+	token, err := fetchAuthHeader(c)
 	if err != nil {
 		c.Error(errs.Unauthorized)
 		c.Abort()
+		return
 	}
+
+	ctx := GinCtx(c)
+	c.Set("logger", log.Get(ctx...).WithField("UserId", token.UserID.Hex()))
 }
 
 // HeaderAuthorization token string from Authorization header
@@ -51,16 +59,16 @@ func HeaderToken(c *gin.Context) *token.Token {
 }
 
 func fetchAuthHeader(c *gin.Context) (*token.Token, error) {
-	ctx := TestCtx(c)
+	ctx := GinCtx(c)
 	tokenString, err := HeaderAuthorization(c)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 
 	payload, err := token.Validate(tokenString, ctx...)
 	if err != nil {
-		glog.Error(err)
+		log.Get(ctx...).Error(err)
 		return nil, err
 	}
 
