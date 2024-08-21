@@ -19,11 +19,10 @@ func SendLogout(token string, ctx ...interface{}) error {
 	logger := log.Get(ctx...).
 		WithField("Controller", "Rabbit").
 		WithField("Method", "Emit").
-		WithField("Path", "logout")
+		WithField("Queue", "logout")
 
 	corrId, _ := logger.Data["CorrelationId"].(string)
 	send := message{
-		Type:          "logout",
 		CorrelationId: corrId,
 		Message:       token,
 	}
@@ -63,7 +62,6 @@ func SendLogout(token string, ctx ...interface{}) error {
 }
 
 type message struct {
-	Type          string `json:"type" example:"logout" `
 	CorrelationId string `json:"correlation_id" example:"123123" `
 	Message       string `json:"message" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklEIjoiNjZiNjBlYzhlMGYzYzY4OTUzMzJlOWNmIiwidXNlcklEIjoiNjZhZmQ3ZWU4YTBhYjRjZjQ0YTQ3NDcyIn0.who7upBctOpmlVmTvOgH1qFKOHKXmuQCkEjMV3qeySg" `
 }

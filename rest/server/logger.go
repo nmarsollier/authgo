@@ -23,7 +23,8 @@ func GinLoggerMiddleware(c *gin.Context) {
 	c.Next()
 
 	if c.Request.Method != "OPTIONS" {
-		logger.WithField("status", c.Writer.Status()).Info("Completed")
+		ctx := GinCtx(c)
+		log.Get(ctx...).WithField("status", c.Writer.Status()).Info("Completed")
 	}
 }
 

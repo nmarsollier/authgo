@@ -39,7 +39,6 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 			assert.Equal(t, "auth", exchange)
 			assert.Equal(t, "", routingKey)
 			bodyStr := string(body)
-			assert.Contains(t, bodyStr, "logout")
 			assert.Contains(t, bodyStr, "bearer")
 
 			return nil
