@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/nmarsollier/authgo/tools/env"
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -42,7 +43,7 @@ func (hook *logrusConnectionHook) Close() error {
 }
 
 func configureFluent(logger *logrus.Logger) {
-	conn, err := net.Dial("tcp", "localhost:24224")
+	conn, err := net.Dial("tcp", env.Get().FluentUrl)
 	if err == nil {
 		logger.SetFormatter(&logrus.JSONFormatter{})
 		logger.SetOutput(conn)

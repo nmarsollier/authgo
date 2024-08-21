@@ -11,6 +11,7 @@ type Configuration struct {
 	RabbitURL string `json:"rabbitUrl"`
 	MongoURL  string `json:"mongoUrl"`
 	JWTSecret string `json:"jwtSecret"`
+	FluentUrl string `json:"fluentUrl"`
 }
 
 var config *Configuration
@@ -21,6 +22,7 @@ func new() *Configuration {
 		RabbitURL: "amqp://localhost",
 		MongoURL:  "mongodb://localhost:27017",
 		JWTSecret: "ecb6d3479ac3823f1da7f314d871989b",
+		FluentUrl: "localhost:24224",
 	}
 }
 
@@ -43,6 +45,10 @@ func load() *Configuration {
 
 	if value := os.Getenv("MONGO_URL"); len(value) > 0 {
 		result.MongoURL = value
+	}
+
+	if value := os.Getenv("FLUENT_URL"); len(value) > 0 {
+		result.FluentUrl = value
 	}
 
 	if value := os.Getenv("PORT"); len(value) > 0 {
