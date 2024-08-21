@@ -9,10 +9,10 @@ import (
 
 func newGinLogger(c *gin.Context) *logrus.Entry {
 	return log.Get().
-		WithField("CorrelationId", getCorrelationId(c)).
-		WithField("Controller", "Rest").
-		WithField("Method", c.Request.Method).
-		WithField("Path", c.Request.URL.Path)
+		WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(c)).
+		WithField(log.LOG_FIELD_CONTOROLLER, "Rest").
+		WithField(log.LOG_FIELD_HTTP_METHOD, c.Request.Method).
+		WithField(log.LOG_FIELD_HTTP_PATH, c.Request.URL.Path)
 }
 
 func GinLoggerMiddleware(c *gin.Context) {
@@ -24,7 +24,7 @@ func GinLoggerMiddleware(c *gin.Context) {
 
 	if c.Request.Method != "OPTIONS" {
 		ctx := GinCtx(c)
-		log.Get(ctx...).WithField("status", c.Writer.Status()).Info("Completed")
+		log.Get(ctx...).WithField(log.LOG_FIELD_HTTP_STATUS, c.Writer.Status()).Info("Completed")
 	}
 }
 
@@ -37,7 +37,7 @@ func ginLogger(c *gin.Context) *logrus.Entry {
 }
 
 func getCorrelationId(c *gin.Context) string {
-	value := c.GetHeader("CorrelationId")
+	value := c.GetHeader(log.LOG_FIELD_CORRELATION_ID)
 
 	if len(value) == 0 {
 		value = uuid.NewV4().String()

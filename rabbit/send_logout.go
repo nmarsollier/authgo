@@ -17,11 +17,12 @@ import (
 // SendLogout envía un broadcast a rabbit con logout
 func SendLogout(token string, ctx ...interface{}) error {
 	logger := log.Get(ctx...).
-		WithField("Controller", "Rabbit").
-		WithField("Method", "Emit").
-		WithField("Queue", "logout")
+		WithField(log.LOG_FIELD_CONTOROLLER, "Rabbit").
+		WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
+		WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
+		WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
 
-	corrId, _ := logger.Data["CorrelationId"].(string)
+	corrId, _ := logger.Data[log.LOG_FIELD_CORRELATION_ID].(string)
 	send := message{
 		CorrelationId: corrId,
 		Message:       token,

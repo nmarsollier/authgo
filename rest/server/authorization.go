@@ -21,7 +21,7 @@ func ValidateAdmin(c *gin.Context) {
 	}
 
 	ctx := GinCtx(c)
-	c.Set("logger", log.Get(ctx...).WithField("UserId", payload.UserID.Hex()))
+	c.Set("logger", log.Get(ctx...).WithField(log.LOG_FIELD_USER_ID, payload.UserID.Hex()))
 	ctx = GinCtx(c)
 
 	if !user.Granted(payload.UserID.Hex(), "admin", ctx...) {
@@ -41,7 +41,7 @@ func ValidateLoggedIn(c *gin.Context) {
 	}
 
 	ctx := GinCtx(c)
-	c.Set("logger", log.Get(ctx...).WithField("UserId", token.UserID.Hex()))
+	c.Set("logger", log.Get(ctx...).WithField(log.LOG_FIELD_USER_ID, token.UserID.Hex()))
 }
 
 // HeaderAuthorization token string from Authorization header
