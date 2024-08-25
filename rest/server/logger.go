@@ -10,7 +10,7 @@ import (
 func newGinLogger(c *gin.Context) *logrus.Entry {
 	return log.Get().
 		WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(c)).
-		WithField(log.LOG_FIELD_CONTOROLLER, "Rest").
+		WithField(log.LOG_FIELD_CONTROLLER, "Rest").
 		WithField(log.LOG_FIELD_HTTP_METHOD, c.Request.Method).
 		WithField(log.LOG_FIELD_HTTP_PATH, c.Request.URL.Path)
 }

@@ -17,7 +17,7 @@ import (
 // SendLogout envía un broadcast a rabbit con logout
 func SendLogout(token string, ctx ...interface{}) error {
 	logger := log.Get(ctx...).
-		WithField(log.LOG_FIELD_CONTOROLLER, "Rabbit").
+		WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
 		WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
 		WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
 		WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
