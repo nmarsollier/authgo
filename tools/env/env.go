@@ -52,7 +52,7 @@ func load() *Configuration {
 	}
 
 	if value := os.Getenv("PORT"); len(value) > 0 {
-		if intVal, err := strconv.Atoi(value); err != nil {
+		if intVal, err := strconv.Atoi(value); err == nil {
 			result.Port = intVal
 		}
 	}
