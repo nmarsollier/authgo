@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
@@ -35,7 +36,7 @@ func TestGetUserCurrentHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := server.TestRouter(mongo)
+	r := server.TestRouter(mongo, log.NewTestLogger(ctrl, 6, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestGetRequest("/v1/users/current", tokenString)
@@ -61,7 +62,7 @@ func TestGetUserCurrentErrorDisabledToken(t *testing.T) {
 	token.ExpectTokenFindOne(mongo, tokenData, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongo)
+	r := server.TestRouter(mongo, log.NewTestLogger(ctrl, 5, 1, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestGetRequest("/v1/users/current", tokenString)
@@ -84,7 +85,7 @@ func TestGetUserCurrentErrorDisabledUser(t *testing.T) {
 	user.ExpectUserFindOne(mongo, userData, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongo)
+	r := server.TestRouter(mongo, log.NewTestLogger(ctrl, 6, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestGetRequest("/v1/users/current", tokenString)
@@ -103,7 +104,7 @@ func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
 	db.ExpectFindOneError(mongo, errs.Internal, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongo)
+	r := server.TestRouter(mongo, log.NewTestLogger(ctrl, 5, 2, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestGetRequest("/v1/users/current", tokenString)
@@ -124,7 +125,7 @@ func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
 	db.ExpectFindOneError(mongo, topology.ErrServerSelectionTimeout, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongo)
+	r := server.TestRouter(mongo, log.NewTestLogger(ctrl, 6, 1, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestGetRequest("/v1/users/current", tokenString)

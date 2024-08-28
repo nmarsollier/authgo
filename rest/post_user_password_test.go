@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
@@ -52,7 +53,7 @@ func TestPostUserPasswordHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
@@ -71,7 +72,7 @@ func TestPostUserPasswordMissingCurrent(t *testing.T) {
 	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{New: "456"}, tokenString)
@@ -94,7 +95,7 @@ func TestPostUserPasswordMissingNew(t *testing.T) {
 	token.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123"}, tokenString)
@@ -130,7 +131,7 @@ func TestPostUserPasswordWrongCurrent(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "456", New: "456"}, tokenString)
@@ -158,7 +159,7 @@ func TestPostUserPasswordUserNotFound(t *testing.T) {
 	db.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 1, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)
@@ -191,7 +192,7 @@ func TestPostUserPasswordUpdateFails(t *testing.T) {
 	db.ExpectUpdateOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 1, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/password", changePasswordBody{Current: "123", New: "456"}, tokenString)

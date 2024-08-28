@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
@@ -59,7 +60,7 @@ func TestPostUserGrantHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
@@ -81,7 +82,7 @@ func TestPostUserGrantFindUserError_1(t *testing.T) {
 	db.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 1, 1, 0, 1, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
@@ -116,7 +117,7 @@ func TestPostUserGrantFindUserError_2(t *testing.T) {
 	db.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 1, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
@@ -147,7 +148,7 @@ func TestPostUserGrantNotAdmin(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 6, 0, 1, 0, 1, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/tools/db"
@@ -42,7 +43,7 @@ func TestPostSignInHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 5, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -80,7 +81,7 @@ func TestPostSignInWrongPassword(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 5, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: "wrong"}, "")
@@ -116,7 +117,7 @@ func TestPostSignInUserDisabled(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 5, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -129,7 +130,8 @@ func TestPostSignInMissingLogin(t *testing.T) {
 	_, password := user.TestUser()
 
 	// REQUEST
-	r := server.TestRouter()
+	ctrl := gomock.NewController(t)
+	r := server.TestRouter(log.NewTestLogger(ctrl, 5, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/signin", user.SignInRequest{Password: password}, "")
@@ -146,7 +148,8 @@ func TestPostSignInMissingPassword(t *testing.T) {
 	userData, _ := user.TestUser()
 
 	// REQUEST
-	r := server.TestRouter()
+	ctrl := gomock.NewController(t)
+	r := server.TestRouter(log.NewTestLogger(ctrl, 5, 0, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login}, "")
@@ -169,7 +172,7 @@ func TestPostSignInUserDbError(t *testing.T) {
 	db.ExpectFindOneError(mongodb, errs.Internal, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 5, 1, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -192,7 +195,7 @@ func TestPostSignInUserNotFound(t *testing.T) {
 	db.ExpectFindOneError(mongodb, mongo.ErrNoDocuments, 1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 5, 1, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")
@@ -222,7 +225,7 @@ func TestPostTokenDbError(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	r := server.TestRouter(mongodb)
+	r := server.TestRouter(mongodb, log.NewTestLogger(ctrl, 5, 1, 1, 0, 0, 0))
 	InitRoutes()
 
 	req, w := server.TestPostRequest("/v1/user/signin", user.SignInRequest{Login: userData.Login, Password: password}, "")

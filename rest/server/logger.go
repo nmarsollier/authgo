@@ -4,36 +4,36 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/log"
 	uuid "github.com/satori/go.uuid"
-	"github.com/sirupsen/logrus"
 )
 
-func newGinLogger(c *gin.Context) *logrus.Entry {
-	return log.Get().
+func newGinLogger(c *gin.Context, ctx ...interface{}) log.LogRusEntry {
+	return log.Get(ctx...).
 		WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(c)).
 		WithField(log.LOG_FIELD_CONTROLLER, "Rest").
 		WithField(log.LOG_FIELD_HTTP_METHOD, c.Request.Method).
 		WithField(log.LOG_FIELD_HTTP_PATH, c.Request.URL.Path)
 }
 
-func GinLoggerMiddleware(c *gin.Context) {
-	logger := newGinLogger(c)
+func GinLoggerMiddleware(ctx ...interface{}) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		logger := newGinLogger(c, ctx...)
+		c.Set("logger", logger)
 
-	c.Set("logger", logger)
+		c.Next()
 
-	c.Next()
-
-	if c.Request.Method != "OPTIONS" {
-		ctx := GinCtx(c)
-		log.Get(ctx...).WithField(log.LOG_FIELD_HTTP_STATUS, c.Writer.Status()).Info("Completed")
+		if c.Request.Method != "OPTIONS" {
+			ctx := GinCtx(c)
+			log.Get(ctx...).WithField(log.LOG_FIELD_HTTP_STATUS, c.Writer.Status()).Info("Completed")
+		}
 	}
 }
 
-func ginLogger(c *gin.Context) *logrus.Entry {
+func ginLogger(c *gin.Context) log.LogRusEntry {
 	logger, exist := c.Get("logger")
 	if !exist {
 		return newGinLogger(c)
 	}
-	return logger.(*logrus.Entry)
+	return logger.(log.LogRusEntry)
 }
 
 func getCorrelationId(c *gin.Context) string {

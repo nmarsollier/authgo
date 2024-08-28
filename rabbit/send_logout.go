@@ -22,12 +22,13 @@ func SendLogout(token string, ctx ...interface{}) error {
 		WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
 		WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
 
-	corrId, _ := logger.Data[log.LOG_FIELD_CORRELATION_ID].(string)
+	corrId, _ := logger.Data()[log.LOG_FIELD_CORRELATION_ID].(string)
 	send := message{
 		CorrelationId: corrId,
 		Message:       token,
 	}
 
+	ctx = append(ctx, logger)
 	chanel, err := getChannel(ctx...)
 	if err != nil {
 		logger.Error(err)
