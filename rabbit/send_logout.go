@@ -3,7 +3,7 @@ package rabbit
 import (
 	"encoding/json"
 
-	"github.com/nmarsollier/authgo/log"
+	"github.com/nmarsollier/authgo/tools/log"
 )
 
 //	@Summary		Mensage Rabbit

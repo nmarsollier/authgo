@@ -12,7 +12,7 @@ func TestUser() (*User, string) {
 	userData.Login = "Login"
 	userData.Name = "Name"
 	userData.Permissions = []string{"user", "other"}
-	userData.SetPasswordText(password)
+	userData.setPasswordText(password)
 	return userData, password
 }
 
@@ -22,7 +22,7 @@ func TestAdminUser() (*User, string) {
 	userData.Login = "Login"
 	userData.Name = "Name"
 	userData.Permissions = []string{"user", "admin"}
-	userData.SetPasswordText(password)
+	userData.setPasswordText(password)
 	return userData, password
 }
 

@@ -3,8 +3,8 @@ package db
 import (
 	"context"
 
-	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/tools/env"
+	"github.com/nmarsollier/authgo/tools/log"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

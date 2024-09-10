@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -68,7 +68,7 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 }
 
 func insert(user *User, ctx ...interface{}) (*User, error) {
-	if err := user.ValidateSchema(); err != nil {
+	if err := user.validateSchema(); err != nil {
 		log.Get(ctx...).Error(err)
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func insert(user *User, ctx ...interface{}) (*User, error) {
 }
 
 func update(user *User, ctx ...interface{}) (*User, error) {
-	if err := user.ValidateSchema(); err != nil {
+	if err := user.validateSchema(); err != nil {
 		log.Get(ctx...).Error(err)
 		return nil, err
 	}

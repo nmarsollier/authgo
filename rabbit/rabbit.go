@@ -1,8 +1,8 @@
 package rabbit
 
 import (
-	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/tools/env"
+	"github.com/nmarsollier/authgo/tools/log"
 	"github.com/streadway/amqp"
 )
 

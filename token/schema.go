@@ -9,11 +9,20 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Token es un objeto valor que representa un token.
+// Token es una estructura valor que representa un token.
 type Token struct {
 	ID      primitive.ObjectID `bson:"_id"`
 	UserID  primitive.ObjectID `bson:"userId"`
 	Enabled bool               `bson:"enabled"`
+}
+
+// NewToken crea un nuevo Token con la información minima necesaria
+func newToken(userID primitive.ObjectID) *Token {
+	return &Token{
+		ID:      primitive.NewObjectID(),
+		UserID:  userID,
+		Enabled: true,
+	}
 }
 
 // Encode codifica un Token obteniendo el tokenString
@@ -30,15 +39,6 @@ func Encode(t *Token) (string, error) {
 	}
 
 	return tokenString, nil
-}
-
-// NewToken crea un nuevo Token con la información minima necesaria
-func newToken(userID primitive.ObjectID) *Token {
-	return &Token{
-		ID:      primitive.NewObjectID(),
-		UserID:  userID,
-		Enabled: true,
-	}
 }
 
 // descifra el token string y devuelve los datos del payload

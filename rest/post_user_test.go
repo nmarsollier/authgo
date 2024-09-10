@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/rest/server"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
+	"github.com/nmarsollier/authgo/tools/log"
 	"github.com/nmarsollier/authgo/user"
 	"github.com/stretchr/testify/assert"
 )

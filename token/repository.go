@@ -3,9 +3,9 @@ package token
 import (
 	"context"
 
-	"github.com/nmarsollier/authgo/log"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
+	"github.com/nmarsollier/authgo/tools/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
