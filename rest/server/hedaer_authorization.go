@@ -12,10 +12,16 @@ import (
 // HeaderAuthorization token string from Authorization header
 func HeaderAuthorization(c *gin.Context) (string, error) {
 	tokenString := c.GetHeader("Authorization")
-	if strings.Index(tokenString, "bearer ") != 0 {
-		return "", errs.Unauthorized
+
+	if strings.Index(tokenString, "bearer ") == 0 {
+		return tokenString[7:], nil
 	}
-	return tokenString[7:], nil
+
+	if strings.Index(tokenString, "Bearer ") == 0 {
+		return tokenString[7:], nil
+	}
+
+	return "", errs.Unauthorized
 }
 
 // HeaderToken Token data from Authorization header
