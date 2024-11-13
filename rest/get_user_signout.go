@@ -11,7 +11,7 @@ import (
 // @Tags			Seguridad
 // @Accept			json
 // @Produce		json
-// @Param			Authorization	header	string	true	"bearer {token}"
+// @Param			Authorization	header	string	true	"Bearer {token}"
 // @Success		200				"No Content"
 // @Failure		500				{object}	server.ErrorData	"Error response"
 // @Router			/v1/user/signout [get]

@@ -20,7 +20,7 @@ func Invalidate(tokenString string, ctx ...interface{}) error {
 	cacheRemove(token)
 
 	go func() {
-		if err = rabbit.SendLogout("bearer "+tokenString, ctx...); err != nil {
+		if err = rabbit.SendLogout("Bearer "+tokenString, ctx...); err != nil {
 			log.Get(ctx...).Info("Rabbit logout no se pudo enviar")
 		}
 	}()

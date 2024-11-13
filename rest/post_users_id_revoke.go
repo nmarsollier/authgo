@@ -12,7 +12,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			userId			path	string				true	"ID del usuario a quitar permiso"
-//	@Param			Authorization	header	string				true	"bearer {token}"
+//	@Param			Authorization	header	string				true	"Bearer {token}"
 //	@Param			body			body	grantPermissionBody	true	"Permisos a Qutiar"
 //	@Success		200				"No Content"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"

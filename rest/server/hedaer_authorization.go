@@ -13,11 +13,7 @@ import (
 func HeaderAuthorization(c *gin.Context) (string, error) {
 	tokenString := c.GetHeader("Authorization")
 
-	if strings.Index(tokenString, "bearer ") == 0 {
-		return tokenString[7:], nil
-	}
-
-	if strings.Index(tokenString, "Bearer ") == 0 {
+	if strings.Index(strings.ToUpper(tokenString), "BEARER ") == 0 {
 		return tokenString[7:], nil
 	}
 

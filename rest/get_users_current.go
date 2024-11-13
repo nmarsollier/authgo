@@ -18,7 +18,7 @@ type UserResponse struct {
 //	@Tags			Seguridad
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string				true	"bearer {token}"
+//	@Param			Authorization	header		string				true	"Bearer {token}"
 //	@Success		200				{object}	UserResponse		"User data"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
 //	@Failure		401				{object}	server.ErrorData	"Unauthorized"

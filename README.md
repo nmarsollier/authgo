@@ -1,4 +1,5 @@
 ### Si queres sabes mas sobre mi:
+
 [Nestor Marsollier](https://github.com/nmarsollier/profile)
 
 # Auth Service en GO
@@ -9,9 +10,9 @@ Este Microservicio de seguridad reemplaza al del proyecto
 
 Se encarga de registrar y autenticar usuarios en el sistema.
 
-Utiliza el esquema JWT con un header Authorization "bearer" estándar.
+Utiliza el esquema JWT con un header Authorization "Bearer" estándar.
 
-Cada usuario tiene asociado una lista de permisos, existen 2 permisos genéricos "user" y "admin". Los usuarios que se registran son todos "user",  muchos procesos necesitan un usuario "admin" para poder funcionar, por lo tanto hay que editar el esquema en mongodb para asociarle el permiso admin a algún usuario inicialmente.
+Cada usuario tiene asociado una lista de permisos, existen 2 permisos genéricos "user" y "admin". Los usuarios que se registran son todos "user", muchos procesos necesitan un usuario "admin" para poder funcionar, por lo tanto hay que editar el esquema en mongodb para asociarle el permiso admin a algún usuario inicialmente.
 
 [Documentación de API](./README-API.md)
 
@@ -21,7 +22,6 @@ que una vez levantado el servidor se puede navegar en [localhost:3000](http://lo
 ## Requisitos
 
 Go [golang.org](https://golang.org/doc/install)
-
 
 ## Configuración inicial
 
@@ -41,8 +41,8 @@ cd $GOPATH/src/github.com/nmarsollier/authgo
 
 ```bash
 git config core.hooksPath .githooks
-go install github.com/swaggo/gin-swagger/swaggerFiles 
-go install github.com/swaggo/gin-swagger 
+go install github.com/swaggo/gin-swagger/swaggerFiles
+go install github.com/swaggo/gin-swagger
 go install github.com/swaggo/swag/cmd/swag
 go install github.com/golang/mock/mockgen@v1.6.0
 ```
@@ -72,7 +72,7 @@ No se requiere ninguna configuración adicional, solo levantarlo luego de instal
 
 Usamos [swaggo](https://github.com/swaggo/swag)
 
-Requisitos 
+Requisitos
 
 ```bash
 go install github.com/swaggo/swag/cmd/swag@latest
@@ -86,19 +86,19 @@ swag init
 
 Para generar el archivo README-API.md
 
-Requisito 
+Requisito
 
 ```bash
 sudo npm install -g swagger-markdown
 ```
 
-y ejecutamos 
+y ejecutamos
 
 ```bash
 npx swagger-markdown -i ./docs/swagger.yaml -o README-API.md
 ```
 
-## Tests 
+## Tests
 
 ```bash
 go install github.com/golang/mock/mockgen@v1.6.0
