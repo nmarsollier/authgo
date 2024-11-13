@@ -185,7 +185,7 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/rest.changePasswordBody'
-      - description: bearer {token}
+      - description: Bearer {token}
         in: header
         name: Authorization
         required: true
@@ -258,7 +258,7 @@ paths:
       - application/json
       description: Desloguea un usuario en el sistema, invalida el token.
       parameters:
-      - description: bearer {token}
+      - description: Bearer {token}
         in: header
         name: Authorization
         required: true
@@ -282,7 +282,7 @@ paths:
       description: Obtiene información de todos los usuarios. El usuario logueado
         debe tener permisos "admin".
       parameters:
-      - description: bearer {token}
+      - description: Bearer {token}
         in: header
         name: Authorization
         required: true
@@ -327,7 +327,7 @@ paths:
         name: userId
         required: true
         type: string
-      - description: bearer {token}
+      - description: Bearer {token}
         in: header
         name: Authorization
         required: true
@@ -374,7 +374,7 @@ paths:
         name: userId
         required: true
         type: string
-      - description: bearer {token}
+      - description: Bearer {token}
         in: header
         name: Authorization
         required: true
@@ -421,7 +421,7 @@ paths:
         name: userId
         required: true
         type: string
-      - description: bearer {token}
+      - description: Bearer {token}
         in: header
         name: Authorization
         required: true
@@ -462,7 +462,7 @@ paths:
         name: userId
         required: true
         type: string
-      - description: bearer {token}
+      - description: Bearer {token}
         in: header
         name: Authorization
         required: true
@@ -497,7 +497,7 @@ paths:
       - application/json
       description: Obtiene información del usuario actual.
       parameters:
-      - description: bearer {token}
+      - description: Bearer {token}
         in: header
         name: Authorization
         required: true

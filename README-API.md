@@ -74,7 +74,7 @@ Cambia la contraseña del usuario actual.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ------ |
 | body | body | Passwords | Yes | [rest.changePasswordBody](#restchangepasswordbody) |
-| Authorization | header | bearer {token} | Yes | string |
+| Authorization | header | Bearer {token} | Yes | string |
 
 ##### Responses
 
@@ -128,7 +128,7 @@ Desloguea un usuario en el sistema, invalida el token.
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ------ |
-| Authorization | header | bearer {token} | Yes | string |
+| Authorization | header | Bearer {token} | Yes | string |
 
 ##### Responses
 
@@ -152,7 +152,7 @@ Obtiene información de todos los usuarios. El usuario logueado debe tener permi
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ------ |
-| Authorization | header | bearer {token} | Yes | string |
+| Authorization | header | Bearer {token} | Yes | string |
 
 ##### Responses
 
@@ -180,7 +180,7 @@ Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ------ |
 | userId | path | ID del usuario a habilitar permiso | Yes | string |
-| Authorization | header | bearer {token} | Yes | string |
+| Authorization | header | Bearer {token} | Yes | string |
 | body | body | Permisos a Habilitar | Yes | [rest.grantPermissionBody](#restgrantpermissionbody) |
 
 ##### Responses
@@ -209,7 +209,7 @@ Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ------ |
 | userId | path | ID del usuario a quitar permiso | Yes | string |
-| Authorization | header | bearer {token} | Yes | string |
+| Authorization | header | Bearer {token} | Yes | string |
 | body | body | Permisos a Qutiar | Yes | [rest.grantPermissionBody](#restgrantpermissionbody) |
 
 ##### Responses
@@ -238,7 +238,7 @@ Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos "a
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ------ |
 | userId | path | ID del usuario a deshabilitar | Yes | string |
-| Authorization | header | bearer {token} | Yes | string |
+| Authorization | header | Bearer {token} | Yes | string |
 
 ##### Responses
 
@@ -266,7 +266,7 @@ Habilita un usuario en el sistema. El usuario logueado debe tener permisos "admi
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ------ |
 | userId | path | ID del usuario a habilitar | Yes | string |
-| Authorization | header | bearer {token} | Yes | string |
+| Authorization | header | Bearer {token} | Yes | string |
 
 ##### Responses
 
@@ -293,7 +293,7 @@ Obtiene información del usuario actual.
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ------ |
-| Authorization | header | bearer {token} | Yes | string |
+| Authorization | header | Bearer {token} | Yes | string |
 
 ##### Responses
 

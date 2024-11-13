@@ -128,7 +128,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "bearer {token}",
+                        "description": "Bearer {token}",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -239,7 +239,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "bearer {token}",
+                        "description": "Bearer {token}",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -274,7 +274,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "bearer {token}",
+                        "description": "Bearer {token}",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -340,7 +340,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "bearer {token}",
+                        "description": "Bearer {token}",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -409,7 +409,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "bearer {token}",
+                        "description": "Bearer {token}",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -478,7 +478,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "bearer {token}",
+                        "description": "Bearer {token}",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -538,7 +538,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "bearer {token}",
+                        "description": "Bearer {token}",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -591,7 +591,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "bearer {token}",
+                        "description": "Bearer {token}",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
