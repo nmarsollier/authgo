@@ -7,14 +7,14 @@ type Mutation {
   signUp(name: String!, login: String!, password: String!): TokenResponse!
   signOut: Boolean!
   changePassword(oldPassword: String!, newPassword: String!): Boolean!
-  enable(userId: ID!): Boolean!
-  disable(userId: ID!): Boolean!
-  grant(userId: ID!, permissions: [String!]): Boolean!
-  revoke(userId: ID!, permissions: [String!]): Boolean!
+  enable(userId: String!): Boolean!
+  disable(userId: String!): Boolean!
+  grant(userId: String!, permissions: [String!]): Boolean!
+  revoke(userId: String!, permissions: [String!]): Boolean!
 }
 
 type UserResponse {
-  id: ID!
+  id: String!
   name: String!
   permissions: [String!]!
   login: String!

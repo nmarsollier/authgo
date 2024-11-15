@@ -20,7 +20,7 @@ var config *Configuration
 func new() *Configuration {
 	return &Configuration{
 		Port:      3000,
-		GqlPort:   3080,
+		GqlPort:   4000,
 		RabbitURL: "amqp://localhost",
 		MongoURL:  "mongodb://localhost:27017",
 		JWTSecret: "ecb6d3479ac3823f1da7f314d871989b",

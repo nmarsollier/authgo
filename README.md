@@ -99,6 +99,14 @@ y ejecutamos
 npx swagger-markdown -i ./docs/swagger.yaml -o README-API.md
 ```
 
+## GraphQL
+
+El esquema se genera con
+
+```bash
+./generate_gql.sh
+```
+
 ## Tests
 
 ```bash
