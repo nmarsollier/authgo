@@ -19,6 +19,8 @@ Cada usuario tiene asociado una lista de permisos, existen 2 permisos genéricos
 La documentación de las api también se pueden consultar desde el home del microservicio
 que una vez levantado el servidor se puede navegar en [localhost:3000](http://localhost:3000/docs/index.html)
 
+La interfaz GraphQL en [localhost:4000](http://localhost:4000/docs/index.html)
+
 ## Requisitos
 
 Go [golang.org](https://golang.org/doc/install)
@@ -123,6 +125,7 @@ Este servidor usa las siguientes variables de entorno para configuración :
 RABBIT_URL : Url de rabbit (default amqp://localhost)
 MONGO_URL : Url de mongo (default mongodb://localhost:27017)
 PORT : Puerto (default 3000)
+GQL_PORT : Puerto de graphql (default 4000)
 JWT_SECRET : Secret para password (default ecb6d3479ac3823f1da7f314d871989b)
 ```
 
@@ -143,11 +146,11 @@ docker build -t dev-auth-go .
 Mac | Windows
 
 ```bash
-docker run -it --name dev-auth-go -p 3000:3000 -v $PWD:/go/src/github.com/nmarsollier/authgo dev-auth-go
+docker run -it --name dev-auth-go -p 3000:3000 -p 4000:4000 -v $PWD:/go/src/github.com/nmarsollier/authgo dev-auth-go
 ```
 
 Linux
 
 ```bash
-docker run -it --add-host host.docker.internal:172.17.0.1 --name dev-auth-go -p 3000:3000 -v $PWD:/go/src/github.com/nmarsollier/authgo dev-auth-go
+docker run -it --add-host host.docker.internal:172.17.0.1 --name dev-auth-go -p 3000:3000 -p 4000:4000 -v $PWD:/go/src/github.com/nmarsollier/authgo dev-auth-go
 ```
