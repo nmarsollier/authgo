@@ -23,34 +23,6 @@ definitions:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklEIjoiNjZiNjBlYzhlMGYzYzY4OTUzMzJlOWNmIiwidXNlcklEIjoiNjZhZmQ3ZWU4YTBhYjRjZjQ0YTQ3NDcyIn0.who7upBctOpmlVmTvOgH1qFKOHKXmuQCkEjMV3qeySg
         type: string
     type: object
-  rest.UserDataResponse:
-    properties:
-      enabled:
-        type: boolean
-      id:
-        type: string
-      login:
-        type: string
-      name:
-        type: string
-      permissions:
-        items:
-          type: string
-        type: array
-    type: object
-  rest.UserResponse:
-    properties:
-      id:
-        type: string
-      login:
-        type: string
-      name:
-        type: string
-      permissions:
-        items:
-          type: string
-        type: array
-    type: object
   rest.changePasswordBody:
     properties:
       currentPassword:
@@ -73,11 +45,6 @@ definitions:
         type: array
     required:
     - permissions
-    type: object
-  rest.tokenResponse:
-    properties:
-      token:
-        type: string
     type: object
   server.ErrorData:
     properties:
@@ -106,6 +73,26 @@ definitions:
     - login
     - name
     - password
+    type: object
+  user.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  user.UserResponse:
+    properties:
+      enabled:
+        type: boolean
+      id:
+        type: string
+      login:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
     type: object
 host: localhost:3000
 info:
@@ -153,7 +140,7 @@ paths:
         "200":
           description: User Token
           schema:
-            $ref: '#/definitions/rest.tokenResponse'
+            $ref: '#/definitions/user.TokenResponse'
         "400":
           description: Bad Request
           schema:
@@ -232,7 +219,7 @@ paths:
         "200":
           description: User Token
           schema:
-            $ref: '#/definitions/rest.tokenResponse'
+            $ref: '#/definitions/user.TokenResponse'
         "400":
           description: Bad Request
           schema:
@@ -294,7 +281,7 @@ paths:
           description: Users
           schema:
             items:
-              $ref: '#/definitions/rest.UserDataResponse'
+              $ref: '#/definitions/user.UserResponse'
             type: array
         "400":
           description: Bad Request
@@ -508,7 +495,7 @@ paths:
         "200":
           description: User data
           schema:
-            $ref: '#/definitions/rest.UserResponse'
+            $ref: '#/definitions/user.UserResponse'
         "400":
           description: Bad Request
           schema:

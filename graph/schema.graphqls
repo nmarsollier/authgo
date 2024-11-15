@@ -1,0 +1,27 @@
+type TokenResponse {
+  token: String!
+}
+
+type Mutation {
+  signIn(login: String!, password: String!): TokenResponse!
+  signUp(name: String!, login: String!, password: String!): TokenResponse!
+  signOut: Boolean!
+  changePassword(oldPassword: String!, newPassword: String!): Boolean!
+  enable(userId: ID!): Boolean!
+  disable(userId: ID!): Boolean!
+  grant(userId: ID!, permissions: [String!]): Boolean!
+  revoke(userId: ID!, permissions: [String!]): Boolean!
+}
+
+type UserResponse {
+  id: ID!
+  name: String!
+  permissions: [String!]!
+  login: String!
+  enabled: Boolean!
+}
+
+type Query {
+  currentUser: UserResponse!
+  users: [UserResponse!]!
+}

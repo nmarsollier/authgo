@@ -45,6 +45,7 @@ go install github.com/swaggo/gin-swagger/swaggerFiles
 go install github.com/swaggo/gin-swagger
 go install github.com/swaggo/swag/cmd/swag
 go install github.com/golang/mock/mockgen@v1.6.0
+go install github.com/99designs/gqlgen@v0.17.56
 ```
 
 ```bash

@@ -13,7 +13,7 @@ type SignUpRequest struct {
 }
 
 // SignUp is the controller to signup new users
-func SignUp(user *SignUpRequest, ctx ...interface{}) (string, error) {
+func SignUp(user *SignUpRequest, ctx ...interface{}) (*TokenResponse, error) {
 	newUser := NewUser()
 	newUser.Login = user.Login
 	newUser.Name = user.Name
@@ -21,13 +21,18 @@ func SignUp(user *SignUpRequest, ctx ...interface{}) (string, error) {
 
 	newUser, err := insert(newUser, ctx...)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	newToken, err := token.Create(newUser.ID, ctx...)
 	if err != nil {
-		return "", errs.Internal
+		return nil, errs.Internal
 	}
 
-	return token.Encode(newToken)
+	tokenString, err := token.Encode(newToken)
+	if err != nil {
+		return nil, errs.Unauthorized
+	}
+
+	return &TokenResponse{Token: tokenString}, nil
 }

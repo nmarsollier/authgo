@@ -52,7 +52,7 @@ Registra un nuevo usuario en el sistema.
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
-| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
+| 200 | User Token | [user.TokenResponse](#usertokenresponse) |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [server.ErrorData](#servererrordata) |
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
@@ -107,7 +107,7 @@ Loguea un usuario en el sistema.
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
-| 200 | User Token | [rest.tokenResponse](#resttokenresponse) |
+| 200 | User Token | [user.TokenResponse](#usertokenresponse) |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [server.ErrorData](#servererrordata) |
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
@@ -158,7 +158,7 @@ Obtiene información de todos los usuarios. El usuario logueado debe tener permi
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
-| 200 | Users | [ [rest.UserDataResponse](#restuserdataresponse) ] |
+| 200 | Users | [ [user.UserResponse](#useruserresponse) ] |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [server.ErrorData](#servererrordata) |
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
@@ -299,7 +299,7 @@ Obtiene información del usuario actual.
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
-| 200 | User data | [rest.UserResponse](#restuserresponse) |
+| 200 | User data | [user.UserResponse](#useruserresponse) |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [server.ErrorData](#servererrordata) |
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
@@ -328,25 +328,6 @@ Obtiene información del usuario actual.
 | correlation_id | string | *Example:* `"123123"` | No |
 | message | string | *Example:* `"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklEIjoiNjZiNjBlYzhlMGYzYzY4OTUzMzJlOWNmIiwidXNlcklEIjoiNjZhZmQ3ZWU4YTBhYjRjZjQ0YTQ3NDcyIn0.who7upBctOpmlVmTvOgH1qFKOHKXmuQCkEjMV3qeySg"` | No |
 
-#### rest.UserDataResponse
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| enabled | boolean |  | No |
-| id | string |  | No |
-| login | string |  | No |
-| name | string |  | No |
-| permissions | [ string ] |  | No |
-
-#### rest.UserResponse
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| id | string |  | No |
-| login | string |  | No |
-| name | string |  | No |
-| permissions | [ string ] |  | No |
-
 #### rest.changePasswordBody
 
 | Name | Type | Description | Required |
@@ -359,12 +340,6 @@ Obtiene información del usuario actual.
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | permissions | [ string ] |  | Yes |
-
-#### rest.tokenResponse
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| token | string |  | No |
 
 #### server.ErrorData
 
@@ -386,3 +361,19 @@ Obtiene información del usuario actual.
 | login | string |  | Yes |
 | name | string |  | Yes |
 | password | string |  | Yes |
+
+#### user.TokenResponse
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| token | string |  | No |
+
+#### user.UserResponse
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| enabled | boolean |  | No |
+| id | string |  | No |
+| login | string |  | No |
+| name | string |  | No |
+| permissions | [ string ] |  | No |

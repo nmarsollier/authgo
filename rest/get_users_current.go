@@ -6,20 +6,13 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-type UserResponse struct {
-	Id          string   `json:"id"`
-	Name        string   `json:"name"`
-	Permissions []string `json:"permissions"`
-	Login       string   `json:"login"`
-}
-
 //	@Summary		Usuario Actual
 //	@Description	Obtiene información del usuario actual.
 //	@Tags			Seguridad
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string				true	"Bearer {token}"
-//	@Success		200				{object}	UserResponse		"User data"
+//	@Success		200				{object}	user.UserResponse	"User data"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
 //	@Failure		401				{object}	server.ErrorData	"Unauthorized"
 //	@Failure		404				{object}	server.ErrorData	"Not Found"
@@ -45,10 +38,5 @@ func currentUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, UserResponse{
-		Id:          user.ID.Hex(),
-		Name:        user.Name,
-		Permissions: user.Permissions,
-		Login:       user.Login,
-	})
+	c.JSON(200, user)
 }

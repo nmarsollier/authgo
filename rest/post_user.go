@@ -12,7 +12,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		user.SignUpRequest	true	"Informacion de ususario"
-//	@Success		200		{object}	tokenResponse		"User Token"
+//	@Success		200		{object}	user.TokenResponse	"User Token"
 //	@Failure		400		{object}	errs.ValidationErr	"Bad Request"
 //	@Failure		401		{object}	server.ErrorData	"Unauthorized"
 //	@Failure		404		{object}	server.ErrorData	"Not Found"
@@ -41,7 +41,5 @@ func signUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"token": token,
-	})
+	c.JSON(200, token)
 }

@@ -12,7 +12,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			body	body		user.SignInRequest	true	"Sign in information"
-//	@Success		200		{object}	tokenResponse		"User Token"
+//	@Success		200		{object}	user.TokenResponse	"User Token"
 //	@Failure		400		{object}	errs.ValidationErr	"Bad Request"
 //	@Failure		401		{object}	server.ErrorData	"Unauthorized"
 //	@Failure		404		{object}	server.ErrorData	"Not Found"
@@ -27,10 +27,6 @@ func postUserSignInRoute() {
 	)
 }
 
-type tokenResponse struct {
-	Token string `json:"token"`
-}
-
 func signIn(c *gin.Context) {
 	login := user.SignInRequest{}
 	if err := c.ShouldBindJSON(&login); err != nil {
@@ -39,13 +35,11 @@ func signIn(c *gin.Context) {
 	}
 
 	ctx := server.GinCtx(c)
-	tokenString, err := user.SignIn(login, ctx...)
+	token, err := user.SignIn(login, ctx...)
 	if err != nil {
 		server.AbortWithError(c, err)
 		return
 	}
 
-	c.JSON(200, tokenResponse{
-		Token: tokenString,
-	})
+	c.JSON(200, token)
 }

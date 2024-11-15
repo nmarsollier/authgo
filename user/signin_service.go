@@ -10,25 +10,34 @@ type SignInRequest struct {
 	Login    string `json:"login" binding:"required"`
 }
 
+type TokenResponse struct {
+	Token string `json:"token"`
+}
+
 // SignIn is the controller to sign in users
-func SignIn(data SignInRequest, ctx ...interface{}) (string, error) {
+func SignIn(data SignInRequest, ctx ...interface{}) (*TokenResponse, error) {
 	user, err := findByLogin(data.Login, ctx...)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	if !user.Enabled {
-		return "", errs.Unauthorized
+		return nil, errs.Unauthorized
 	}
 
 	if err = user.validatePassword(data.Password); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	newToken, err := token.Create(user.ID, ctx...)
 	if err != nil {
-		return "", errs.Unauthorized
+		return nil, errs.Unauthorized
 	}
 
-	return token.Encode(newToken)
+	tokenString, err := token.Encode(newToken)
+	if err != nil {
+		return nil, errs.Unauthorized
+	}
+
+	return &TokenResponse{Token: tokenString}, nil
 }

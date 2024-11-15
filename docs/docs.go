@@ -73,7 +73,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User Token",
                         "schema": {
-                            "$ref": "#/definitions/rest.tokenResponse"
+                            "$ref": "#/definitions/user.TokenResponse"
                         }
                     },
                     "400": {
@@ -193,7 +193,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User Token",
                         "schema": {
-                            "$ref": "#/definitions/rest.tokenResponse"
+                            "$ref": "#/definitions/user.TokenResponse"
                         }
                     },
                     "400": {
@@ -286,7 +286,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/rest.UserDataResponse"
+                                "$ref": "#/definitions/user.UserResponse"
                             }
                         }
                     },
@@ -601,7 +601,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User data",
                         "schema": {
-                            "$ref": "#/definitions/rest.UserResponse"
+                            "$ref": "#/definitions/user.UserResponse"
                         }
                     },
                     "400": {
@@ -668,49 +668,6 @@ const docTemplate = `{
                 }
             }
         },
-        "rest.UserDataResponse": {
-            "type": "object",
-            "properties": {
-                "enabled": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "login": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "rest.UserResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "login": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "rest.changePasswordBody": {
             "type": "object",
             "required": [
@@ -741,14 +698,6 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
-                }
-            }
-        },
-        "rest.tokenResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
                 }
             }
         },
@@ -791,6 +740,37 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "user.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.UserResponse": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "login": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         }
