@@ -6,18 +6,25 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/99designs/gqlgen/plugin/federation/fedruntime"
 	"github.com/nmarsollier/authgo/graph/model"
+	"github.com/nmarsollier/authgo/graph/resolvers"
 	"github.com/nmarsollier/authgo/user"
 )
 
-// FindUserResponseByID is the resolver for the findUserResponseByID field.
-func (r *entityResolver) FindUserResponseByID(ctx context.Context, id string) (*user.UserResponse, error) {
-	panic(fmt.Errorf("not implemented: FindUserResponseByID - findUserResponseByID"))
+// FindUserDataByID is the resolver for the findUserDataByID field.
+func (r *entityResolver) FindUserDataByID(ctx context.Context, id string) (*user.UserData, error) {
+	user, err := resolvers.FindUser(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 // Entity returns model.EntityResolver implementation.
 func (r *Resolver) Entity() model.EntityResolver { return &entityResolver{r} }
 
 type entityResolver struct{ *Resolver }
+
+var _ fedruntime.Entity = &user.UserData{}

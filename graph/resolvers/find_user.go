@@ -7,7 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-func FindUser(ctx context.Context, id string) (*user.UserResponse, error) {
+func FindUser(ctx context.Context, id string) (*user.UserData, error) {
 	_, err := tools.HeaderToken(ctx)
 	if err != nil {
 		return nil, err

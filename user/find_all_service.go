@@ -1,7 +1,7 @@
 package user
 
 // FindAllUsers wrapper para obtener todos los usuarios
-func FindAllUsers(ctx ...interface{}) ([]*UserResponse, error) {
+func FindAllUsers(ctx ...interface{}) ([]*UserData, error) {
 
 	user, err := findAll(ctx...)
 
@@ -9,9 +9,9 @@ func FindAllUsers(ctx ...interface{}) ([]*UserResponse, error) {
 		return nil, err
 	}
 
-	result := []*UserResponse{}
+	result := []*UserData{}
 	for i := 0; i < len(user); i = i + 1 {
-		result = append(result, &UserResponse{
+		result = append(result, &UserData{
 			Id:          user[i].ID.Hex(),
 			Name:        user[i].Name,
 			Permissions: user[i].Permissions,

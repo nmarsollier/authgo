@@ -36,9 +36,3 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
-  UserResponse:
-    model: github.com/nmarsollier/authgo/user.UserResponse
-  SignInRequest:
-    model: github.com/nmarsollier/authgo/user.SignInRequest
-  TokenResponse:
-    model: github.com/nmarsollier/authgo/user.TokenResponse

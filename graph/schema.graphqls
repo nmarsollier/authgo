@@ -13,7 +13,7 @@ type Mutation {
   revoke(userId: String!, permissions: [String!]): Boolean!
 }
 
-type UserResponse @key(fields: "id") {
+type UserData @key(fields: "id") {
   id: String!
   name: String!
   permissions: [String!]!
@@ -22,6 +22,6 @@ type UserResponse @key(fields: "id") {
 }
 
 type Query {
-  currentUser: UserResponse!
-  users: [UserResponse!]!
+  currentUser: UserData!
+  users: [UserData!]!
 }

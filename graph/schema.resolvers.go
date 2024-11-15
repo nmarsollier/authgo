@@ -53,12 +53,12 @@ func (r *mutationResolver) Revoke(ctx context.Context, userID string, permission
 }
 
 // CurrentUser is the resolver for the currentUser field.
-func (r *queryResolver) CurrentUser(ctx context.Context) (*user.UserResponse, error) {
+func (r *queryResolver) CurrentUser(ctx context.Context) (*user.UserData, error) {
 	return resolvers.CurrentUser(ctx)
 }
 
 // Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*user.UserResponse, error) {
+func (r *queryResolver) Users(ctx context.Context) ([]*user.UserData, error) {
 	return resolvers.Users(ctx)
 }
 

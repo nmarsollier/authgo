@@ -7,7 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-func Users(ctx context.Context) ([]*user.UserResponse, error) {
+func Users(ctx context.Context) ([]*user.UserData, error) {
 	if err := tools.ValidateAdmin(ctx); err != nil {
 		return nil, err
 	}

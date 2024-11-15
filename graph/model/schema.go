@@ -49,7 +49,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Entity struct {
-		FindUserResponseByID func(childComplexity int, id string) int
+		FindUserDataByID func(childComplexity int, id string) int
 	}
 
 	Mutation struct {
@@ -74,7 +74,7 @@ type ComplexityRoot struct {
 		Token func(childComplexity int) int
 	}
 
-	UserResponse struct {
+	UserData struct {
 		Enabled     func(childComplexity int) int
 		Id          func(childComplexity int) int
 		Login       func(childComplexity int) int
@@ -88,7 +88,7 @@ type ComplexityRoot struct {
 }
 
 type EntityResolver interface {
-	FindUserResponseByID(ctx context.Context, id string) (*user.UserResponse, error)
+	FindUserDataByID(ctx context.Context, id string) (*user.UserData, error)
 }
 type MutationResolver interface {
 	SignIn(ctx context.Context, login string, password string) (*user.TokenResponse, error)
@@ -101,8 +101,8 @@ type MutationResolver interface {
 	Revoke(ctx context.Context, userID string, permissions []string) (bool, error)
 }
 type QueryResolver interface {
-	CurrentUser(ctx context.Context) (*user.UserResponse, error)
-	Users(ctx context.Context) ([]*user.UserResponse, error)
+	CurrentUser(ctx context.Context) (*user.UserData, error)
+	Users(ctx context.Context) ([]*user.UserData, error)
 }
 
 type executableSchema struct {
@@ -124,17 +124,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Entity.findUserResponseByID":
-		if e.complexity.Entity.FindUserResponseByID == nil {
+	case "Entity.findUserDataByID":
+		if e.complexity.Entity.FindUserDataByID == nil {
 			break
 		}
 
-		args, err := ec.field_Entity_findUserResponseByID_args(context.TODO(), rawArgs)
+		args, err := ec.field_Entity_findUserDataByID_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Entity.FindUserResponseByID(childComplexity, args["id"].(string)), true
+		return e.complexity.Entity.FindUserDataByID(childComplexity, args["id"].(string)), true
 
 	case "Mutation.changePassword":
 		if e.complexity.Mutation.ChangePassword == nil {
@@ -267,40 +267,40 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TokenResponse.Token(childComplexity), true
 
-	case "UserResponse.enabled":
-		if e.complexity.UserResponse.Enabled == nil {
+	case "UserData.enabled":
+		if e.complexity.UserData.Enabled == nil {
 			break
 		}
 
-		return e.complexity.UserResponse.Enabled(childComplexity), true
+		return e.complexity.UserData.Enabled(childComplexity), true
 
-	case "UserResponse.id":
-		if e.complexity.UserResponse.Id == nil {
+	case "UserData.id":
+		if e.complexity.UserData.Id == nil {
 			break
 		}
 
-		return e.complexity.UserResponse.Id(childComplexity), true
+		return e.complexity.UserData.Id(childComplexity), true
 
-	case "UserResponse.login":
-		if e.complexity.UserResponse.Login == nil {
+	case "UserData.login":
+		if e.complexity.UserData.Login == nil {
 			break
 		}
 
-		return e.complexity.UserResponse.Login(childComplexity), true
+		return e.complexity.UserData.Login(childComplexity), true
 
-	case "UserResponse.name":
-		if e.complexity.UserResponse.Name == nil {
+	case "UserData.name":
+		if e.complexity.UserData.Name == nil {
 			break
 		}
 
-		return e.complexity.UserResponse.Name(childComplexity), true
+		return e.complexity.UserData.Name(childComplexity), true
 
-	case "UserResponse.permissions":
-		if e.complexity.UserResponse.Permissions == nil {
+	case "UserData.permissions":
+		if e.complexity.UserData.Permissions == nil {
 			break
 		}
 
-		return e.complexity.UserResponse.Permissions(childComplexity), true
+		return e.complexity.UserData.Permissions(childComplexity), true
 
 	case "_Service.sdl":
 		if e.complexity._Service.SDL == nil {
@@ -428,7 +428,7 @@ type Mutation {
   revoke(userId: String!, permissions: [String!]): Boolean!
 }
 
-type UserResponse @key(fields: "id") {
+type UserData @key(fields: "id") {
   id: String!
   name: String!
   permissions: [String!]!
@@ -437,8 +437,8 @@ type UserResponse @key(fields: "id") {
 }
 
 type Query {
-  currentUser: UserResponse!
-  users: [UserResponse!]!
+  currentUser: UserData!
+  users: [UserData!]!
 }
 `, BuiltIn: false},
 	{Name: "../../federation/directives.graphql", Input: `
@@ -452,11 +452,11 @@ type Query {
 `, BuiltIn: true},
 	{Name: "../../federation/entity.graphql", Input: `
 # a union of all types that use the @key directive
-union _Entity = UserResponse
+union _Entity = UserData
 
 # fake type to build resolver interfaces for users to implement
 type Entity {
-	findUserResponseByID(id: String!,): UserResponse!
+	findUserDataByID(id: String!,): UserData!
 }
 
 type _Service {
@@ -475,17 +475,17 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Entity_findUserResponseByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Entity_findUserDataByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Entity_findUserResponseByID_argsID(ctx, rawArgs)
+	arg0, err := ec.field_Entity_findUserDataByID_argsID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Entity_findUserResponseByID_argsID(
+func (ec *executionContext) field_Entity_findUserDataByID_argsID(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (string, error) {
@@ -867,8 +867,8 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Entity_findUserResponseByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Entity_findUserResponseByID(ctx, field)
+func (ec *executionContext) _Entity_findUserDataByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Entity_findUserDataByID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -881,7 +881,7 @@ func (ec *executionContext) _Entity_findUserResponseByID(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Entity().FindUserResponseByID(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Entity().FindUserDataByID(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -893,12 +893,12 @@ func (ec *executionContext) _Entity_findUserResponseByID(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*user.UserResponse)
+	res := resTmp.(*user.UserData)
 	fc.Result = res
-	return ec.marshalNUserResponse2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserResponse(ctx, field.Selections, res)
+	return ec.marshalNUserData2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Entity_findUserResponseByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Entity_findUserDataByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Entity",
 		Field:      field,
@@ -907,17 +907,17 @@ func (ec *executionContext) fieldContext_Entity_findUserResponseByID(ctx context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserResponse_id(ctx, field)
+				return ec.fieldContext_UserData_id(ctx, field)
 			case "name":
-				return ec.fieldContext_UserResponse_name(ctx, field)
+				return ec.fieldContext_UserData_name(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserResponse_permissions(ctx, field)
+				return ec.fieldContext_UserData_permissions(ctx, field)
 			case "login":
-				return ec.fieldContext_UserResponse_login(ctx, field)
+				return ec.fieldContext_UserData_login(ctx, field)
 			case "enabled":
-				return ec.fieldContext_UserResponse_enabled(ctx, field)
+				return ec.fieldContext_UserData_enabled(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserResponse", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserData", field.Name)
 		},
 	}
 	defer func() {
@@ -927,7 +927,7 @@ func (ec *executionContext) fieldContext_Entity_findUserResponseByID(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Entity_findUserResponseByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Entity_findUserDataByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1397,9 +1397,9 @@ func (ec *executionContext) _Query_currentUser(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*user.UserResponse)
+	res := resTmp.(*user.UserData)
 	fc.Result = res
-	return ec.marshalNUserResponse2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserResponse(ctx, field.Selections, res)
+	return ec.marshalNUserData2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_currentUser(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1411,17 +1411,17 @@ func (ec *executionContext) fieldContext_Query_currentUser(_ context.Context, fi
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserResponse_id(ctx, field)
+				return ec.fieldContext_UserData_id(ctx, field)
 			case "name":
-				return ec.fieldContext_UserResponse_name(ctx, field)
+				return ec.fieldContext_UserData_name(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserResponse_permissions(ctx, field)
+				return ec.fieldContext_UserData_permissions(ctx, field)
 			case "login":
-				return ec.fieldContext_UserResponse_login(ctx, field)
+				return ec.fieldContext_UserData_login(ctx, field)
 			case "enabled":
-				return ec.fieldContext_UserResponse_enabled(ctx, field)
+				return ec.fieldContext_UserData_enabled(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserResponse", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserData", field.Name)
 		},
 	}
 	return fc, nil
@@ -1453,9 +1453,9 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*user.UserResponse)
+	res := resTmp.([]*user.UserData)
 	fc.Result = res
-	return ec.marshalNUserResponse2ᚕᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserResponseᚄ(ctx, field.Selections, res)
+	return ec.marshalNUserData2ᚕᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserDataᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_users(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1467,17 +1467,17 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserResponse_id(ctx, field)
+				return ec.fieldContext_UserData_id(ctx, field)
 			case "name":
-				return ec.fieldContext_UserResponse_name(ctx, field)
+				return ec.fieldContext_UserData_name(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserResponse_permissions(ctx, field)
+				return ec.fieldContext_UserData_permissions(ctx, field)
 			case "login":
-				return ec.fieldContext_UserResponse_login(ctx, field)
+				return ec.fieldContext_UserData_login(ctx, field)
 			case "enabled":
-				return ec.fieldContext_UserResponse_enabled(ctx, field)
+				return ec.fieldContext_UserData_enabled(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserResponse", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserData", field.Name)
 		},
 	}
 	return fc, nil
@@ -1759,8 +1759,8 @@ func (ec *executionContext) fieldContext_TokenResponse_token(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _UserResponse_id(ctx context.Context, field graphql.CollectedField, obj *user.UserResponse) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserResponse_id(ctx, field)
+func (ec *executionContext) _UserData_id(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserData_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1790,9 +1790,9 @@ func (ec *executionContext) _UserResponse_id(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserResponse_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserData_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserResponse",
+		Object:     "UserData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1803,8 +1803,8 @@ func (ec *executionContext) fieldContext_UserResponse_id(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _UserResponse_name(ctx context.Context, field graphql.CollectedField, obj *user.UserResponse) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserResponse_name(ctx, field)
+func (ec *executionContext) _UserData_name(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserData_name(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1834,9 +1834,9 @@ func (ec *executionContext) _UserResponse_name(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserResponse_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserData_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserResponse",
+		Object:     "UserData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1847,8 +1847,8 @@ func (ec *executionContext) fieldContext_UserResponse_name(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _UserResponse_permissions(ctx context.Context, field graphql.CollectedField, obj *user.UserResponse) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserResponse_permissions(ctx, field)
+func (ec *executionContext) _UserData_permissions(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserData_permissions(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1878,9 +1878,9 @@ func (ec *executionContext) _UserResponse_permissions(ctx context.Context, field
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserResponse_permissions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserData_permissions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserResponse",
+		Object:     "UserData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1891,8 +1891,8 @@ func (ec *executionContext) fieldContext_UserResponse_permissions(_ context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _UserResponse_login(ctx context.Context, field graphql.CollectedField, obj *user.UserResponse) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserResponse_login(ctx, field)
+func (ec *executionContext) _UserData_login(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserData_login(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1922,9 +1922,9 @@ func (ec *executionContext) _UserResponse_login(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserResponse_login(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserData_login(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserResponse",
+		Object:     "UserData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1935,8 +1935,8 @@ func (ec *executionContext) fieldContext_UserResponse_login(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _UserResponse_enabled(ctx context.Context, field graphql.CollectedField, obj *user.UserResponse) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserResponse_enabled(ctx, field)
+func (ec *executionContext) _UserData_enabled(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserData_enabled(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1966,9 +1966,9 @@ func (ec *executionContext) _UserResponse_enabled(ctx context.Context, field gra
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserResponse_enabled(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserData_enabled(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserResponse",
+		Object:     "UserData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3801,13 +3801,13 @@ func (ec *executionContext) __Entity(ctx context.Context, sel ast.SelectionSet, 
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case user.UserResponse:
-		return ec._UserResponse(ctx, sel, &obj)
-	case *user.UserResponse:
+	case user.UserData:
+		return ec._UserData(ctx, sel, &obj)
+	case *user.UserData:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._UserResponse(ctx, sel, obj)
+		return ec._UserData(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -3836,7 +3836,7 @@ func (ec *executionContext) _Entity(ctx context.Context, sel ast.SelectionSet) g
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Entity")
-		case "findUserResponseByID":
+		case "findUserDataByID":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -3845,7 +3845,7 @@ func (ec *executionContext) _Entity(ctx context.Context, sel ast.SelectionSet) g
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Entity_findUserResponseByID(ctx, field)
+				res = ec._Entity_findUserDataByID(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -4156,39 +4156,39 @@ func (ec *executionContext) _TokenResponse(ctx context.Context, sel ast.Selectio
 	return out
 }
 
-var userResponseImplementors = []string{"UserResponse", "_Entity"}
+var userDataImplementors = []string{"UserData", "_Entity"}
 
-func (ec *executionContext) _UserResponse(ctx context.Context, sel ast.SelectionSet, obj *user.UserResponse) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userResponseImplementors)
+func (ec *executionContext) _UserData(ctx context.Context, sel ast.SelectionSet, obj *user.UserData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userDataImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserResponse")
+			out.Values[i] = graphql.MarshalString("UserData")
 		case "id":
-			out.Values[i] = ec._UserResponse_id(ctx, field, obj)
+			out.Values[i] = ec._UserData_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "name":
-			out.Values[i] = ec._UserResponse_name(ctx, field, obj)
+			out.Values[i] = ec._UserData_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "permissions":
-			out.Values[i] = ec._UserResponse_permissions(ctx, field, obj)
+			out.Values[i] = ec._UserData_permissions(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "login":
-			out.Values[i] = ec._UserResponse_login(ctx, field, obj)
+			out.Values[i] = ec._UserData_login(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "enabled":
-			out.Values[i] = ec._UserResponse_enabled(ctx, field, obj)
+			out.Values[i] = ec._UserData_enabled(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -4653,11 +4653,11 @@ func (ec *executionContext) marshalNTokenResponse2ᚖgithubᚗcomᚋnmarsollier�
 	return ec._TokenResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserResponse2githubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserResponse(ctx context.Context, sel ast.SelectionSet, v user.UserResponse) graphql.Marshaler {
-	return ec._UserResponse(ctx, sel, &v)
+func (ec *executionContext) marshalNUserData2githubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx context.Context, sel ast.SelectionSet, v user.UserData) graphql.Marshaler {
+	return ec._UserData(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserResponse2ᚕᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserResponseᚄ(ctx context.Context, sel ast.SelectionSet, v []*user.UserResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNUserData2ᚕᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserDataᚄ(ctx context.Context, sel ast.SelectionSet, v []*user.UserData) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4681,7 +4681,7 @@ func (ec *executionContext) marshalNUserResponse2ᚕᚖgithubᚗcomᚋnmarsollie
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUserResponse2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserResponse(ctx, sel, v[i])
+			ret[i] = ec.marshalNUserData2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4701,14 +4701,14 @@ func (ec *executionContext) marshalNUserResponse2ᚕᚖgithubᚗcomᚋnmarsollie
 	return ret
 }
 
-func (ec *executionContext) marshalNUserResponse2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserResponse(ctx context.Context, sel ast.SelectionSet, v *user.UserResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNUserData2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx context.Context, sel ast.SelectionSet, v *user.UserData) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._UserResponse(ctx, sel, v)
+	return ec._UserData(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalN_Any2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {

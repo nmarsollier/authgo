@@ -5,7 +5,7 @@ import (
 )
 
 // Get wrapper para obtener un usuario
-func Get(userID string, ctx ...interface{}) (*UserResponse, error) {
+func Get(userID string, ctx ...interface{}) (*UserData, error) {
 	user, err := findByID(userID, ctx...)
 	if err != nil {
 		return nil, err
@@ -15,7 +15,7 @@ func Get(userID string, ctx ...interface{}) (*UserResponse, error) {
 		return nil, errs.NotFound
 	}
 
-	return &UserResponse{
+	return &UserData{
 		Id:          user.ID.Hex(),
 		Name:        user.Name,
 		Permissions: user.Permissions,

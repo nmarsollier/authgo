@@ -7,7 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-func CurrentUser(ctx context.Context) (*user.UserResponse, error) {
+func CurrentUser(ctx context.Context) (*user.UserData, error) {
 	token, err := tools.HeaderToken(ctx)
 	if err != nil {
 		return nil, err
