@@ -7,3 +7,5 @@ type UserResponse struct {
 	Login       string   `json:"login"`
 	Enabled     bool     `json:"enabled"`
 }
+
+func (UserResponse) IsEntity() {}

@@ -13,7 +13,7 @@ type Mutation {
   revoke(userId: String!, permissions: [String!]): Boolean!
 }
 
-type UserResponse {
+type UserResponse @key(fields: "id") {
   id: String!
   name: String!
   permissions: [String!]!
