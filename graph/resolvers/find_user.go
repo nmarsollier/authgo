@@ -8,10 +8,10 @@ import (
 )
 
 func FindUser(ctx context.Context, id string) (*user.UserData, error) {
-	_, err := tools.HeaderToken(ctx)
+	/*_, err := tools.HeaderToken(ctx)
 	if err != nil {
 		return nil, err
-	}
+	}*/
 
 	env := tools.GqlCtx(ctx)
 	user, err := user.Get(id, env...)
