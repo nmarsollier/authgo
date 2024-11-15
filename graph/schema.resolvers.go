@@ -6,152 +6,59 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/nmarsollier/authgo/graph/model"
-	"github.com/nmarsollier/authgo/graph/tools"
-	"github.com/nmarsollier/authgo/token"
 	"github.com/nmarsollier/authgo/user"
 )
 
 // SignIn is the resolver for the signIn field.
 func (r *mutationResolver) SignIn(ctx context.Context, login string, password string) (*user.TokenResponse, error) {
-	env := tools.GqlCtx(ctx)
-
-	tokenString, err := user.SignIn(user.SignInRequest{Login: login, Password: password}, env...)
-	if err != nil {
-		return nil, err
-	}
-
-	return tokenString, nil
+	return signInResolver(ctx, login, password)
 }
 
 // SignUp is the resolver for the signUp field.
 func (r *mutationResolver) SignUp(ctx context.Context, name string, login string, password string) (*user.TokenResponse, error) {
-	panic(fmt.Errorf("not implemented: SignUp - signUp"))
+	return signUpResolver(ctx, name, login, password)
 }
 
 // SignOut is the resolver for the signOut field.
 func (r *mutationResolver) SignOut(ctx context.Context) (bool, error) {
-	tokenString, err := tools.TokenString(ctx)
-	if err != nil {
-		return false, err
-	}
-
-	env := tools.GqlCtx(ctx)
-
-	if err := token.Invalidate(tokenString, env...); err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return signOutResolver(ctx)
 }
 
 // ChangePassword is the resolver for the changePassword field.
 func (r *mutationResolver) ChangePassword(ctx context.Context, oldPassword string, newPassword string) (bool, error) {
-	token, err := tools.HeaderToken(ctx)
-	if err != nil {
-		return false, err
-	}
-
-	env := tools.GqlCtx(ctx)
-	if err := user.ChangePassword(token.UserID.Hex(), oldPassword, newPassword, env...); err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return changePasswordResolver(ctx, oldPassword, newPassword)
 }
 
 // Enable is the resolver for the enable field.
 func (r *mutationResolver) Enable(ctx context.Context, userID string) (bool, error) {
-	if err := tools.ValidateAdmin(ctx); err != nil {
-		return false, err
-	}
-
-	env := tools.GqlCtx(ctx)
-
-	if err := user.Enable(userID, env...); err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return enableResolver(ctx, userID)
 }
 
 // Disable is the resolver for the disable field.
 func (r *mutationResolver) Disable(ctx context.Context, userID string) (bool, error) {
-	if err := tools.ValidateAdmin(ctx); err != nil {
-		return false, err
-	}
-
-	env := tools.GqlCtx(ctx)
-
-	if err := user.Disable(userID, env...); err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return disableResolver(ctx, userID)
 }
 
 // Grant is the resolver for the grant field.
 func (r *mutationResolver) Grant(ctx context.Context, userID string, permissions []string) (bool, error) {
-	if err := tools.ValidateAdmin(ctx); err != nil {
-		return false, err
-	}
-
-	env := tools.GqlCtx(ctx)
-
-	if err := user.Grant(userID, permissions, env...); err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return grantResolver(ctx, userID, permissions)
 }
 
 // Revoke is the resolver for the revoke field.
 func (r *mutationResolver) Revoke(ctx context.Context, userID string, permissions []string) (bool, error) {
-	if err := tools.ValidateAdmin(ctx); err != nil {
-		return false, err
-	}
-
-	env := tools.GqlCtx(ctx)
-
-	if err := user.Revoke(userID, permissions, env...); err != nil {
-		return false, err
-	}
-
-	return true, nil
+	return revokeResolver(ctx, userID, permissions)
 }
 
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*user.UserResponse, error) {
-	token, err := tools.HeaderToken(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	env := tools.GqlCtx(ctx)
-	user, err := user.Get(token.UserID.Hex(), env...)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	return currentUserResolver(ctx)
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*user.UserResponse, error) {
-	if err := tools.ValidateAdmin(ctx); err != nil {
-		return nil, err
-	}
-
-	env := tools.GqlCtx(ctx)
-	result, err := user.FindAllUsers(env...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return usersResolver(ctx)
 }
 
 // Mutation returns model.MutationResolver implementation.
