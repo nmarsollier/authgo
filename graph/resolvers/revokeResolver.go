@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 import (
 	"context"
@@ -7,14 +7,14 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-func disableResolver(ctx context.Context, userID string) (bool, error) {
+func Revoke(ctx context.Context, userID string, permissions []string) (bool, error) {
 	if err := tools.ValidateAdmin(ctx); err != nil {
 		return false, err
 	}
 
 	env := tools.GqlCtx(ctx)
 
-	if err := user.Disable(userID, env...); err != nil {
+	if err := user.Revoke(userID, permissions, env...); err != nil {
 		return false, err
 	}
 

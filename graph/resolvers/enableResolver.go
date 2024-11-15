@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-func enableResolver(ctx context.Context, userID string) (bool, error) {
+func Enable(ctx context.Context, userID string) (bool, error) {
 	if err := tools.ValidateAdmin(ctx); err != nil {
 		return false, err
 	}

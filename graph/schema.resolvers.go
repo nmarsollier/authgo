@@ -8,57 +8,58 @@ import (
 	"context"
 
 	"github.com/nmarsollier/authgo/graph/model"
+	"github.com/nmarsollier/authgo/graph/resolvers"
 	"github.com/nmarsollier/authgo/user"
 )
 
 // SignIn is the resolver for the signIn field.
 func (r *mutationResolver) SignIn(ctx context.Context, login string, password string) (*user.TokenResponse, error) {
-	return signInResolver(ctx, login, password)
+	return resolvers.SignIn(ctx, login, password)
 }
 
 // SignUp is the resolver for the signUp field.
 func (r *mutationResolver) SignUp(ctx context.Context, name string, login string, password string) (*user.TokenResponse, error) {
-	return signUpResolver(ctx, name, login, password)
+	return resolvers.SignUp(ctx, name, login, password)
 }
 
 // SignOut is the resolver for the signOut field.
 func (r *mutationResolver) SignOut(ctx context.Context) (bool, error) {
-	return signOutResolver(ctx)
+	return resolvers.SignOut(ctx)
 }
 
 // ChangePassword is the resolver for the changePassword field.
 func (r *mutationResolver) ChangePassword(ctx context.Context, oldPassword string, newPassword string) (bool, error) {
-	return changePasswordResolver(ctx, oldPassword, newPassword)
+	return resolvers.ChangePassword(ctx, oldPassword, newPassword)
 }
 
 // Enable is the resolver for the enable field.
 func (r *mutationResolver) Enable(ctx context.Context, userID string) (bool, error) {
-	return enableResolver(ctx, userID)
+	return resolvers.Enable(ctx, userID)
 }
 
 // Disable is the resolver for the disable field.
 func (r *mutationResolver) Disable(ctx context.Context, userID string) (bool, error) {
-	return disableResolver(ctx, userID)
+	return resolvers.Disable(ctx, userID)
 }
 
 // Grant is the resolver for the grant field.
 func (r *mutationResolver) Grant(ctx context.Context, userID string, permissions []string) (bool, error) {
-	return grantResolver(ctx, userID, permissions)
+	return resolvers.Grant(ctx, userID, permissions)
 }
 
 // Revoke is the resolver for the revoke field.
 func (r *mutationResolver) Revoke(ctx context.Context, userID string, permissions []string) (bool, error) {
-	return revokeResolver(ctx, userID, permissions)
+	return resolvers.Revoke(ctx, userID, permissions)
 }
 
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*user.UserResponse, error) {
-	return currentUserResolver(ctx)
+	return resolvers.CurrentUser(ctx)
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*user.UserResponse, error) {
-	return usersResolver(ctx)
+	return resolvers.Users(ctx)
 }
 
 // Mutation returns model.MutationResolver implementation.

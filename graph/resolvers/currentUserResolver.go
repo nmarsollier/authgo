@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-func currentUserResolver(ctx context.Context) (*user.UserResponse, error) {
+func CurrentUser(ctx context.Context) (*user.UserResponse, error) {
 	token, err := tools.HeaderToken(ctx)
 	if err != nil {
 		return nil, err

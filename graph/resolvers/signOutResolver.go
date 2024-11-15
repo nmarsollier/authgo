@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/token"
 )
 
-func signOutResolver(ctx context.Context) (bool, error) {
+func SignOut(ctx context.Context) (bool, error) {
 	tokenString, err := tools.TokenString(ctx)
 	if err != nil {
 		return false, err

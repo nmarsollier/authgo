@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 )
 
 // SignIn is the resolver for the signIn field.
-func signInResolver(ctx context.Context, login string, password string) (*user.TokenResponse, error) {
+func SignIn(ctx context.Context, login string, password string) (*user.TokenResponse, error) {
 	env := tools.GqlCtx(ctx)
 
 	tokenString, err := user.SignIn(user.SignInRequest{Login: login, Password: password}, env...)

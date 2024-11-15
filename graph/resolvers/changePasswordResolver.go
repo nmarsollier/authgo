@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-func changePasswordResolver(ctx context.Context, oldPassword string, newPassword string) (bool, error) {
+func ChangePassword(ctx context.Context, oldPassword string, newPassword string) (bool, error) {
 	token, err := tools.HeaderToken(ctx)
 	if err != nil {
 		return false, err

@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-func usersResolver(ctx context.Context) ([]*user.UserResponse, error) {
+func Users(ctx context.Context) ([]*user.UserResponse, error) {
 	if err := tools.ValidateAdmin(ctx); err != nil {
 		return nil, err
 	}

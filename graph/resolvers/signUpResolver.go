@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/nmarsollier/authgo/user"
 )
 
-func signUpResolver(ctx context.Context, name string, login string, password string) (*user.TokenResponse, error) {
+func SignUp(ctx context.Context, name string, login string, password string) (*user.TokenResponse, error) {
 	env := tools.GqlCtx(ctx)
 	token, err := user.SignUp(&user.SignUpRequest{
 		Name:     name,
