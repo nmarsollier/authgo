@@ -1,6 +1,4 @@
-### Si queres sabes mas sobre mi:
-
-[Nestor Marsollier](https://github.com/nmarsollier/profile)
+<!-- cSpell:language es -->
 
 # Auth Service en GO
 
@@ -20,6 +18,15 @@ La documentación de las api también se pueden consultar desde el home del micr
 que una vez levantado el servidor se puede navegar en [localhost:3000](http://localhost:3000/docs/index.html)
 
 La interfaz GraphQL en [localhost:4000](http://localhost:4000/docs/index.html)
+
+## Directorios
+
+- **user:** Logica de negocio del agregado user
+- **token:** Logica de negocio del agregado token
+- **graph:** Servidor y Controllers GraphQL federation server
+- **rabbit:** Servidor y Controllers RabbitMQ
+- **rest:** Servidor y Controllers Rest
+- **tools:** Herramientas varias
 
 ## Requisitos
 
