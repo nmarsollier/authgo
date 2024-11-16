@@ -14,7 +14,6 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/99designs/gqlgen/plugin/federation/fedruntime"
-	"github.com/nmarsollier/authgo/user"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -49,7 +48,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Entity struct {
-		FindUserDataByID func(childComplexity int, id string) int
+		FindUserByID func(childComplexity int, id string) int
 	}
 
 	Mutation struct {
@@ -70,13 +69,13 @@ type ComplexityRoot struct {
 		__resolve_entities func(childComplexity int, representations []map[string]interface{}) int
 	}
 
-	TokenResponse struct {
+	Token struct {
 		Token func(childComplexity int) int
 	}
 
-	UserData struct {
+	User struct {
 		Enabled     func(childComplexity int) int
-		Id          func(childComplexity int) int
+		ID          func(childComplexity int) int
 		Login       func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Permissions func(childComplexity int) int
@@ -88,11 +87,11 @@ type ComplexityRoot struct {
 }
 
 type EntityResolver interface {
-	FindUserDataByID(ctx context.Context, id string) (*user.UserData, error)
+	FindUserByID(ctx context.Context, id string) (*User, error)
 }
 type MutationResolver interface {
-	SignIn(ctx context.Context, login string, password string) (*user.TokenResponse, error)
-	SignUp(ctx context.Context, name string, login string, password string) (*user.TokenResponse, error)
+	SignIn(ctx context.Context, login string, password string) (*Token, error)
+	SignUp(ctx context.Context, name string, login string, password string) (*Token, error)
 	SignOut(ctx context.Context) (bool, error)
 	ChangePassword(ctx context.Context, oldPassword string, newPassword string) (bool, error)
 	Enable(ctx context.Context, userID string) (bool, error)
@@ -101,8 +100,8 @@ type MutationResolver interface {
 	Revoke(ctx context.Context, userID string, permissions []string) (bool, error)
 }
 type QueryResolver interface {
-	CurrentUser(ctx context.Context) (*user.UserData, error)
-	Users(ctx context.Context) ([]*user.UserData, error)
+	CurrentUser(ctx context.Context) (*User, error)
+	Users(ctx context.Context) ([]*User, error)
 }
 
 type executableSchema struct {
@@ -124,17 +123,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Entity.findUserDataByID":
-		if e.complexity.Entity.FindUserDataByID == nil {
+	case "Entity.findUserByID":
+		if e.complexity.Entity.FindUserByID == nil {
 			break
 		}
 
-		args, err := ec.field_Entity_findUserDataByID_args(context.TODO(), rawArgs)
+		args, err := ec.field_Entity_findUserByID_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Entity.FindUserDataByID(childComplexity, args["id"].(string)), true
+		return e.complexity.Entity.FindUserByID(childComplexity, args["id"].(string)), true
 
 	case "Mutation.changePassword":
 		if e.complexity.Mutation.ChangePassword == nil {
@@ -260,47 +259,47 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.__resolve_entities(childComplexity, args["representations"].([]map[string]interface{})), true
 
-	case "TokenResponse.token":
-		if e.complexity.TokenResponse.Token == nil {
+	case "Token.token":
+		if e.complexity.Token.Token == nil {
 			break
 		}
 
-		return e.complexity.TokenResponse.Token(childComplexity), true
+		return e.complexity.Token.Token(childComplexity), true
 
-	case "UserData.enabled":
-		if e.complexity.UserData.Enabled == nil {
+	case "User.enabled":
+		if e.complexity.User.Enabled == nil {
 			break
 		}
 
-		return e.complexity.UserData.Enabled(childComplexity), true
+		return e.complexity.User.Enabled(childComplexity), true
 
-	case "UserData.id":
-		if e.complexity.UserData.Id == nil {
+	case "User.id":
+		if e.complexity.User.ID == nil {
 			break
 		}
 
-		return e.complexity.UserData.Id(childComplexity), true
+		return e.complexity.User.ID(childComplexity), true
 
-	case "UserData.login":
-		if e.complexity.UserData.Login == nil {
+	case "User.login":
+		if e.complexity.User.Login == nil {
 			break
 		}
 
-		return e.complexity.UserData.Login(childComplexity), true
+		return e.complexity.User.Login(childComplexity), true
 
-	case "UserData.name":
-		if e.complexity.UserData.Name == nil {
+	case "User.name":
+		if e.complexity.User.Name == nil {
 			break
 		}
 
-		return e.complexity.UserData.Name(childComplexity), true
+		return e.complexity.User.Name(childComplexity), true
 
-	case "UserData.permissions":
-		if e.complexity.UserData.Permissions == nil {
+	case "User.permissions":
+		if e.complexity.User.Permissions == nil {
 			break
 		}
 
-		return e.complexity.UserData.Permissions(childComplexity), true
+		return e.complexity.User.Permissions(childComplexity), true
 
 	case "_Service.sdl":
 		if e.complexity._Service.SDL == nil {
@@ -413,13 +412,13 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schema.graphqls", Input: `type TokenResponse {
+	{Name: "../schema.graphqls", Input: `type Token {
   token: String!
 }
 
 type Mutation {
-  signIn(login: String!, password: String!): TokenResponse!
-  signUp(name: String!, login: String!, password: String!): TokenResponse!
+  signIn(login: String!, password: String!): Token!
+  signUp(name: String!, login: String!, password: String!): Token!
   signOut: Boolean!
   changePassword(oldPassword: String!, newPassword: String!): Boolean!
   enable(userId: String!): Boolean!
@@ -428,7 +427,7 @@ type Mutation {
   revoke(userId: String!, permissions: [String!]): Boolean!
 }
 
-type UserData @key(fields: "id") {
+type User @key(fields: "id") {
   id: String!
   name: String!
   permissions: [String!]!
@@ -437,8 +436,8 @@ type UserData @key(fields: "id") {
 }
 
 type Query {
-  currentUser: UserData!
-  users: [UserData!]!
+  currentUser: User!
+  users: [User!]!
 }
 `, BuiltIn: false},
 	{Name: "../../federation/directives.graphql", Input: `
@@ -452,11 +451,11 @@ type Query {
 `, BuiltIn: true},
 	{Name: "../../federation/entity.graphql", Input: `
 # a union of all types that use the @key directive
-union _Entity = UserData
+union _Entity = User
 
 # fake type to build resolver interfaces for users to implement
 type Entity {
-	findUserDataByID(id: String!,): UserData!
+	findUserByID(id: String!,): User!
 }
 
 type _Service {
@@ -475,17 +474,17 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Entity_findUserDataByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Entity_findUserByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Entity_findUserDataByID_argsID(ctx, rawArgs)
+	arg0, err := ec.field_Entity_findUserByID_argsID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Entity_findUserDataByID_argsID(
+func (ec *executionContext) field_Entity_findUserByID_argsID(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (string, error) {
@@ -867,8 +866,8 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Entity_findUserDataByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Entity_findUserDataByID(ctx, field)
+func (ec *executionContext) _Entity_findUserByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Entity_findUserByID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -881,7 +880,7 @@ func (ec *executionContext) _Entity_findUserDataByID(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Entity().FindUserDataByID(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Entity().FindUserByID(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -893,12 +892,12 @@ func (ec *executionContext) _Entity_findUserDataByID(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*user.UserData)
+	res := resTmp.(*User)
 	fc.Result = res
-	return ec.marshalNUserData2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Entity_findUserDataByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Entity_findUserByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Entity",
 		Field:      field,
@@ -907,17 +906,17 @@ func (ec *executionContext) fieldContext_Entity_findUserDataByID(ctx context.Con
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserData_id(ctx, field)
+				return ec.fieldContext_User_id(ctx, field)
 			case "name":
-				return ec.fieldContext_UserData_name(ctx, field)
+				return ec.fieldContext_User_name(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserData_permissions(ctx, field)
+				return ec.fieldContext_User_permissions(ctx, field)
 			case "login":
-				return ec.fieldContext_UserData_login(ctx, field)
+				return ec.fieldContext_User_login(ctx, field)
 			case "enabled":
-				return ec.fieldContext_UserData_enabled(ctx, field)
+				return ec.fieldContext_User_enabled(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserData", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	defer func() {
@@ -927,7 +926,7 @@ func (ec *executionContext) fieldContext_Entity_findUserDataByID(ctx context.Con
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Entity_findUserDataByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Entity_findUserByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -960,9 +959,9 @@ func (ec *executionContext) _Mutation_signIn(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*user.TokenResponse)
+	res := resTmp.(*Token)
 	fc.Result = res
-	return ec.marshalNTokenResponse2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐTokenResponse(ctx, field.Selections, res)
+	return ec.marshalNToken2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐToken(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_signIn(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -974,9 +973,9 @@ func (ec *executionContext) fieldContext_Mutation_signIn(ctx context.Context, fi
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "token":
-				return ec.fieldContext_TokenResponse_token(ctx, field)
+				return ec.fieldContext_Token_token(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TokenResponse", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Token", field.Name)
 		},
 	}
 	defer func() {
@@ -1019,9 +1018,9 @@ func (ec *executionContext) _Mutation_signUp(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*user.TokenResponse)
+	res := resTmp.(*Token)
 	fc.Result = res
-	return ec.marshalNTokenResponse2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐTokenResponse(ctx, field.Selections, res)
+	return ec.marshalNToken2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐToken(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1033,9 +1032,9 @@ func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, fi
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "token":
-				return ec.fieldContext_TokenResponse_token(ctx, field)
+				return ec.fieldContext_Token_token(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TokenResponse", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Token", field.Name)
 		},
 	}
 	defer func() {
@@ -1397,9 +1396,9 @@ func (ec *executionContext) _Query_currentUser(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*user.UserData)
+	res := resTmp.(*User)
 	fc.Result = res
-	return ec.marshalNUserData2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_currentUser(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1411,17 +1410,17 @@ func (ec *executionContext) fieldContext_Query_currentUser(_ context.Context, fi
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserData_id(ctx, field)
+				return ec.fieldContext_User_id(ctx, field)
 			case "name":
-				return ec.fieldContext_UserData_name(ctx, field)
+				return ec.fieldContext_User_name(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserData_permissions(ctx, field)
+				return ec.fieldContext_User_permissions(ctx, field)
 			case "login":
-				return ec.fieldContext_UserData_login(ctx, field)
+				return ec.fieldContext_User_login(ctx, field)
 			case "enabled":
-				return ec.fieldContext_UserData_enabled(ctx, field)
+				return ec.fieldContext_User_enabled(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserData", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
@@ -1453,9 +1452,9 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*user.UserData)
+	res := resTmp.([]*User)
 	fc.Result = res
-	return ec.marshalNUserData2ᚕᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserDataᚄ(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_users(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1467,17 +1466,17 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserData_id(ctx, field)
+				return ec.fieldContext_User_id(ctx, field)
 			case "name":
-				return ec.fieldContext_UserData_name(ctx, field)
+				return ec.fieldContext_User_name(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserData_permissions(ctx, field)
+				return ec.fieldContext_User_permissions(ctx, field)
 			case "login":
-				return ec.fieldContext_UserData_login(ctx, field)
+				return ec.fieldContext_User_login(ctx, field)
 			case "enabled":
-				return ec.fieldContext_UserData_enabled(ctx, field)
+				return ec.fieldContext_User_enabled(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserData", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
@@ -1715,8 +1714,8 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _TokenResponse_token(ctx context.Context, field graphql.CollectedField, obj *user.TokenResponse) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TokenResponse_token(ctx, field)
+func (ec *executionContext) _Token_token(ctx context.Context, field graphql.CollectedField, obj *Token) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Token_token(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1746,9 +1745,9 @@ func (ec *executionContext) _TokenResponse_token(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TokenResponse_token(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Token_token(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TokenResponse",
+		Object:     "Token",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1759,8 +1758,8 @@ func (ec *executionContext) fieldContext_TokenResponse_token(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _UserData_id(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserData_id(ctx, field)
+func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1773,7 +1772,7 @@ func (ec *executionContext) _UserData_id(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Id, nil
+		return obj.ID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1790,9 +1789,9 @@ func (ec *executionContext) _UserData_id(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserData_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserData",
+		Object:     "User",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1803,8 +1802,8 @@ func (ec *executionContext) fieldContext_UserData_id(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _UserData_name(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserData_name(ctx, field)
+func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_name(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1834,9 +1833,9 @@ func (ec *executionContext) _UserData_name(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserData_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserData",
+		Object:     "User",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1847,8 +1846,8 @@ func (ec *executionContext) fieldContext_UserData_name(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _UserData_permissions(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserData_permissions(ctx, field)
+func (ec *executionContext) _User_permissions(ctx context.Context, field graphql.CollectedField, obj *User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_permissions(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1878,9 +1877,9 @@ func (ec *executionContext) _UserData_permissions(ctx context.Context, field gra
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserData_permissions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_permissions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserData",
+		Object:     "User",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1891,8 +1890,8 @@ func (ec *executionContext) fieldContext_UserData_permissions(_ context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _UserData_login(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserData_login(ctx, field)
+func (ec *executionContext) _User_login(ctx context.Context, field graphql.CollectedField, obj *User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_login(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1922,9 +1921,9 @@ func (ec *executionContext) _UserData_login(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserData_login(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_login(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserData",
+		Object:     "User",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1935,8 +1934,8 @@ func (ec *executionContext) fieldContext_UserData_login(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _UserData_enabled(ctx context.Context, field graphql.CollectedField, obj *user.UserData) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserData_enabled(ctx, field)
+func (ec *executionContext) _User_enabled(ctx context.Context, field graphql.CollectedField, obj *User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_enabled(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1966,9 +1965,9 @@ func (ec *executionContext) _UserData_enabled(ctx context.Context, field graphql
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserData_enabled(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_enabled(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserData",
+		Object:     "User",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3801,13 +3800,13 @@ func (ec *executionContext) __Entity(ctx context.Context, sel ast.SelectionSet, 
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case user.UserData:
-		return ec._UserData(ctx, sel, &obj)
-	case *user.UserData:
+	case User:
+		return ec._User(ctx, sel, &obj)
+	case *User:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._UserData(ctx, sel, obj)
+		return ec._User(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -3836,7 +3835,7 @@ func (ec *executionContext) _Entity(ctx context.Context, sel ast.SelectionSet) g
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Entity")
-		case "findUserDataByID":
+		case "findUserByID":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -3845,7 +3844,7 @@ func (ec *executionContext) _Entity(ctx context.Context, sel ast.SelectionSet) g
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Entity_findUserDataByID(ctx, field)
+				res = ec._Entity_findUserByID(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -4117,19 +4116,19 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var tokenResponseImplementors = []string{"TokenResponse"}
+var tokenImplementors = []string{"Token"}
 
-func (ec *executionContext) _TokenResponse(ctx context.Context, sel ast.SelectionSet, obj *user.TokenResponse) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tokenResponseImplementors)
+func (ec *executionContext) _Token(ctx context.Context, sel ast.SelectionSet, obj *Token) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tokenImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("TokenResponse")
+			out.Values[i] = graphql.MarshalString("Token")
 		case "token":
-			out.Values[i] = ec._TokenResponse_token(ctx, field, obj)
+			out.Values[i] = ec._Token_token(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -4156,39 +4155,39 @@ func (ec *executionContext) _TokenResponse(ctx context.Context, sel ast.Selectio
 	return out
 }
 
-var userDataImplementors = []string{"UserData", "_Entity"}
+var userImplementors = []string{"User", "_Entity"}
 
-func (ec *executionContext) _UserData(ctx context.Context, sel ast.SelectionSet, obj *user.UserData) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userDataImplementors)
+func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *User) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserData")
+			out.Values[i] = graphql.MarshalString("User")
 		case "id":
-			out.Values[i] = ec._UserData_id(ctx, field, obj)
+			out.Values[i] = ec._User_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "name":
-			out.Values[i] = ec._UserData_name(ctx, field, obj)
+			out.Values[i] = ec._User_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "permissions":
-			out.Values[i] = ec._UserData_permissions(ctx, field, obj)
+			out.Values[i] = ec._User_permissions(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "login":
-			out.Values[i] = ec._UserData_login(ctx, field, obj)
+			out.Values[i] = ec._User_login(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "enabled":
-			out.Values[i] = ec._UserData_enabled(ctx, field, obj)
+			out.Values[i] = ec._User_enabled(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -4639,25 +4638,25 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNTokenResponse2githubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐTokenResponse(ctx context.Context, sel ast.SelectionSet, v user.TokenResponse) graphql.Marshaler {
-	return ec._TokenResponse(ctx, sel, &v)
+func (ec *executionContext) marshalNToken2githubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐToken(ctx context.Context, sel ast.SelectionSet, v Token) graphql.Marshaler {
+	return ec._Token(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTokenResponse2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐTokenResponse(ctx context.Context, sel ast.SelectionSet, v *user.TokenResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNToken2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐToken(ctx context.Context, sel ast.SelectionSet, v *Token) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._TokenResponse(ctx, sel, v)
+	return ec._Token(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserData2githubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx context.Context, sel ast.SelectionSet, v user.UserData) graphql.Marshaler {
-	return ec._UserData(ctx, sel, &v)
+func (ec *executionContext) marshalNUser2githubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v User) graphql.Marshaler {
+	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserData2ᚕᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserDataᚄ(ctx context.Context, sel ast.SelectionSet, v []*user.UserData) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*User) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4681,7 +4680,7 @@ func (ec *executionContext) marshalNUserData2ᚕᚖgithubᚗcomᚋnmarsollierᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUserData2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx, sel, v[i])
+			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4701,14 +4700,14 @@ func (ec *executionContext) marshalNUserData2ᚕᚖgithubᚗcomᚋnmarsollierᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNUserData2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋuserᚐUserData(ctx context.Context, sel ast.SelectionSet, v *user.UserData) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋnmarsollierᚋauthgoᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._UserData(ctx, sel, v)
+	return ec._User(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalN_Any2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {

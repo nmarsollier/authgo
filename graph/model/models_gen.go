@@ -7,3 +7,17 @@ type Mutation struct {
 
 type Query struct {
 }
+
+type Token struct {
+	Token string `json:"token"`
+}
+
+type User struct {
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Permissions []string `json:"permissions"`
+	Login       string   `json:"login"`
+	Enabled     bool     `json:"enabled"`
+}
+
+func (User) IsEntity() {}

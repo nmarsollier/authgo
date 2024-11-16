@@ -9,16 +9,15 @@ import (
 
 	"github.com/nmarsollier/authgo/graph/model"
 	"github.com/nmarsollier/authgo/graph/resolvers"
-	"github.com/nmarsollier/authgo/user"
 )
 
 // SignIn is the resolver for the signIn field.
-func (r *mutationResolver) SignIn(ctx context.Context, login string, password string) (*user.TokenResponse, error) {
+func (r *mutationResolver) SignIn(ctx context.Context, login string, password string) (*model.Token, error) {
 	return resolvers.SignIn(ctx, login, password)
 }
 
 // SignUp is the resolver for the signUp field.
-func (r *mutationResolver) SignUp(ctx context.Context, name string, login string, password string) (*user.TokenResponse, error) {
+func (r *mutationResolver) SignUp(ctx context.Context, name string, login string, password string) (*model.Token, error) {
 	return resolvers.SignUp(ctx, name, login, password)
 }
 
@@ -53,12 +52,12 @@ func (r *mutationResolver) Revoke(ctx context.Context, userID string, permission
 }
 
 // CurrentUser is the resolver for the currentUser field.
-func (r *queryResolver) CurrentUser(ctx context.Context) (*user.UserData, error) {
+func (r *queryResolver) CurrentUser(ctx context.Context) (*model.User, error) {
 	return resolvers.CurrentUser(ctx)
 }
 
 // Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*user.UserData, error) {
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return resolvers.Users(ctx)
 }
 

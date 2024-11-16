@@ -3,11 +3,12 @@ package resolvers
 import (
 	"context"
 
+	"github.com/nmarsollier/authgo/graph/model"
 	"github.com/nmarsollier/authgo/graph/tools"
 	"github.com/nmarsollier/authgo/user"
 )
 
-func SignUp(ctx context.Context, name string, login string, password string) (*user.TokenResponse, error) {
+func SignUp(ctx context.Context, name string, login string, password string) (*model.Token, error) {
 	env := tools.GqlCtx(ctx)
 	token, err := user.SignUp(&user.SignUpRequest{
 		Name:     name,
@@ -17,5 +18,7 @@ func SignUp(ctx context.Context, name string, login string, password string) (*u
 	if err != nil {
 		return nil, err
 	}
-	return token, nil
+	return &model.Token{
+		Token: token.Token,
+	}, nil
 }

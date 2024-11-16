@@ -1,10 +1,10 @@
-type TokenResponse {
+type Token {
   token: String!
 }
 
 type Mutation {
-  signIn(login: String!, password: String!): TokenResponse!
-  signUp(name: String!, login: String!, password: String!): TokenResponse!
+  signIn(login: String!, password: String!): Token!
+  signUp(name: String!, login: String!, password: String!): Token!
   signOut: Boolean!
   changePassword(oldPassword: String!, newPassword: String!): Boolean!
   enable(userId: String!): Boolean!
@@ -13,7 +13,7 @@ type Mutation {
   revoke(userId: String!, permissions: [String!]): Boolean!
 }
 
-type UserData @key(fields: "id") {
+type User @key(fields: "id") {
   id: String!
   name: String!
   permissions: [String!]!
@@ -22,6 +22,6 @@ type UserData @key(fields: "id") {
 }
 
 type Query {
-  currentUser: UserData!
-  users: [UserData!]!
+  currentUser: User!
+  users: [User!]!
 }

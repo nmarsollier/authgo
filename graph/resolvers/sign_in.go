@@ -3,12 +3,13 @@ package resolvers
 import (
 	"context"
 
+	"github.com/nmarsollier/authgo/graph/model"
 	"github.com/nmarsollier/authgo/graph/tools"
 	"github.com/nmarsollier/authgo/user"
 )
 
 // SignIn is the resolver for the signIn field.
-func SignIn(ctx context.Context, login string, password string) (*user.TokenResponse, error) {
+func SignIn(ctx context.Context, login string, password string) (*model.Token, error) {
 	env := tools.GqlCtx(ctx)
 
 	tokenString, err := user.SignIn(user.SignInRequest{Login: login, Password: password}, env...)
@@ -16,5 +17,7 @@ func SignIn(ctx context.Context, login string, password string) (*user.TokenResp
 		return nil, err
 	}
 
-	return tokenString, nil
+	return &model.Token{
+		Token: tokenString.Token,
+	}, nil
 }

@@ -153,21 +153,21 @@ func (ec *executionContext) resolveEntity(
 	}()
 
 	switch typeName {
-	case "UserData":
-		resolverName, err := entityResolverNameForUserData(ctx, rep)
+	case "User":
+		resolverName, err := entityResolverNameForUser(ctx, rep)
 		if err != nil {
-			return nil, fmt.Errorf(`finding resolver for Entity "UserData": %w`, err)
+			return nil, fmt.Errorf(`finding resolver for Entity "User": %w`, err)
 		}
 		switch resolverName {
 
-		case "findUserDataByID":
+		case "findUserByID":
 			id0, err := ec.unmarshalNString2string(ctx, rep["id"])
 			if err != nil {
-				return nil, fmt.Errorf(`unmarshalling param 0 for findUserDataByID(): %w`, err)
+				return nil, fmt.Errorf(`unmarshalling param 0 for findUserByID(): %w`, err)
 			}
-			entity, err := ec.resolvers.Entity().FindUserDataByID(ctx, id0)
+			entity, err := ec.resolvers.Entity().FindUserByID(ctx, id0)
 			if err != nil {
-				return nil, fmt.Errorf(`resolving Entity "UserData": %w`, err)
+				return nil, fmt.Errorf(`resolving Entity "User": %w`, err)
 			}
 
 			return entity, nil
@@ -198,7 +198,7 @@ func (ec *executionContext) resolveManyEntities(
 	}
 }
 
-func entityResolverNameForUserData(ctx context.Context, rep EntityRepresentation) (string, error) {
+func entityResolverNameForUser(ctx context.Context, rep EntityRepresentation) (string, error) {
 	for {
 		var (
 			m   EntityRepresentation
@@ -220,7 +220,7 @@ func entityResolverNameForUserData(ctx context.Context, rep EntityRepresentation
 		if allNull {
 			break
 		}
-		return "findUserDataByID", nil
+		return "findUserByID", nil
 	}
-	return "", fmt.Errorf("%w for UserData", ErrTypeNotFound)
+	return "", fmt.Errorf("%w for User", ErrTypeNotFound)
 }

@@ -3,11 +3,12 @@ package resolvers
 import (
 	"context"
 
+	"github.com/nmarsollier/authgo/graph/model"
 	"github.com/nmarsollier/authgo/graph/tools"
 	"github.com/nmarsollier/authgo/user"
 )
 
-func CurrentUser(ctx context.Context) (*user.UserData, error) {
+func CurrentUser(ctx context.Context) (*model.User, error) {
 	token, err := tools.HeaderToken(ctx)
 	if err != nil {
 		return nil, err
@@ -19,5 +20,5 @@ func CurrentUser(ctx context.Context) (*user.UserData, error) {
 		return nil, err
 	}
 
-	return user, nil
+	return ToUser(user), nil
 }

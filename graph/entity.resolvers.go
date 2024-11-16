@@ -7,15 +7,13 @@ package graph
 import (
 	"context"
 
-	"github.com/99designs/gqlgen/plugin/federation/fedruntime"
 	"github.com/nmarsollier/authgo/graph/model"
 	"github.com/nmarsollier/authgo/graph/resolvers"
-	"github.com/nmarsollier/authgo/user"
 )
 
-// FindUserDataByID is the resolver for the findUserDataByID field.
-func (r *entityResolver) FindUserDataByID(ctx context.Context, id string) (*user.UserData, error) {
-	user, err := resolvers.FindUser(ctx, id)
+// FindUserByID is the resolver for the findUserByID field.
+func (r *entityResolver) FindUserByID(ctx context.Context, id string) (*model.User, error) {
+	user, err := resolvers.FindUserByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -26,5 +24,3 @@ func (r *entityResolver) FindUserDataByID(ctx context.Context, id string) (*user
 func (r *Resolver) Entity() model.EntityResolver { return &entityResolver{r} }
 
 type entityResolver struct{ *Resolver }
-
-var _ fedruntime.Entity = &user.UserData{}

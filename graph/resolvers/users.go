@@ -3,20 +3,26 @@ package resolvers
 import (
 	"context"
 
+	"github.com/nmarsollier/authgo/graph/model"
 	"github.com/nmarsollier/authgo/graph/tools"
 	"github.com/nmarsollier/authgo/user"
 )
 
-func Users(ctx context.Context) ([]*user.UserData, error) {
+func Users(ctx context.Context) ([]*model.User, error) {
 	if err := tools.ValidateAdmin(ctx); err != nil {
 		return nil, err
 	}
 
 	env := tools.GqlCtx(ctx)
-	result, err := user.FindAllUsers(env...)
+	users, err := user.FindAllUsers(env...)
 
 	if err != nil {
 		return nil, err
+	}
+
+	result := make([]*model.User, len(users))
+	for i := range users {
+		result[i] = ToUser(users[i])
 	}
 
 	return result, nil
