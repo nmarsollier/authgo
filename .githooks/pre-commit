@@ -5,13 +5,6 @@ if [ -f ~/.zshrc ]; then
     source ~/.zshrc
 fi
 
-NPM_GLOBAL_DIR="/usr"
-npm config set prefix "$NPM_GLOBAL_DIR"
-export PATH="$NPM_GLOBAL_DIR/bin:$PATH"
-
-# Optional: Source your zshrc if you need your zsh configuration
-# source ~/.zshrc
-
 # Ejecutar el build
 echo "Building the project..."
 
@@ -21,7 +14,7 @@ if ! ./scripts/generate_mocks.sh; then
 fi
 
 if ! ./scripts/generate_gql.sh; then
-    echo "Build failed generating mocks."
+    echo "Build failed generating gql."
     exit 1
 fi
 
