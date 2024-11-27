@@ -1,0 +1,3354 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>docs: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/nmarsollier/authgo/docs/docs.go (100.0%)</option>
+				
+				<option value="file1">github.com/nmarsollier/authgo/main.go (0.0%)</option>
+				
+				<option value="file2">github.com/nmarsollier/authgo/rabbit/mocks.go (0.0%)</option>
+				
+				<option value="file3">github.com/nmarsollier/authgo/rabbit/rabbit.go (40.0%)</option>
+				
+				<option value="file4">github.com/nmarsollier/authgo/rest/engine/access.go (100.0%)</option>
+				
+				<option value="file5">github.com/nmarsollier/authgo/rest/engine/engine.go (100.0%)</option>
+				
+				<option value="file6">github.com/nmarsollier/authgo/rest/engine/error.go (46.4%)</option>
+				
+				<option value="file7">github.com/nmarsollier/authgo/rest/get_user_signout.go (100.0%)</option>
+				
+				<option value="file8">github.com/nmarsollier/authgo/rest/get_users.go (100.0%)</option>
+				
+				<option value="file9">github.com/nmarsollier/authgo/rest/get_users_current.go (100.0%)</option>
+				
+				<option value="file10">github.com/nmarsollier/authgo/rest/post_user.go (100.0%)</option>
+				
+				<option value="file11">github.com/nmarsollier/authgo/rest/post_user_password.go (100.0%)</option>
+				
+				<option value="file12">github.com/nmarsollier/authgo/rest/post_user_signin.go (100.0%)</option>
+				
+				<option value="file13">github.com/nmarsollier/authgo/rest/post_users_id_disable.go (100.0%)</option>
+				
+				<option value="file14">github.com/nmarsollier/authgo/rest/post_users_id_enable.go (100.0%)</option>
+				
+				<option value="file15">github.com/nmarsollier/authgo/rest/post_users_id_grant.go (85.7%)</option>
+				
+				<option value="file16">github.com/nmarsollier/authgo/rest/post_users_id_revoke.go (85.7%)</option>
+				
+				<option value="file17">github.com/nmarsollier/authgo/rest/router.go (83.3%)</option>
+				
+				<option value="file18">github.com/nmarsollier/authgo/token/cache.go (90.9%)</option>
+				
+				<option value="file19">github.com/nmarsollier/authgo/token/dao.go (61.5%)</option>
+				
+				<option value="file20">github.com/nmarsollier/authgo/token/schema.go (83.3%)</option>
+				
+				<option value="file21">github.com/nmarsollier/authgo/token/service.go (96.6%)</option>
+				
+				<option value="file22">github.com/nmarsollier/authgo/tools/app_errors/errors.go (53.8%)</option>
+				
+				<option value="file23">github.com/nmarsollier/authgo/tools/db/connection.go (0.0%)</option>
+				
+				<option value="file24">github.com/nmarsollier/authgo/tools/db/mocks.go (100.0%)</option>
+				
+				<option value="file25">github.com/nmarsollier/authgo/tools/db/mongo_collection.go (0.0%)</option>
+				
+				<option value="file26">github.com/nmarsollier/authgo/tools/db/tools.go (71.4%)</option>
+				
+				<option value="file27">github.com/nmarsollier/authgo/tools/env/env.go (66.7%)</option>
+				
+				<option value="file28">github.com/nmarsollier/authgo/tools/tests/assertions.go (100.0%)</option>
+				
+				<option value="file29">github.com/nmarsollier/authgo/tools/tests/data.go (100.0%)</option>
+				
+				<option value="file30">github.com/nmarsollier/authgo/tools/tests/database.go (100.0%)</option>
+				
+				<option value="file31">github.com/nmarsollier/authgo/tools/tests/test_requests.go (100.0%)</option>
+				
+				<option value="file32">github.com/nmarsollier/authgo/user/dao.go (72.9%)</option>
+				
+				<option value="file33">github.com/nmarsollier/authgo/user/schema.go (92.3%)</option>
+				
+				<option value="file34">github.com/nmarsollier/authgo/user/service.go (98.6%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">// Package docs Code generated by swaggo/swag. DO NOT EDIT
+package docs
+
+import "github.com/swaggo/swag"
+
+const docTemplate = `{
+    "schemes": {{ marshal .Schemes }},
+    "swagger": "2.0",
+    "info": {
+        "description": "{{escape .Description}}",
+        "title": "{{.Title}}",
+        "contact": {
+            "name": "Nestor Marsollier",
+            "email": "nmarsollier@gmail.com"
+        },
+        "version": "{{.Version}}"
+    },
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
+    "paths": {
+        "/rabbit/logout": {
+            "put": {
+                "description": "SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rabbit"
+                ],
+                "summary": "Mensage Rabbit",
+                "parameters": [
+                    {
+                        "description": "Token deshabilitado",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rabbit.message"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/user": {
+            "post": {
+                "description": "Registra un nuevo usuario en el sistema.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Registrar Usuario",
+                "parameters": [
+                    {
+                        "description": "Informacion de ususario",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.SignUpRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Token",
+                        "schema": {
+                            "$ref": "#/definitions/rest.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.ErrValidation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/password": {
+            "post": {
+                "description": "Cambia la contraseña del usuario actual.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Cambiar Password",
+                "parameters": [
+                    {
+                        "description": "Passwords",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.changePasswordBody"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.ErrValidation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/signin": {
+            "post": {
+                "description": "Loguea un usuario en el sistema.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Sign in information",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.SignInRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Token",
+                        "schema": {
+                            "$ref": "#/definitions/rest.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.ErrValidation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/signout": {
+            "get": {
+                "description": "Desloguea un usuario en el sistema, invalida el token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Logout",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content"
+                    },
+                    "500": {
+                        "description": "Error response",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users": {
+            "get": {
+                "description": "Obtiene información de todos los usuarios. El usuario logueado debe tener permisos \"admin\".",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Listar Usuarios",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Users",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/rest.UserDataResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.ErrValidation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/:userID/grant": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "User Token",
+                        "schema": {
+                            "$ref": "#/definitions/rest.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.ErrValidation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/:userID/revoke": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "User Token",
+                        "schema": {
+                            "$ref": "#/definitions/rest.revokePermissionBody"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.ErrValidation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/:userId/disable": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "User Token",
+                        "schema": {
+                            "$ref": "#/definitions/rest.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.ErrValidation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/:userId/enable": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "User Token",
+                        "schema": {
+                            "$ref": "#/definitions/rest.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.ErrValidation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/current": {
+            "get": {
+                "description": "Obtiene información del usuario actual.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Usuario Actual",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User data",
+                        "schema": {
+                            "$ref": "#/definitions/rest.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.ErrValidation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app_errors.OtherErrors"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "app_errors.ErrField": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
+        "app_errors.ErrValidation": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/app_errors.ErrField"
+                    }
+                }
+            }
+        },
+        "app_errors.OtherErrors": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "rabbit.message": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.UserDataResponse": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "login": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "rest.UserResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "login": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "rest.changePasswordBody": {
+            "type": "object",
+            "required": [
+                "currentPassword",
+                "newPassword"
+            ],
+            "properties": {
+                "currentPassword": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "newPassword": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                }
+            }
+        },
+        "rest.revokePermissionBody": {
+            "type": "object",
+            "required": [
+                "permissions",
+                "user"
+            ],
+            "properties": {
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.tokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.SignInRequest": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.SignUpRequest": {
+            "type": "object",
+            "required": [
+                "login",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}`
+
+// SwaggerInfo holds exported Swagger Info so clients can modify it
+var SwaggerInfo = &amp;swag.Spec{
+        Version:          "1.0",
+        Host:             "localhost:3000",
+        BasePath:         "/v1",
+        Schemes:          []string{},
+        Title:            "AuthGo",
+        Description:      "Microservicio de Autentificación.",
+        InfoInstanceName: "swagger",
+        SwaggerTemplate:  docTemplate,
+        LeftDelim:        "{{",
+        RightDelim:       "}}",
+}
+
+func init() <span class="cov8" title="1">{
+        swag.Register(SwaggerInfo.InstanceName(), SwaggerInfo)
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        routes "github.com/nmarsollier/authgo/rest"
+)
+
+//        @title                        AuthGo
+//        @version                1.0
+//        @description        Microservicio de Autentificación.
+
+//        @contact.name        Nestor Marsollier
+//        @contact.email        nmarsollier@gmail.com
+
+// @host                localhost:3000
+// @BasePath        /v1
+func main() <span class="cov0" title="0">{
+        routes.Start()
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: ./rabbit/rabbit.go
+
+// Package rabbit is a generated GoMock package.
+package rabbit
+
+import (
+        reflect "reflect"
+
+        gomock "github.com/golang/mock/gomock"
+)
+
+// MockRabbit is a mock of Rabbit interface.
+type MockRabbit struct {
+        ctrl     *gomock.Controller
+        recorder *MockRabbitMockRecorder
+}
+
+// MockRabbitMockRecorder is the mock recorder for MockRabbit.
+type MockRabbitMockRecorder struct {
+        mock *MockRabbit
+}
+
+// NewMockRabbit creates a new mock instance.
+func NewMockRabbit(ctrl *gomock.Controller) *MockRabbit <span class="cov0" title="0">{
+        mock := &amp;MockRabbit{ctrl: ctrl}
+        mock.recorder = &amp;MockRabbitMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRabbit) EXPECT() *MockRabbitMockRecorder <span class="cov0" title="0">{
+        return m.recorder
+}</span>
+
+// SendLogout mocks base method.
+func (m *MockRabbit) SendLogout(token string) error <span class="cov0" title="0">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "SendLogout", token)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// SendLogout indicates an expected call of SendLogout.
+func (mr *MockRabbitMockRecorder) SendLogout(token interface{}) *gomock.Call <span class="cov0" title="0">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendLogout", reflect.TypeOf((*MockRabbit)(nil).SendLogout), token)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package rabbit
+
+import (
+        "encoding/json"
+        "log"
+
+        "github.com/nmarsollier/authgo/tools/app_errors"
+        "github.com/nmarsollier/authgo/tools/env"
+        "github.com/streadway/amqp"
+)
+
+// ErrChannelNotInitialized Rabbit channel could not be initialized
+var ErrChannelNotInitialized = app_errors.NewCustom(400, "Channel not initialized")
+
+var channel *amqp.Channel
+
+type Rabbit interface {
+        SendLogout(token string) error
+}
+
+type rabbitImpl struct {
+}
+
+var currentRabbit Rabbit
+
+func Get(options ...interface{}) Rabbit <span class="cov8" title="1">{
+        for _, o := range options </span><span class="cov8" title="1">{
+                if ti, ok := o.(Rabbit); ok </span><span class="cov0" title="0">{
+                        return ti
+                }</span>
+        }
+
+        <span class="cov8" title="1">if currentRabbit == nil </span><span class="cov8" title="1">{
+                currentRabbit = &amp;rabbitImpl{}
+        }</span>
+        <span class="cov8" title="1">return currentRabbit</span>
+}
+
+type message struct {
+        Type    string `json:"type"`
+        Message string `json:"message"`
+}
+
+func getChannel() (*amqp.Channel, error) <span class="cov8" title="1">{
+        if channel == nil </span><span class="cov8" title="1">{
+                conn, err := amqp.Dial(env.Get().RabbitURL)
+                if err != nil </span><span class="cov8" title="1">{
+                        return nil, err
+                }</span>
+
+                <span class="cov0" title="0">ch, err := conn.Channel()
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">channel = ch</span>
+        }
+        <span class="cov0" title="0">if channel == nil </span><span class="cov0" title="0">{
+                return nil, ErrChannelNotInitialized
+        }</span>
+        <span class="cov0" title="0">return channel, nil</span>
+}
+
+// SendLogout envía un broadcast a rabbit con logout
+//
+//        @Summary                Mensage Rabbit
+//        @Description        SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.
+//        @Tags                        Rabbit
+//        @Accept                        json
+//        @Produce                json
+//        @Param                        body        body        message        true        "Token deshabilitado"
+//        @Router                        /rabbit/logout [put]
+func (r *rabbitImpl) SendLogout(token string) error <span class="cov8" title="1">{
+        send := message{
+                Type:    "logout",
+                Message: token,
+        }
+
+        chanel, err := getChannel()
+        if err != nil </span><span class="cov8" title="1">{
+                channel = nil
+                return err
+        }</span>
+
+        <span class="cov0" title="0">err = chanel.ExchangeDeclare(
+                "auth",   // name
+                "fanout", // type
+                false,    // durable
+                false,    // auto-deleted
+                false,    // internal
+                false,    // no-wait
+                nil,      // arguments
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                channel = nil
+                return err
+        }</span>
+
+        <span class="cov0" title="0">body, err := json.Marshal(send)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">err = chanel.Publish(
+                "auth", // exchange
+                "",     // routing key
+                false,  // mandatory
+                false,  // immediate
+                amqp.Publishing{
+                        Body: []byte(body),
+                })
+        if err != nil </span><span class="cov0" title="0">{
+                channel = nil
+                return err
+        }</span>
+
+        <span class="cov0" title="0">log.Output(1, "Rabbit logout enviado")
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package engine
+
+import (
+        "strings"
+
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/token"
+        "github.com/nmarsollier/authgo/tools/app_errors"
+        "github.com/nmarsollier/authgo/user"
+)
+
+// ValidateAdmin check admin user is logged in
+func ValidateAdmin(c *gin.Context) <span class="cov8" title="1">{
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">payload, err := fetchAuthHeader(c)
+        if err != nil </span><span class="cov8" title="1">{
+                c.Error(app_errors.Unauthorized)
+                c.Abort()
+                return
+        }</span>
+
+        <span class="cov8" title="1">if !user.Granted(payload.UserID.Hex(), "admin", extraParams...) </span><span class="cov8" title="1">{
+                c.Error(app_errors.Unauthorized)
+                c.Abort()
+        }</span>
+}
+
+// ValidateLoggedIn user
+func ValidateLoggedIn(c *gin.Context) <span class="cov8" title="1">{
+        _, err := fetchAuthHeader(c)
+        if err != nil </span><span class="cov8" title="1">{
+                c.Error(app_errors.Unauthorized)
+                c.Abort()
+        }</span>
+}
+
+// HeaderToken token from Authorization header
+func HeaderToken(c *gin.Context) *token.Token <span class="cov8" title="1">{
+        return c.MustGet("auth_header").(*token.Token)
+}</span>
+
+func fetchAuthHeader(c *gin.Context) (*token.Token, error) <span class="cov8" title="1">{
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">tokenString, err := RAWHeaderToken(c)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">payload, err := token.Validate(tokenString, extraParams...)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">c.Set("auth_header", payload)
+
+        return payload, nil</span>
+}
+
+// RAWHeaderToken token from Authorization header
+func RAWHeaderToken(c *gin.Context) (string, error) <span class="cov8" title="1">{
+        tokenString := c.GetHeader("Authorization")
+        if strings.Index(tokenString, "bearer ") != 0 </span><span class="cov8" title="1">{
+                return "", app_errors.Unauthorized
+        }</span>
+        <span class="cov8" title="1">return tokenString[7:], nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package engine
+
+import (
+        "time"
+
+        "github.com/gin-contrib/gzip"
+        "github.com/gin-gonic/gin"
+        cors "github.com/itsjamie/gin-cors"
+        _ "github.com/nmarsollier/authgo/docs"
+        "github.com/swaggo/files"
+        ginSwagger "github.com/swaggo/gin-swagger"
+)
+
+var engine *gin.Engine = nil
+
+func TestRouter(props ...interface{}) *gin.Engine <span class="cov8" title="1">{
+        engine = nil
+        Router()
+        if len(props) &gt; 0 </span><span class="cov8" title="1">{
+                engine.Use(func(c *gin.Context) </span><span class="cov8" title="1">{
+                        c.Set("mocks", props)
+                        c.Next()
+                }</span>)
+        }
+
+        <span class="cov8" title="1">return engine</span>
+}
+
+func Router() *gin.Engine <span class="cov8" title="1">{
+        if engine == nil </span><span class="cov8" title="1">{
+                engine = gin.Default()
+
+                engine.Use(gzip.Gzip(gzip.DefaultCompression))
+
+                engine.Use(cors.Middleware(cors.Config{
+                        Origins:         "*",
+                        Methods:         "GET, PUT, POST, DELETE",
+                        RequestHeaders:  "Origin, Authorization, Content-Type",
+                        ExposedHeaders:  "",
+                        MaxAge:          50 * time.Second,
+                        Credentials:     false,
+                        ValidateHeaders: false,
+                }))
+
+                engine.Use(ErrorHandler)
+
+                engine.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+        }</span>
+
+        <span class="cov8" title="1">return engine</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package engine
+
+import (
+        "fmt"
+        "log"
+        "strings"
+
+        "github.com/gin-gonic/gin"
+        "github.com/go-playground/validator"
+        "github.com/nmarsollier/authgo/tools/app_errors"
+        "github.com/nmarsollier/authgo/tools/db"
+        "go.mongodb.org/mongo-driver/mongo"
+        "go.mongodb.org/mongo-driver/x/mongo/driver/topology"
+)
+
+func ErrorHandler(c *gin.Context) <span class="cov8" title="1">{
+        c.Next()
+        handleErrorIfNeeded(c)
+}</span>
+
+func AbortWithError(c *gin.Context, err error) <span class="cov8" title="1">{
+        c.Error(err)
+        c.Abort()
+}</span>
+
+func handleErrorIfNeeded(c *gin.Context) <span class="cov8" title="1">{
+        err := c.Errors.Last()
+        if err == nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        // Compruebo errores bien conocidos
+        <span class="cov8" title="1">switch err </span>{
+        case topology.ErrServerSelectionTimeout, topology.ErrTopologyClosed:<span class="cov0" title="0">
+                // Errores de conexión con MongoDB
+                db.CheckError(err)
+                handleCustom(c, app_errors.Internal)
+                return</span>
+        case mongo.ErrNoDocuments:<span class="cov0" title="0">
+                handleCustom(c, app_errors.NotFound)
+                return</span>
+        }
+
+        // Compruebo tipos de errores conocidos
+        <span class="cov8" title="1">switch value := err.Err.(type) </span>{
+        case app_errors.Custom:<span class="cov8" title="1">
+                // Son validaciones hechas con NewCustom
+                handleCustom(c, value)</span>
+        case app_errors.Validation:<span class="cov8" title="1">
+                // Son validaciones hechas con NewValidation
+                c.JSON(400, err)</span>
+        case validator.ValidationErrors:<span class="cov0" title="0">
+                // Son las validaciones de validator usadas en validaciones de estructuras
+                handleValidationError(c, value)</span>
+        case mongo.WriteException:<span class="cov0" title="0">
+                // Errores de mongo
+                if db.IsUniqueKeyError(value) </span><span class="cov0" title="0">{
+                        handleCustom(c, app_errors.AlreadyExist)
+                }</span> else<span class="cov0" title="0"> {
+                        log.Output(1, fmt.Sprintf("Error DB : %s", value.Error()))
+                        handleCustom(c, app_errors.Internal)
+                }</span>
+        case error:<span class="cov8" title="1">
+                // Otros errores
+                c.JSON(500, app_errors.OtherErrors{
+                        Error: value.Error(),
+                })</span>
+        default:<span class="cov0" title="0">
+                // No se sabe que es, devolvemos internal
+                handleCustom(c, app_errors.Internal)</span>
+        }
+}
+
+func handleValidationError(c *gin.Context, validationErrors validator.ValidationErrors) <span class="cov0" title="0">{
+        err := app_errors.NewValidation()
+
+        for _, e := range validationErrors </span><span class="cov0" title="0">{
+                err.Add(strings.ToLower(e.Field()), e.Tag())
+        }</span>
+
+        <span class="cov0" title="0">c.JSON(400, err)</span>
+}
+
+func handleCustom(c *gin.Context, err app_errors.Custom) <span class="cov8" title="1">{
+        c.JSON(err.Status(), err)
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/token"
+)
+
+// Desloguea un usuario en el sistema, invalida el token.
+//
+//        @Summary                Logout
+//        @Description        Desloguea un usuario en el sistema, invalida el token.
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//        @Param                        Authorization        header        string        true        "bearer {token}"
+//
+//        @Success                200                                "No Content"
+//
+//        @Failure                500                                {object}        app_errors.OtherErrors        "Error response"
+//        @Router                        /v1/user/signout [get]
+func getUserSignOutRoute() <span class="cov8" title="1">{
+        engine.Router().GET(
+                "/v1/user/signout",
+                engine.ValidateLoggedIn,
+                signOut,
+        )
+}</span>
+
+func signOut(c *gin.Context) <span class="cov8" title="1">{
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">tokenString, _ := engine.RAWHeaderToken(c)
+
+        if err := token.Invalidate(tokenString, extraParams...); err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.Done()</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/user"
+)
+
+type UserDataResponse struct {
+        Id          string   `json:"id"`
+        Name        string   `json:"name"`
+        Permissions []string `json:"permissions"`
+        Login       string   `json:"login"`
+        Enabled     bool     `json:"enabled"`
+}
+
+// Obtiene información de todos los usuarios.
+//
+//        @Summary                Listar Usuarios
+//        @Description        Obtiene información de todos los usuarios. El usuario logueado debe tener permisos "admin".
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//        @Param                        Authorization        header                string                                                true        "bearer {token}"
+//        @Success                200                                {array}                UserDataResponse                        "Users"
+//
+//        @Failure                400                                {object}        app_errors.ErrValidation        "Bad Request"
+//        @Failure                401                                {object}        app_errors.OtherErrors                "Unauthorized"
+//        @Failure                404                                {object}        app_errors.OtherErrors                "Not Found"
+//        @Failure                500                                {object}        app_errors.OtherErrors                "Internal Server Error"
+//
+//        @Router                        /v1/users [get]
+func getUsersRoute() <span class="cov8" title="1">{
+        engine.Router().GET(
+                "/v1/users",
+                engine.ValidateAdmin,
+                users,
+        )
+}</span>
+
+func users(c *gin.Context) <span class="cov8" title="1">{
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">user, err := user.Users(extraParams...)
+
+        if err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+        <span class="cov8" title="1">result := []UserDataResponse{}
+        for i := 0; i &lt; len(user); i = i + 1 </span><span class="cov8" title="1">{
+                result = append(result, UserDataResponse{
+                        Id:          user[i].ID.Hex(),
+                        Name:        user[i].Name,
+                        Permissions: user[i].Permissions,
+                        Login:       user[i].Login,
+                        Enabled:     user[i].Enabled,
+                })
+        }</span>
+
+        <span class="cov8" title="1">c.JSON(200, result)</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/user"
+)
+
+type UserResponse struct {
+        Id          string   `json:"id"`
+        Name        string   `json:"name"`
+        Permissions []string `json:"permissions"`
+        Login       string   `json:"login"`
+}
+
+// Obtiene información del usuario actual.
+//
+//        @Summary                Usuario Actual
+//        @Description        Obtiene información del usuario actual.
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//        @Param                        Authorization        header                string                                                true        "bearer {token}"
+//        @Success                200                                {object}        UserResponse                                "User data"
+//
+//        @Failure                400                                {object}        app_errors.ErrValidation        "Bad Request"
+//        @Failure                401                                {object}        app_errors.OtherErrors                "Unauthorized"
+//        @Failure                404                                {object}        app_errors.OtherErrors                "Not Found"
+//        @Failure                500                                {object}        app_errors.OtherErrors                "Internal Server Error"
+//
+//        @Router                        /v1/users/current [get]
+func getUsersCurrentRoute() <span class="cov8" title="1">{
+        engine.Router().GET(
+                "/v1/users/current",
+                engine.ValidateLoggedIn,
+                currentUser,
+        )
+}</span>
+
+func currentUser(c *gin.Context) <span class="cov8" title="1">{
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">token := engine.HeaderToken(c)
+
+        user, err := user.Get(token.UserID.Hex(), extraParams...)
+        if err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.JSON(200, UserResponse{
+                Id:          user.ID.Hex(),
+                Name:        user.Name,
+                Permissions: user.Permissions,
+                Login:       user.Login,
+        })</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/user"
+)
+
+// Registra un nuevo usuario en el sistema.
+//
+//        @Summary                Registrar Usuario
+//        @Description        Registra un nuevo usuario en el sistema.
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//
+//        @Param                        body        body                user.SignUpRequest                        true        "Informacion de ususario"
+//
+//        @Success                200                {object}        tokenResponse                                "User Token"
+//
+//        @Failure                400                {object}        app_errors.ErrValidation        "Bad Request"
+//        @Failure                401                {object}        app_errors.OtherErrors                "Unauthorized"
+//        @Failure                404                {object}        app_errors.OtherErrors                "Not Found"
+//        @Failure                500                {object}        app_errors.OtherErrors                "Internal Server Error"
+//
+//        @Router                        /v1/user [post]
+func postUsersRoute() <span class="cov8" title="1">{
+        engine.Router().POST(
+                "/v1/user",
+                validateSignUpBody,
+                signUp,
+        )
+}</span>
+
+func signUp(c *gin.Context) <span class="cov8" title="1">{
+        body := c.MustGet("data").(user.SignUpRequest)
+
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">token, err := user.SignUp(&amp;body, extraParams...)
+        if err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.JSON(200, gin.H{
+                "token": token,
+        })</span>
+}
+
+func validateSignUpBody(c *gin.Context) <span class="cov8" title="1">{
+        body := user.SignUpRequest{}
+        if err := c.ShouldBindJSON(&amp;body); err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.Set("data", body)
+        c.Next()</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/user"
+)
+
+// Cambia la contraseña del usuario actual.
+//
+//        @Summary                Cambiar Password
+//        @Description        Cambia la contraseña del usuario actual.
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//
+//        @Param                        body                        body        changePasswordBody        true        "Passwords"
+//
+//        @Param                        Authorization        header        string                                true        "bearer {token}"
+//
+//        @Success                200                                "No Content"
+//
+//        @Failure                400                                {object}        app_errors.ErrValidation        "Bad Request"
+//
+//        @Failure                401                                {object}        app_errors.OtherErrors                "Unauthorized"
+//        @Failure                404                                {object}        app_errors.OtherErrors                "Not Found"
+//        @Failure                500                                {object}        app_errors.OtherErrors                "Internal Server Error"
+//
+//        @Router                        /v1/user/password [post]
+func getUserPasswordRoute() <span class="cov8" title="1">{
+        engine.Router().POST(
+                "/v1/user/password",
+                engine.ValidateLoggedIn,
+                validateChangePasswordBody,
+                changePassword,
+        )
+}</span>
+
+type changePasswordBody struct {
+        Current string `json:"currentPassword" binding:"required,min=1,max=100"`
+        New     string `json:"newPassword" binding:"required,min=1,max=100"`
+}
+
+func changePassword(c *gin.Context) <span class="cov8" title="1">{
+        body := c.MustGet("data").(changePasswordBody)
+
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">payload := engine.HeaderToken(c)
+        if err := user.ChangePassword(payload.UserID.Hex(), body.Current, body.New, extraParams...); err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+}
+
+func validateChangePasswordBody(c *gin.Context) <span class="cov8" title="1">{
+        body := changePasswordBody{}
+        if err := c.ShouldBindJSON(&amp;body); err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.Set("data", body)
+        c.Next()</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/user"
+)
+
+// Loguea un usuario en el sistema.
+//
+//        @Summary                Login
+//        @Description        Loguea un usuario en el sistema.
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//
+//        @Param                        body        body                user.SignInRequest                        true        "Sign in information"
+//
+//        @Success                200                {object}        tokenResponse                                "User Token"
+//
+//        @Failure                400                {object}        app_errors.ErrValidation        "Bad Request"
+//        @Failure                401                {object}        app_errors.OtherErrors                "Unauthorized"
+//        @Failure                404                {object}        app_errors.OtherErrors                "Not Found"
+//        @Failure                500                {object}        app_errors.OtherErrors                "Internal Server Error"
+//
+//        @Router                        /v1/user/signin [post]
+func postUserSignInRoute() <span class="cov8" title="1">{
+        engine.Router().POST(
+                "/v1/user/signin",
+                validateSignInBody,
+                signIn,
+        )
+}</span>
+
+type tokenResponse struct {
+        Token string `json:"token"`
+}
+
+func signIn(c *gin.Context) <span class="cov8" title="1">{
+        login := c.MustGet("data").(user.SignInRequest)
+
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">tokenString, err := user.SignIn(login, extraParams...)
+        if err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.JSON(200, tokenResponse{
+                Token: tokenString,
+        })</span>
+}
+
+func validateSignInBody(c *gin.Context) <span class="cov8" title="1">{
+        login := user.SignInRequest{}
+        if err := c.ShouldBindJSON(&amp;login); err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.Set("data", login)
+        c.Next()</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/user"
+)
+
+// Deshabilitar Usuario
+//
+//        @Summary                Deshabilitar Usuario
+//        @Description        Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos "admin".
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//
+//        @Param                        userId                        path        string        true        "ID del usuario a deshabilitar"
+//        @Param                        Authorization        header        string        true        "bearer {token}"
+
+// @Success        200        {object}        tokenResponse                                "User Token"
+//
+// @Failure        400        {object}        app_errors.ErrValidation        "Bad Request"
+// @Failure        401        {object}        app_errors.OtherErrors                "Unauthorized"
+// @Failure        404        {object}        app_errors.OtherErrors                "Not Found"
+// @Failure        500        {object}        app_errors.OtherErrors                "Internal Server Error"
+//
+// @Router                /v1/users/:userId/disable [post]
+func postUsersIdDisableRoute() <span class="cov8" title="1">{
+        engine.Router().POST(
+                "/v1/users/:userID/disable",
+                engine.ValidateAdmin,
+                disable,
+        )
+}</span>
+
+func disable(c *gin.Context) <span class="cov8" title="1">{
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">if err := user.Disable(c.Param("userID"), extraParams...); err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/user"
+)
+
+// Habilita un usuario en el sistema.
+//
+//        @Summary                Enable User
+//        @Description        Habilita un usuario en el sistema. El usuario logueado debe tener permisos "admin".
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//
+//        @Param                        userId                        path        string        true        "ID del usuario a habilitar"
+//        @Param                        Authorization        header        string        true        "bearer {token}"
+
+// @Success        200        {object}        tokenResponse                                "User Token"
+//
+// @Failure        400        {object}        app_errors.ErrValidation        "Bad Request"
+// @Failure        401        {object}        app_errors.OtherErrors                "Unauthorized"
+// @Failure        404        {object}        app_errors.OtherErrors                "Not Found"
+// @Failure        500        {object}        app_errors.OtherErrors                "Internal Server Error"
+//
+// @Router                /v1/users/:userId/enable [post]
+func postUsersIdEnableRoute() <span class="cov8" title="1">{
+        engine.Router().POST(
+                "/v1/users/:userID/enable",
+                engine.ValidateAdmin,
+                enable,
+        )
+}</span>
+
+func enable(c *gin.Context) <span class="cov8" title="1">{
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">if err := user.Enable(c.Param("userID"), extraParams...); err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/user"
+)
+
+// Otorga permisos al usuario indicado.
+//
+//        @Summary                Haiblitar permisos
+//        @Description        Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//
+//        @Param                        userId                        path        string                                true        "ID del usuario a habilitar permiso"
+//        @Param                        Authorization        header        string                                true        "bearer {token}"
+//        @Param                        body                        body        grantPermissionBody        true        "Permisos a Habilitar"
+
+// @Success        200        {object}        tokenResponse                                "User Token"
+//
+// @Failure        400        {object}        app_errors.ErrValidation        "Bad Request"
+// @Failure        401        {object}        app_errors.OtherErrors                "Unauthorized"
+// @Failure        404        {object}        app_errors.OtherErrors                "Not Found"
+// @Failure        500        {object}        app_errors.OtherErrors                "Internal Server Error"
+//
+// @Router                /v1/users/:userID/grant [post]
+func postUsersIdGrantRoute() <span class="cov8" title="1">{
+        engine.Router().POST(
+                "/v1/users/:userID/grant",
+                engine.ValidateAdmin,
+                validateGrantBody,
+                grantPermission,
+        )
+}</span>
+
+type grantPermissionBody struct {
+        UserId      string   `json:"user" binding:"required"`
+        Permissions []string `json:"permissions" binding:"required"`
+}
+
+func grantPermission(c *gin.Context) <span class="cov8" title="1">{
+        body := c.MustGet("data").(grantPermissionBody)
+
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">if err := user.Grant(body.UserId, body.Permissions, extraParams...); err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+}
+
+func validateGrantBody(c *gin.Context) <span class="cov8" title="1">{
+        body := grantPermissionBody{}
+        if err := c.ShouldBindJSON(&amp;body); err != nil </span><span class="cov0" title="0">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.Set("data", body)
+        c.Next()</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package rest
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/user"
+)
+
+// Quita permisos al usuario indicado.
+//
+//        @Summary                Quitar permisos
+//        @Description        Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso "admin".
+//        @Tags                        Seguridad
+//        @Accept                        json
+//        @Produce                json
+//
+//        @Param                        userId                        path        string                                true        "ID del usuario a quitar permiso"
+//        @Param                        Authorization        header        string                                true        "bearer {token}"
+//        @Param                        body                        body        grantPermissionBody        true        "Permisos a Qutiar"
+
+// @Success        200        {object}        revokePermissionBody                "User Token"
+//
+// @Failure        400        {object}        app_errors.ErrValidation        "Bad Request"
+// @Failure        401        {object}        app_errors.OtherErrors                "Unauthorized"
+// @Failure        404        {object}        app_errors.OtherErrors                "Not Found"
+// @Failure        500        {object}        app_errors.OtherErrors                "Internal Server Error"
+//
+// @Router                /v1/users/:userID/revoke [post]
+func postUsersIdRevokeRoute() <span class="cov8" title="1">{
+        engine.Router().POST(
+                "/v1/users/:userID/revoke",
+                engine.ValidateAdmin,
+                validateRevokeBody,
+                revokePermission,
+        )
+}</span>
+
+type revokePermissionBody struct {
+        UserId      string   `json:"user" binding:"required"`
+        Permissions []string `json:"permissions" binding:"required"`
+}
+
+func revokePermission(c *gin.Context) <span class="cov8" title="1">{
+        body := c.MustGet("data").(revokePermissionBody)
+
+        var extraParams []interface{}
+        if mocks, ok := c.Get("mocks"); ok </span><span class="cov8" title="1">{
+                extraParams = mocks.([]interface{})
+        }</span>
+
+        <span class="cov8" title="1">if err := user.Revoke(body.UserId, body.Permissions, extraParams...); err != nil </span><span class="cov8" title="1">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+}
+
+func validateRevokeBody(c *gin.Context) <span class="cov8" title="1">{
+        body := revokePermissionBody{}
+        if err := c.ShouldBindJSON(&amp;body); err != nil </span><span class="cov0" title="0">{
+                engine.AbortWithError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">c.Set("data", body)
+        c.Next()</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package rest
+
+import (
+        "fmt"
+
+        "github.com/nmarsollier/authgo/rest/engine"
+        "github.com/nmarsollier/authgo/tools/env"
+)
+
+// Start this server
+func Start() <span class="cov0" title="0">{
+        InitRoutes()
+        engine.Router().Run(fmt.Sprintf(":%d", env.Get().Port))
+}</span>
+
+func InitRoutes() <span class="cov8" title="1">{
+        getUserSignOutRoute()
+        getUsersCurrentRoute()
+        getUsersRoute()
+        getUserPasswordRoute()
+        postUserSignInRoute()
+        postUsersRoute()
+        postUsersIdDisableRoute()
+        postUsersIdEnableRoute()
+        postUsersIdGrantRoute()
+        postUsersIdRevokeRoute()
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package token
+
+import (
+        "time"
+
+        "github.com/nmarsollier/authgo/tools/app_errors"
+        gocache "github.com/patrickmn/go-cache"
+)
+
+var cache = gocache.New(60*time.Minute, 10*time.Minute)
+
+// Add genera un nuevo token al cache
+func cacheAdd(token *Token) error <span class="cov8" title="1">{
+        tokenString, err := Encode(token)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">cache.Set(tokenString, token, gocache.DefaultExpiration)
+        return nil</span>
+}
+
+func cacheGet(tokenString string) (*Token, error) <span class="cov8" title="1">{
+        // Si esta en cache, retornamos el cache
+        if found, ok := cache.Get(tokenString); ok </span><span class="cov8" title="1">{
+                if token, ok := found.(*Token); ok </span><span class="cov8" title="1">{
+                        return token, nil
+                }</span>
+        }
+
+        <span class="cov8" title="1">return nil, app_errors.NotFound</span>
+}
+
+// Remove elimia un token del cache
+func cacheRemove(token *Token) <span class="cov8" title="1">{
+        if tokenString, err := Encode(token); err == nil </span><span class="cov8" title="1">{
+                cache.Delete(tokenString)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package token
+
+import (
+        "context"
+
+        "github.com/nmarsollier/authgo/tools/app_errors"
+        "github.com/nmarsollier/authgo/tools/db"
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+        "go.mongodb.org/mongo-driver/mongo"
+)
+
+var collection db.MongoCollection
+
+func NewProps(collection db.MongoCollection) TokenProps <span class="cov8" title="1">{
+        return TokenProps{
+                Collection: collection,
+        }
+}</span>
+
+type TokenProps struct {
+        Collection db.MongoCollection
+}
+
+func dbCollection(props ...interface{}) (db.MongoCollection, error) <span class="cov8" title="1">{
+        for _, o := range props </span><span class="cov8" title="1">{
+                if ti, ok := o.(TokenProps); ok </span><span class="cov8" title="1">{
+                        return ti.Collection, nil
+                }</span>
+        }
+
+        <span class="cov0" title="0">if collection != nil </span><span class="cov0" title="0">{
+                return collection, nil
+        }</span>
+
+        <span class="cov0" title="0">database, err := db.Get()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">_collection := database.Collection("tokens")
+
+        _, err = _collection.Indexes().CreateOne(
+                context.Background(),
+                mongo.IndexModel{
+                        Keys: bson.M{
+                                "userId": 1, // index in ascending order
+                        }, Options: nil,
+                },
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">collection = db.NewMongoCollection(_collection)
+
+        return collection, nil</span>
+}
+
+// insert crea un nuevo token y lo almacena en la db
+func insert(userID primitive.ObjectID, props ...interface{}) (*Token, error) <span class="cov8" title="1">{
+        collection, err := dbCollection(props...)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">token := newToken(userID)
+
+        _, err = collection.InsertOne(context.Background(), token)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return token, nil</span>
+}
+
+// findByID busca un token en la db
+func findByID(tokenID string, props ...interface{}) (*Token, error) <span class="cov8" title="1">{
+        collection, err := dbCollection(props...)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">_id, err := primitive.ObjectIDFromHex(tokenID)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, app_errors.Unauthorized
+        }</span>
+
+        <span class="cov8" title="1">token := &amp;Token{}
+        filter := bson.M{"_id": _id}
+
+        if err = collection.FindOne(context.Background(), filter, token); err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return token, nil</span>
+}
+
+// delete como deshabilitado un token
+func delete(tokenID primitive.ObjectID, props ...interface{}) error <span class="cov8" title="1">{
+        collection, err := dbCollection(props...)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">_, err = collection.UpdateOne(context.Background(),
+                bson.M{"_id": tokenID},
+                bson.M{"$set": bson.M{
+                        "enabled": false,
+                }},
+        )
+
+        return err</span>
+}
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package token
+
+import (
+        "fmt"
+
+        jwt "github.com/dgrijalva/jwt-go/v4"
+        "github.com/nmarsollier/authgo/tools/app_errors"
+        "github.com/nmarsollier/authgo/tools/env"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// Token es un objeto valor que representa un token.
+type Token struct {
+        ID      primitive.ObjectID `bson:"_id"`
+        UserID  primitive.ObjectID `bson:"userId"`
+        Enabled bool               `bson:"enabled"`
+}
+
+// Encode codifica un Token obteniendo el tokenString
+func Encode(t *Token) (string, error) <span class="cov8" title="1">{
+        jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+                "tokenID": t.ID.Hex(),
+                "userID":  t.UserID.Hex(),
+        })
+
+        // Sign and get the complete encoded token as a string using the secret
+        tokenString, err := jwtToken.SignedString([]byte(env.Get().JWTSecret))
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov8" title="1">return tokenString, nil</span>
+}
+
+// NewToken crea un nuevo Token con la información minima necesaria
+func newToken(userID primitive.ObjectID) *Token <span class="cov8" title="1">{
+        return &amp;Token{
+                ID:      primitive.NewObjectID(),
+                UserID:  userID,
+                Enabled: true,
+        }
+}</span>
+
+// descifra el token string y devuelve los datos del payload
+func ExtractPayload(tokenString string) (string, string, error) <span class="cov8" title="1">{
+        token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
+                if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+                }</span>
+
+                <span class="cov8" title="1">return []byte(env.Get().JWTSecret), nil</span>
+        })
+
+        <span class="cov8" title="1">if err != nil || !token.Valid </span><span class="cov8" title="1">{
+                return "", "", app_errors.Unauthorized
+        }</span>
+
+        <span class="cov8" title="1">claims, ok := token.Claims.(jwt.MapClaims)
+
+        if !ok </span><span class="cov0" title="0">{
+                return "", "", app_errors.Unauthorized
+        }</span>
+
+        <span class="cov8" title="1">tokenID := claims["tokenID"].(string)
+        userID := claims["userID"].(string)
+
+        return tokenID, userID, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package token
+
+import (
+        "log"
+
+        "github.com/nmarsollier/authgo/rabbit"
+        "github.com/nmarsollier/authgo/tools/app_errors"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// Create crea un nuevo token y lo almacena en la db
+func Create(userID primitive.ObjectID, props ...interface{}) (*Token, error) <span class="cov8" title="1">{
+        token, err := insert(userID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">cacheAdd(token)
+
+        return token, nil</span>
+}
+
+// Find busca un token en la db
+func Find(tokenID string, props ...interface{}) (*Token, error) <span class="cov8" title="1">{
+        token, err := findByID(tokenID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">cacheAdd(token)
+
+        return token, nil</span>
+}
+
+// Validate dado un tokenString devuelve el Token asociado
+func Validate(tokenString string, props ...interface{}) (*Token, error) <span class="cov8" title="1">{
+        if token, err := cacheGet(tokenString); err == nil </span><span class="cov8" title="1">{
+                return token, err
+        }</span>
+
+        // Sino validamos el token y lo agregamos al cache
+        <span class="cov8" title="1">tokenID, _, err := ExtractPayload(tokenString)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        // Buscamos el token en la db para validarlo
+        <span class="cov8" title="1">token, err := Find(tokenID, props...)
+        if err != nil || !token.Enabled </span><span class="cov8" title="1">{
+                return nil, app_errors.Unauthorized
+        }</span>
+
+        <span class="cov8" title="1">return token, nil</span>
+}
+
+// Invalidate invalida un token
+func Invalidate(tokenString string, props ...interface{}) error <span class="cov8" title="1">{
+        token, err := Validate(tokenString, props...)
+        if err != nil </span><span class="cov0" title="0">{
+                return app_errors.Unauthorized
+        }</span>
+
+        <span class="cov8" title="1">if err = delete(token.ID, props...); err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">cacheRemove(token)
+
+        go func() </span><span class="cov8" title="1">{
+                if err = rabbit.Get(props...).SendLogout("bearer " + tokenString); err != nil </span><span class="cov8" title="1">{
+                        log.Output(1, "Rabbit logout no se pudo enviar")
+                }</span>
+        }()
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package app_errors
+
+import (
+        "encoding/json"
+        "fmt"
+)
+
+// - Algunos errors comunes en el sistema -
+
+// ErrID el id del documento es invalido
+var ErrID = NewValidationField("id", "Invalid")
+
+// Unauthorized el usuario no esta autorizado al recurso
+var Unauthorized = NewCustom(401, "Unauthorized")
+
+// AccessLevel es el error de seguridad, el usuario no esta autorizado para acceder al recurso
+var AccessLevel = NewCustom(401, "Accesos Insuficientes")
+
+// NotFound cuando un registro no se encuentra en la db
+var NotFound = NewCustom(404, "Document not found")
+
+// AlreadyExist cuando no se puede ingresar un registro a la db
+var AlreadyExist = NewCustom(400, "Already exist")
+
+// Internal esta aplicación no sabe como manejar el error
+var Internal = NewCustom(500, "Internal server error")
+
+// - Creación de errors -
+
+// NewValidationField crea un error de validación para un solo campo
+func NewValidationField(field string, err string) Validation <span class="cov8" title="1">{
+        return &amp;ErrValidation{
+                Messages: []ErrField{
+                        {
+                                Path:    field,
+                                Message: err,
+                        },
+                },
+        }
+}</span>
+
+// NewValidation crea un error de validación para un solo campo
+func NewValidation() Validation <span class="cov0" title="0">{
+        return &amp;ErrValidation{
+                Messages: []ErrField{},
+        }
+}</span>
+
+// NewCustom creates a new errCustom
+func NewCustom(status int, message string) *ErrCustom <span class="cov8" title="1">{
+        return &amp;ErrCustom{
+                status:  status,
+                Message: message,
+        }
+}</span>
+
+//  - Algunas definiciones necesarias -
+
+// Custom es una interfaz para definir errores custom
+type Custom interface {
+        Status() int
+        Error() string
+}
+
+// ErrCustom es un error personalizado para http
+type ErrCustom struct {
+        status  int
+        Message string `json:"error"`
+}
+
+func (e *ErrCustom) Error() string <span class="cov8" title="1">{
+        return fmt.Sprintf(e.Message)
+}</span>
+
+// Status http status code
+func (e *ErrCustom) Status() int <span class="cov8" title="1">{
+        return e.status
+}</span>
+
+// Validation es una interfaz para definir errores custom
+// Validation es un error de validaciones de parameteros o de campos
+type Validation interface {
+        Add(path string, message string) Validation
+        Size() int
+        Error() string
+}
+
+// ErrField define un campo inválido. path y mensaje de error
+type ErrField struct {
+        Path    string `json:"path"`
+        Message string `json:"message"`
+}
+
+type ErrValidation struct {
+        Messages []ErrField `json:"messages"`
+}
+
+func (e *ErrValidation) Error() string <span class="cov8" title="1">{
+        body, err := json.Marshal(e)
+        if err != nil </span><span class="cov0" title="0">{
+                return "ErrValidation que no se puede pasar a json."
+        }</span>
+        <span class="cov8" title="1">return string(body)</span>
+}
+
+// Add agrega errores a un validation error
+func (e *ErrValidation) Add(path string, message string) Validation <span class="cov0" title="0">{
+        err := ErrField{
+                Path:    path,
+                Message: message,
+        }
+        e.Messages = append(e.Messages, err)
+        return e
+}</span>
+
+// Size devuelve la cantidad de errores
+func (e *ErrValidation) Size() int <span class="cov0" title="0">{
+        return len(e.Messages)
+}</span>
+
+type OtherErrors struct {
+        Error string `json:"error"`
+}
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">package db
+
+import (
+        "context"
+        "log"
+
+        "github.com/nmarsollier/authgo/tools/env"
+        "go.mongodb.org/mongo-driver/mongo"
+        "go.mongodb.org/mongo-driver/mongo/options"
+)
+
+var database *mongo.Database
+
+// Get the mongo database
+func Get() (*mongo.Database, error) <span class="cov0" title="0">{
+        if database == nil </span><span class="cov0" title="0">{
+                clientOptions := options.Client().ApplyURI(env.Get().MongoURL)
+
+                client, err := mongo.Connect(context.TODO(), clientOptions)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatal(err)
+                        return nil, err
+                }</span>
+
+                <span class="cov0" title="0">database = client.Database("auth2")</span>
+        }
+        <span class="cov0" title="0">return database, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">// Code generated by MockGen. DO NOT EDIT.
+// Source: ./tools/db/mongo_collection.go
+
+// Package db is a generated GoMock package.
+package db
+
+import (
+        context "context"
+        reflect "reflect"
+
+        gomock "github.com/golang/mock/gomock"
+)
+
+// MockMongoCollection is a mock of MongoCollection interface.
+type MockMongoCollection struct {
+        ctrl     *gomock.Controller
+        recorder *MockMongoCollectionMockRecorder
+}
+
+// MockMongoCollectionMockRecorder is the mock recorder for MockMongoCollection.
+type MockMongoCollectionMockRecorder struct {
+        mock *MockMongoCollection
+}
+
+// NewMockMongoCollection creates a new mock instance.
+func NewMockMongoCollection(ctrl *gomock.Controller) *MockMongoCollection <span class="cov8" title="1">{
+        mock := &amp;MockMongoCollection{ctrl: ctrl}
+        mock.recorder = &amp;MockMongoCollectionMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockMongoCollection) EXPECT() *MockMongoCollectionMockRecorder <span class="cov8" title="1">{
+        return m.recorder
+}</span>
+
+// Find mocks base method.
+func (m *MockMongoCollection) Find(ctx context.Context, filter interface{}) (Cursor, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Find", ctx, filter)
+        ret0, _ := ret[0].(Cursor)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// Find indicates an expected call of Find.
+func (mr *MockMongoCollectionMockRecorder) Find(ctx, filter interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockMongoCollection)(nil).Find), ctx, filter)
+}</span>
+
+// FindOne mocks base method.
+func (m *MockMongoCollection) FindOne(ctx context.Context, filter, v interface{}) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "FindOne", ctx, filter, v)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// FindOne indicates an expected call of FindOne.
+func (mr *MockMongoCollectionMockRecorder) FindOne(ctx, filter, v interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOne", reflect.TypeOf((*MockMongoCollection)(nil).FindOne), ctx, filter, v)
+}</span>
+
+// InsertOne mocks base method.
+func (m *MockMongoCollection) InsertOne(ctx context.Context, document interface{}) (interface{}, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "InsertOne", ctx, document)
+        ret0, _ := ret[0].(interface{})
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// InsertOne indicates an expected call of InsertOne.
+func (mr *MockMongoCollectionMockRecorder) InsertOne(ctx, document interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertOne", reflect.TypeOf((*MockMongoCollection)(nil).InsertOne), ctx, document)
+}</span>
+
+// UpdateOne mocks base method.
+func (m *MockMongoCollection) UpdateOne(ctx context.Context, filter, update interface{}) (int64, error) <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "UpdateOne", ctx, filter, update)
+        ret0, _ := ret[0].(int64)
+        ret1, _ := ret[1].(error)
+        return ret0, ret1
+}</span>
+
+// UpdateOne indicates an expected call of UpdateOne.
+func (mr *MockMongoCollectionMockRecorder) UpdateOne(ctx, filter, update interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOne", reflect.TypeOf((*MockMongoCollection)(nil).UpdateOne), ctx, filter, update)
+}</span>
+
+// MockCursor is a mock of Cursor interface.
+type MockCursor struct {
+        ctrl     *gomock.Controller
+        recorder *MockCursorMockRecorder
+}
+
+// MockCursorMockRecorder is the mock recorder for MockCursor.
+type MockCursorMockRecorder struct {
+        mock *MockCursor
+}
+
+// NewMockCursor creates a new mock instance.
+func NewMockCursor(ctrl *gomock.Controller) *MockCursor <span class="cov8" title="1">{
+        mock := &amp;MockCursor{ctrl: ctrl}
+        mock.recorder = &amp;MockCursorMockRecorder{mock}
+        return mock
+}</span>
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockCursor) EXPECT() *MockCursorMockRecorder <span class="cov8" title="1">{
+        return m.recorder
+}</span>
+
+// Close mocks base method.
+func (m *MockCursor) Close(ctx context.Context) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Close", ctx)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Close indicates an expected call of Close.
+func (mr *MockCursorMockRecorder) Close(ctx interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockCursor)(nil).Close), ctx)
+}</span>
+
+// Decode mocks base method.
+func (m *MockCursor) Decode(val interface{}) error <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Decode", val)
+        ret0, _ := ret[0].(error)
+        return ret0
+}</span>
+
+// Decode indicates an expected call of Decode.
+func (mr *MockCursorMockRecorder) Decode(val interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Decode", reflect.TypeOf((*MockCursor)(nil).Decode), val)
+}</span>
+
+// Next mocks base method.
+func (m *MockCursor) Next(ctx context.Context) bool <span class="cov8" title="1">{
+        m.ctrl.T.Helper()
+        ret := m.ctrl.Call(m, "Next", ctx)
+        ret0, _ := ret[0].(bool)
+        return ret0
+}</span>
+
+// Next indicates an expected call of Next.
+func (mr *MockCursorMockRecorder) Next(ctx interface{}) *gomock.Call <span class="cov8" title="1">{
+        mr.mock.ctrl.T.Helper()
+        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Next", reflect.TypeOf((*MockCursor)(nil).Next), ctx)
+}</span>
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">package db
+
+import (
+        "context"
+
+        "go.mongodb.org/mongo-driver/mongo"
+)
+
+type MongoCollection interface {
+        FindOne(ctx context.Context, filter interface{}, v interface{}) error
+
+        InsertOne(ctx context.Context, document interface{}) (id interface{}, error error)
+
+        UpdateOne(ctx context.Context, filter interface{}, update interface{}) (modified int64, error error)
+
+        Find(ctx context.Context, filter interface{}) (cur Cursor, err error)
+}
+
+func NewMongoCollection(collection *mongo.Collection) MongoCollection <span class="cov0" title="0">{
+        return &amp;mongoCollection{
+                collection: collection,
+        }
+}</span>
+
+type mongoCollection struct {
+        collection *mongo.Collection
+}
+
+func (m *mongoCollection) FindOne(ctx context.Context, filter interface{}, v interface{}) error <span class="cov0" title="0">{
+        if err := m.collection.FindOne(context.Background(), filter).Decode(v); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (m *mongoCollection) InsertOne(ctx context.Context, document interface{}) (id interface{}, error error) <span class="cov0" title="0">{
+        insertedId, err := m.collection.InsertOne(context.Background(), document)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return insertedId.InsertedID, nil</span>
+}
+
+func (m *mongoCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{}) (modified int64, error error) <span class="cov0" title="0">{
+        insertedId, err := m.collection.UpdateOne(context.Background(), filter, update)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov0" title="0">return insertedId.ModifiedCount, nil</span>
+}
+
+func (m *mongoCollection) Find(ctx context.Context, filter interface{}) (cur Cursor, err error) <span class="cov0" title="0">{
+        cursor, err := m.collection.Find(context.Background(), filter)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return NewMongoCursor(cursor), nil</span>
+}
+
+type Cursor interface {
+        Close(ctx context.Context) error
+        Next(ctx context.Context) bool
+        Decode(val interface{}) error
+}
+
+func NewMongoCursor(cursor *mongo.Cursor) Cursor <span class="cov0" title="0">{
+        return &amp;mongoCursor{
+                cursor: cursor,
+        }
+}</span>
+
+type mongoCursor struct {
+        cursor *mongo.Cursor
+}
+
+func (c *mongoCursor) Close(ctx context.Context) error <span class="cov0" title="0">{
+        return c.cursor.Close(ctx)
+}</span>
+
+func (c *mongoCursor) Next(ctx context.Context) bool <span class="cov0" title="0">{
+        return c.cursor.Next(ctx)
+}</span>
+func (c *mongoCursor) Decode(val interface{}) error <span class="cov0" title="0">{
+        return c.cursor.Decode(val)
+}</span>
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">package db
+
+import (
+        "go.mongodb.org/mongo-driver/mongo"
+        "go.mongodb.org/mongo-driver/x/mongo/driver/topology"
+)
+
+// CheckError función a llamar cuando se produce un error de db
+func CheckError(err interface{}) <span class="cov0" title="0">{
+        if err == topology.ErrServerSelectionTimeout </span><span class="cov0" title="0">{
+                database = nil
+        }</span>
+}
+
+// IsUniqueKeyError retorna true si el error es de indice único
+func IsUniqueKeyError(err error) bool <span class="cov8" title="1">{
+        if wErr, ok := err.(mongo.WriteException); ok </span><span class="cov8" title="1">{
+                for i := 0; i &lt; len(wErr.WriteErrors); i++ </span><span class="cov8" title="1">{
+                        if wErr.WriteErrors[i].Code == 11000 </span><span class="cov8" title="1">{
+                                return true
+                        }</span>
+                }
+        }
+        <span class="cov8" title="1">return false</span>
+}
+</pre>
+		
+		<pre class="file" id="file27" style="display: none">package env
+
+import (
+        "os"
+        "strconv"
+)
+
+// Configuration properties
+type Configuration struct {
+        Port      int    `json:"port"`
+        RabbitURL string `json:"rabbitUrl"`
+        MongoURL  string `json:"mongoUrl"`
+        JWTSecret string `json:"jwtSecret"`
+}
+
+var config *Configuration
+
+func new() *Configuration <span class="cov8" title="1">{
+        return &amp;Configuration{
+                Port:      3000,
+                RabbitURL: "amqp://localhost",
+                MongoURL:  "mongodb://localhost:27017",
+                JWTSecret: "ecb6d3479ac3823f1da7f314d871989b",
+        }
+}</span>
+
+// Get Obtiene las variables de entorno del sistema
+func Get() *Configuration <span class="cov8" title="1">{
+        if config == nil </span><span class="cov8" title="1">{
+                config = load()
+        }</span>
+
+        <span class="cov8" title="1">return config</span>
+}
+
+// Load file properties
+func load() *Configuration <span class="cov8" title="1">{
+        result := new()
+
+        if value := os.Getenv("RABBIT_URL"); len(value) &gt; 0 </span><span class="cov0" title="0">{
+                result.RabbitURL = value
+        }</span>
+
+        <span class="cov8" title="1">if value := os.Getenv("MONGO_URL"); len(value) &gt; 0 </span><span class="cov0" title="0">{
+                result.MongoURL = value
+        }</span>
+
+        <span class="cov8" title="1">if value := os.Getenv("PORT"); len(value) &gt; 0 </span><span class="cov0" title="0">{
+                if intVal, err := strconv.Atoi(value); err != nil </span><span class="cov0" title="0">{
+                        result.Port = intVal
+                }</span>
+        }
+
+        <span class="cov8" title="1">if value := os.Getenv("JWT_SECRET"); len(value) &gt; 0 </span><span class="cov0" title="0">{
+                result.JWTSecret = value
+        }</span>
+
+        <span class="cov8" title="1">return result</span>
+}
+</pre>
+		
+		<pre class="file" id="file28" style="display: none">package tests
+
+import (
+        "encoding/json"
+        "fmt"
+        "net/http"
+        "net/http/httptest"
+        "testing"
+
+        "github.com/stretchr/testify/assert"
+)
+
+// Assertion Functions
+func AssertUnauthorized(t *testing.T, w *httptest.ResponseRecorder) <span class="cov8" title="1">{
+        assert.Equal(t, http.StatusUnauthorized, w.Code)
+
+        var result map[string]interface{}
+        json.Unmarshal(w.Body.Bytes(), &amp;result)
+
+        fmt.Println(result)
+        assert.Equal(t, result["error"], "Unauthorized")
+}</span>
+
+func AssertDocumentNotFound(t *testing.T, w *httptest.ResponseRecorder) <span class="cov8" title="1">{
+        assert.Equal(t, http.StatusNotFound, w.Code)
+
+        var result map[string]interface{}
+        json.Unmarshal(w.Body.Bytes(), &amp;result)
+        assert.Equal(t, "Document not found", result["error"])
+}</span>
+
+func AssertInternalServerError(t *testing.T, w *httptest.ResponseRecorder) <span class="cov8" title="1">{
+        assert.Equal(t, http.StatusInternalServerError, w.Code)
+}</span>
+
+func AssertBadRequestError(t *testing.T, w *httptest.ResponseRecorder) <span class="cov8" title="1">{
+        assert.Equal(t, http.StatusBadRequest, w.Code)
+}</span>
+</pre>
+		
+		<pre class="file" id="file29" style="display: none">package tests
+
+import (
+        "github.com/nmarsollier/authgo/token"
+        "github.com/nmarsollier/authgo/user"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// Mock Data
+func TestUser() (*user.User, string) <span class="cov8" title="1">{
+        password := "123"
+        userData := user.NewUser()
+        userData.Login = "Login"
+        userData.Name = "Name"
+        userData.Permissions = []string{"user", "other"}
+        userData.SetPasswordText(password)
+        return userData, password
+}</span>
+
+func TestAdminUser() (*user.User, string) <span class="cov8" title="1">{
+        password := "123"
+        userData := user.NewUser()
+        userData.Login = "Login"
+        userData.Name = "Name"
+        userData.Permissions = []string{"user", "admin"}
+        userData.SetPasswordText(password)
+        return userData, password
+}</span>
+
+func TestToken() (*token.Token, string) <span class="cov8" title="1">{
+        tokenData := &amp;token.Token{
+                ID:      primitive.NewObjectID(),
+                UserID:  primitive.NewObjectID(),
+                Enabled: true,
+        }
+
+        tokenString, _ := token.Encode(tokenData)
+
+        return tokenData, tokenString
+}</span>
+</pre>
+		
+		<pre class="file" id="file30" style="display: none">package tests
+
+import (
+        "testing"
+
+        "github.com/golang/mock/gomock"
+        "github.com/nmarsollier/authgo/token"
+        "github.com/nmarsollier/authgo/tools/db"
+        "github.com/nmarsollier/authgo/user"
+        "github.com/stretchr/testify/assert"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+        "go.mongodb.org/mongo-driver/mongo"
+)
+
+// Mock Data
+var TestIsUniqueError = mongo.WriteException{
+        WriteErrors: []mongo.WriteError{
+                {
+                        Code: 11000,
+                },
+        },
+}
+
+// Espect common functions
+func ExpectFindOneError(userCollection *db.MockMongoCollection, err error, times int) <span class="cov8" title="1">{
+        userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+                func(arg1 interface{}, params interface{}, update interface{}) error </span><span class="cov8" title="1">{
+                        return err
+                }</span>,
+        ).Times(times)
+}
+func ExpectInsertOneError(userCollection *db.MockMongoCollection, err error, times int) <span class="cov8" title="1">{
+        userCollection.EXPECT().InsertOne(gomock.Any(), gomock.Any()).Return("", err).Times(times)
+}</span>
+
+func ExpectUserFindOne(userCollection *db.MockMongoCollection, userData *user.User, times int) <span class="cov8" title="1">{
+        userCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+                func(arg1 interface{}, params primitive.M, update *user.User) error </span><span class="cov8" title="1">{
+                        *update = *userData
+                        return nil
+                }</span>,
+        ).Times(times)
+}
+func ExpectUserInsertOne(userCollection *db.MockMongoCollection, times int) <span class="cov8" title="1">{
+        userCollection.EXPECT().InsertOne(gomock.Any(), gomock.Any()).Return("123", nil).Times(times)
+}</span>
+
+func ExpectUpdateOneError(userCollection *db.MockMongoCollection, err error, times int) <span class="cov8" title="1">{
+        userCollection.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).Return(int64(0), err).Times(times)
+}</span>
+
+func ExpectTokenFinOne(tokenCollection *db.MockMongoCollection, tokenData *token.Token, times int) <span class="cov8" title="1">{
+        tokenCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+                func(arg1 interface{}, params primitive.M, token *token.Token) error </span><span class="cov8" title="1">{
+                        // Asign return values
+                        *token = *tokenData
+                        return nil
+                }</span>,
+        ).Times(times)
+}
+
+func ExpectTokenInsertOne(tokenCollection *db.MockMongoCollection, times int) <span class="cov8" title="1">{
+        tokenCollection.EXPECT().InsertOne(gomock.Any(), gomock.Any()).Return("", nil).Times(times)
+}</span>
+
+func ExpectFindOneForToken(t *testing.T, tokenCollection *db.MockMongoCollection, tokenData *token.Token) <span class="cov8" title="1">{
+        tokenCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+                func(arg1 interface{}, params primitive.M, token *token.Token) error </span><span class="cov8" title="1">{
+                        assert.Equal(t, tokenData.ID, params["_id"])
+
+                        *token = *tokenData
+                        return nil
+                }</span>,
+        ).Times(1)
+}
+</pre>
+		
+		<pre class="file" id="file31" style="display: none">package tests
+
+import (
+        "bytes"
+        "encoding/json"
+        "net/http"
+        "net/http/httptest"
+)
+
+// Requests Test functions
+
+func TestGetRequest(url string, tokenString string) (*http.Request, *httptest.ResponseRecorder) <span class="cov8" title="1">{
+        req, _ := http.NewRequest("GET", url, bytes.NewBuffer([]byte{}))
+        if len(tokenString) &gt; 0 </span><span class="cov8" title="1">{
+                req.Header.Add("Authorization", "bearer "+tokenString)
+        }</span>
+        <span class="cov8" title="1">w := httptest.NewRecorder()
+        return req, w</span>
+}
+
+func TestPostRequest(url string, body interface{}, tokenString string) (*http.Request, *httptest.ResponseRecorder) <span class="cov8" title="1">{
+        jsonBody, _ := json.Marshal(body)
+
+        req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonBody))
+        if len(tokenString) &gt; 0 </span><span class="cov8" title="1">{
+                req.Header.Add("Authorization", "bearer "+tokenString)
+        }</span>
+        <span class="cov8" title="1">w := httptest.NewRecorder()
+        return req, w</span>
+}
+</pre>
+		
+		<pre class="file" id="file32" style="display: none">package user
+
+import (
+        "context"
+        "log"
+        "time"
+
+        "github.com/nmarsollier/authgo/tools/app_errors"
+        "github.com/nmarsollier/authgo/tools/db"
+        "go.mongodb.org/mongo-driver/bson"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+        "go.mongodb.org/mongo-driver/mongo"
+        "go.mongodb.org/mongo-driver/mongo/options"
+)
+
+// Define mongo Collection
+var collection db.MongoCollection
+
+func NewProps(collection db.MongoCollection) UserProps <span class="cov8" title="1">{
+        return UserProps{
+                Collection: collection,
+        }
+}</span>
+
+type UserProps struct {
+        Collection db.MongoCollection
+}
+
+func dbCollection(props ...interface{}) (db.MongoCollection, error) <span class="cov8" title="1">{
+        for _, p := range props </span><span class="cov8" title="1">{
+                if ti, ok := p.(UserProps); ok </span><span class="cov8" title="1">{
+                        return ti.Collection, nil
+                }</span>
+        }
+
+        <span class="cov0" title="0">if collection != nil </span><span class="cov0" title="0">{
+                return collection, nil
+        }</span>
+
+        <span class="cov0" title="0">database, err := db.Get()
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">col := database.Collection("users")
+
+        _, err = col.Indexes().CreateOne(
+                context.Background(),
+                mongo.IndexModel{
+                        Keys:    bson.M{"login": ""},
+                        Options: options.Index().SetUnique(true),
+                },
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                log.Output(1, err.Error())
+        }</span>
+
+        <span class="cov0" title="0">collection = db.NewMongoCollection(col)
+        return collection, nil</span>
+}
+
+func insert(user *User, props ...interface{}) (*User, error) <span class="cov8" title="1">{
+        if err := user.ValidateSchema(); err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">var collection, err = dbCollection(props...)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">if _, err := collection.InsertOne(context.Background(), user); err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return user, nil</span>
+}
+
+func update(user *User, props ...interface{}) (*User, error) <span class="cov8" title="1">{
+        if err := user.ValidateSchema(); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">var collection, err = dbCollection(props...)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">user.Updated = time.Now()
+
+        _, err = collection.UpdateOne(context.Background(),
+                bson.M{"_id": user.ID},
+                bson.M{
+                        "$set": bson.M{
+                                "password":    user.Password,
+                                "name":        user.Name,
+                                "enabled":     user.Enabled,
+                                "updated":     user.Updated,
+                                "permissions": user.Permissions,
+                        },
+                },
+        )
+
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return user, nil</span>
+}
+
+// FindAll devuelve todos los usuarios
+func findAll(props ...interface{}) ([]*User, error) <span class="cov8" title="1">{
+        var collection, err = dbCollection(props...)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">filter := bson.D{}
+        cur, err := collection.Find(context.Background(), filter)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">defer cur.Close(context.Background())
+
+        users := []*User{}
+        for cur.Next(context.Background()) </span><span class="cov8" title="1">{
+                user := &amp;User{}
+                if err := cur.Decode(user); err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">users = append(users, user)</span>
+        }
+
+        <span class="cov8" title="1">return users, nil</span>
+}
+
+// FindByID lee un usuario desde la db
+func findByID(userID string, props ...interface{}) (*User, error) <span class="cov8" title="1">{
+        var collection, err = dbCollection(props...)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">_id, err := primitive.ObjectIDFromHex(userID)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, app_errors.ErrID
+        }</span>
+
+        <span class="cov8" title="1">user := &amp;User{}
+        filter := bson.M{"_id": _id}
+        if err = collection.FindOne(context.Background(), filter, user); err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return user, nil</span>
+}
+
+// FindByLogin lee un usuario desde la db
+func findByLogin(login string, props ...interface{}) (*User, error) <span class="cov8" title="1">{
+        var collection, err = dbCollection(props...)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">user := &amp;User{}
+        filter := bson.M{"login": login}
+        err = collection.FindOne(context.Background(), filter, user)
+        if err != nil </span><span class="cov8" title="1">{
+                if err == mongo.ErrNoDocuments </span><span class="cov8" title="1">{
+                        return nil, ErrLogin
+                }</span>
+                <span class="cov8" title="1">return nil, err</span>
+        }
+
+        <span class="cov8" title="1">return user, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file33" style="display: none">package user
+
+import (
+        "time"
+
+        "github.com/go-playground/validator/v10"
+        "go.mongodb.org/mongo-driver/bson/primitive"
+        "golang.org/x/crypto/bcrypt"
+)
+
+// User data structure
+type User struct {
+        ID          primitive.ObjectID `bson:"_id"`
+        Name        string             `bson:"name" validate:"required,min=1,max=100"`
+        Login       string             `bson:"login" validate:"required,min=5,max=100"`
+        Password    string             `bson:"password" validate:"required"`
+        Permissions []string           `bson:"permissions"`
+        Enabled     bool               `bson:"enabled"`
+        Created     time.Time          `bson:"created"`
+        Updated     time.Time          `bson:"updated"`
+}
+
+// NewUser Nueva instancia de usuario
+func NewUser() *User <span class="cov8" title="1">{
+        return &amp;User{
+                ID:          primitive.NewObjectID(),
+                Enabled:     true,
+                Created:     time.Now(),
+                Updated:     time.Now(),
+                Permissions: []string{"user"},
+        }
+}</span>
+
+// SetPasswordText Asigna la contraseña en modo texto, la encripta
+func (e *User) SetPasswordText(pwd string) error <span class="cov8" title="1">{
+        hash, err := encryptPassword(pwd)
+        if err != nil </span><span class="cov0" title="0">{
+                return ErrPassword
+        }</span>
+
+        <span class="cov8" title="1">e.Password = hash
+        return nil</span>
+}
+
+// ValidatePassword Valida si la contraseña es la correcta
+func (e *User) ValidatePassword(plainPwd string) error <span class="cov8" title="1">{
+        if err := bcrypt.CompareHashAndPassword([]byte(e.Password), []byte(plainPwd)); err != nil </span><span class="cov8" title="1">{
+                return ErrPassword
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+// Granted verifica si el usuario tiene el permiso indicado
+func (e *User) Granted(permission string) bool <span class="cov8" title="1">{
+        for _, p := range e.Permissions </span><span class="cov8" title="1">{
+                if p == permission </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+        <span class="cov8" title="1">return false</span>
+}
+
+// Grant le otorga el permiso indicado al usuario
+func (e *User) Grant(permission string) <span class="cov8" title="1">{
+        if !e.Granted(permission) </span><span class="cov8" title="1">{
+                e.Permissions = append(e.Permissions, permission)
+        }</span>
+}
+
+// Revoke le revoca el permiso indicado al usuario
+func (e *User) Revoke(permission string) <span class="cov8" title="1">{
+        if e.Granted(permission) </span><span class="cov8" title="1">{
+                var newPermissions []string
+                for _, p := range e.Permissions </span><span class="cov8" title="1">{
+                        if p != permission </span><span class="cov8" title="1">{
+                                newPermissions = append(newPermissions, p)
+                        }</span>
+                }
+                <span class="cov8" title="1">e.Permissions = newPermissions</span>
+        }
+}
+
+// ValidateSchema valida la estructura para ser insertada en la db
+func (e *User) ValidateSchema() error <span class="cov8" title="1">{
+        return validator.New().Struct(e)
+}</span>
+
+func encryptPassword(pwd string) (string, error) <span class="cov8" title="1">{
+        hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", ErrPassword
+        }</span>
+
+        <span class="cov8" title="1">return string(hash), nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file34" style="display: none">package user
+
+import (
+        "github.com/nmarsollier/authgo/token"
+        "github.com/nmarsollier/authgo/tools/app_errors"
+        "github.com/nmarsollier/authgo/tools/db"
+)
+
+// SignUpRequest es un nuevo usuario
+type SignUpRequest struct {
+        Name     string `json:"name" binding:"required"`
+        Password string `json:"password" binding:"required"`
+        Login    string `json:"login" binding:"required"`
+}
+
+// SignUp is the controller to signup new users
+func SignUp(user *SignUpRequest, props ...interface{}) (string, error) <span class="cov8" title="1">{
+        newUser := NewUser()
+        newUser.Login = user.Login
+        newUser.Name = user.Name
+        newUser.SetPasswordText(user.Password)
+
+        newUser, err := insert(newUser, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                if db.IsUniqueKeyError(err) </span><span class="cov8" title="1">{
+                        return "", ErrLoginExist
+                }</span>
+                <span class="cov8" title="1">return "", err</span>
+        }
+
+        <span class="cov8" title="1">newToken, err := token.Create(newUser.ID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return "", app_errors.Internal
+        }</span>
+
+        <span class="cov8" title="1">return token.Encode(newToken)</span>
+}
+
+type SignInRequest struct {
+        Password string `json:"password" binding:"required"`
+        Login    string `json:"login" binding:"required"`
+}
+
+// SignIn is the controller to sign in users
+func SignIn(data SignInRequest, props ...interface{}) (string, error) <span class="cov8" title="1">{
+        user, err := findByLogin(data.Login, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return "", err
+        }</span>
+
+        <span class="cov8" title="1">if !user.Enabled </span><span class="cov8" title="1">{
+                return "", app_errors.Unauthorized
+        }</span>
+
+        <span class="cov8" title="1">if err = user.ValidatePassword(data.Password); err != nil </span><span class="cov8" title="1">{
+                return "", err
+        }</span>
+
+        <span class="cov8" title="1">newToken, err := token.Create(user.ID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return "", app_errors.Unauthorized
+        }</span>
+
+        <span class="cov8" title="1">return token.Encode(newToken)</span>
+}
+
+// Get wrapper para obtener un usuario
+func Get(userID string, props ...interface{}) (*User, error) <span class="cov8" title="1">{
+        user, err := findByID(userID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">if !user.Enabled </span><span class="cov8" title="1">{
+                return nil, app_errors.NotFound
+        }</span>
+
+        <span class="cov8" title="1">return user, err</span>
+}
+
+// ChangePassword cambiar la contraseña del usuario indicado
+func ChangePassword(userID string, current string, newPassword string, props ...interface{}) error <span class="cov8" title="1">{
+        user, err := findByID(userID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">if err = user.ValidatePassword(current); err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">if err = user.SetPasswordText(newPassword); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">_, err = update(user, props...)
+
+        return err</span>
+}
+
+// Grant Le habilita los permisos enviados por parametros
+func Grant(userID string, permissions []string, props ...interface{}) error <span class="cov8" title="1">{
+        user, err := findByID(userID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">for _, value := range permissions </span><span class="cov8" title="1">{
+                user.Grant(value)
+        }</span>
+        <span class="cov8" title="1">_, err = update(user, props...)
+
+        return err</span>
+}
+
+// Revoke Le revoca los permisos enviados por parametros
+func Revoke(userID string, permissions []string, props ...interface{}) error <span class="cov8" title="1">{
+        user, err := findByID(userID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">for _, value := range permissions </span><span class="cov8" title="1">{
+                user.Revoke(value)
+        }</span>
+        <span class="cov8" title="1">_, err = update(user, props...)
+
+        return err</span>
+}
+
+// Granted verifica si el usuario tiene el permiso
+func Granted(userID string, permission string, props ...interface{}) bool <span class="cov8" title="1">{
+        usr, err := findByID(userID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        <span class="cov8" title="1">return usr.Granted(permission)</span>
+}
+
+// Disable deshabilita un usuario
+func Disable(userID string, props ...interface{}) error <span class="cov8" title="1">{
+        usr, err := findByID(userID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">usr.Enabled = false
+
+        _, err = update(usr, props...)
+
+        return err</span>
+}
+
+// Enable habilita un usuario
+func Enable(userID string, props ...interface{}) error <span class="cov8" title="1">{
+        usr, err := findByID(userID, props...)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">usr.Enabled = true
+        _, err = update(usr, props...)
+
+        return err</span>
+}
+
+// Users wrapper para obtener todos los usuarios
+func Users(props ...interface{}) ([]*User, error) <span class="cov8" title="1">{
+        return findAll(props...)
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

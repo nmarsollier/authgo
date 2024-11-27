@@ -1,0 +1,15 @@
+mode: set
+github.com/nmarsollier/authgo/tools/env/env.go:18.27,25.2 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:28.27,29.19 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:29.19,31.3 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:33.2,33.15 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:37.28,40.54 2 0
+github.com/nmarsollier/authgo/tools/env/env.go:40.54,42.3 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:44.2,44.53 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:44.53,46.3 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:48.2,48.48 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:48.48,49.53 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:49.53,51.4 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:54.2,54.54 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:54.54,56.3 1 0
+github.com/nmarsollier/authgo/tools/env/env.go:58.2,58.15 1 0
