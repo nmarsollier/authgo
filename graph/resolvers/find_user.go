@@ -14,7 +14,7 @@ func FindUserByID(ctx context.Context, id string) (*model.User, error) {
 		return nil, err
 	}*/
 
-	env := tools.GqlCtx(ctx)
+	env := tools.GqlDeps(ctx)
 	user, err := user.Get(id, env...)
 	if err != nil {
 		return nil, err

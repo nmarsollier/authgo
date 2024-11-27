@@ -6698,7 +6698,7 @@ func ChangePassword(ctx context.Context, oldPassword string, newPassword string)
                 return false, err
         }</span>
 
-        <span class="cov0" title="0">env := tools.GqlCtx(ctx)
+        <span class="cov0" title="0">env := tools.GqlDeps(ctx)
         if err := user.ChangePassword(token.UserID.Hex(), oldPassword, newPassword, env...); err != nil </span><span class="cov0" title="0">{
                 return false, err
         }</span>
@@ -6723,8 +6723,8 @@ func CurrentUser(ctx context.Context) (*model.User, error) <span class="cov0" ti
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">env := tools.GqlCtx(ctx)
-        user, err := user.Get(token.UserID.Hex(), env...)
+        <span class="cov0" title="0">deps := tools.GqlDeps(ctx)
+        user, err := user.Get(token.UserID.Hex(), deps...)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
@@ -6747,7 +6747,7 @@ func Disable(ctx context.Context, userID string) (bool, error) <span class="cov0
                 return false, err
         }</span>
 
-        <span class="cov0" title="0">env := tools.GqlCtx(ctx)
+        <span class="cov0" title="0">env := tools.GqlDeps(ctx)
 
         if err := user.Disable(userID, env...); err != nil </span><span class="cov0" title="0">{
                 return false, err
@@ -6771,7 +6771,7 @@ func Enable(ctx context.Context, userID string) (bool, error) <span class="cov0"
                 return false, err
         }</span>
 
-        <span class="cov0" title="0">env := tools.GqlCtx(ctx)
+        <span class="cov0" title="0">env := tools.GqlDeps(ctx)
 
         if err := user.Enable(userID, env...); err != nil </span><span class="cov0" title="0">{
                 return false, err
@@ -6797,7 +6797,7 @@ func FindUserByID(ctx context.Context, id string) (*model.User, error) <span cla
                 return nil, err
         }*/
 
-        env := tools.GqlCtx(ctx)
+        env := tools.GqlDeps(ctx)
         user, err := user.Get(id, env...)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
@@ -6821,7 +6821,7 @@ func Grant(ctx context.Context, userID string, permissions []string) (bool, erro
                 return false, err
         }</span>
 
-        <span class="cov0" title="0">env := tools.GqlCtx(ctx)
+        <span class="cov0" title="0">env := tools.GqlDeps(ctx)
 
         if err := user.Grant(userID, permissions, env...); err != nil </span><span class="cov0" title="0">{
                 return false, err
@@ -6845,7 +6845,7 @@ func Revoke(ctx context.Context, userID string, permissions []string) (bool, err
                 return false, err
         }</span>
 
-        <span class="cov0" title="0">env := tools.GqlCtx(ctx)
+        <span class="cov0" title="0">env := tools.GqlDeps(ctx)
 
         if err := user.Revoke(userID, permissions, env...); err != nil </span><span class="cov0" title="0">{
                 return false, err
@@ -6867,7 +6867,7 @@ import (
 
 // SignIn is the resolver for the signIn field.
 func SignIn(ctx context.Context, login string, password string) (*model.Token, error) <span class="cov0" title="0">{
-        env := tools.GqlCtx(ctx)
+        env := tools.GqlDeps(ctx)
 
         tokenString, err := user.SignIn(user.SignInRequest{Login: login, Password: password}, env...)
         if err != nil </span><span class="cov0" title="0">{
@@ -6895,7 +6895,7 @@ func SignOut(ctx context.Context) (bool, error) <span class="cov0" title="0">{
                 return false, err
         }</span>
 
-        <span class="cov0" title="0">env := tools.GqlCtx(ctx)
+        <span class="cov0" title="0">env := tools.GqlDeps(ctx)
 
         if err := token.Invalidate(tokenString, env...); err != nil </span><span class="cov0" title="0">{
                 return false, err
@@ -6916,7 +6916,7 @@ import (
 )
 
 func SignUp(ctx context.Context, name string, login string, password string) (*model.Token, error) <span class="cov0" title="0">{
-        env := tools.GqlCtx(ctx)
+        env := tools.GqlDeps(ctx)
         token, err := user.SignUp(&amp;user.SignUpRequest{
                 Name:     name,
                 Login:    login,
@@ -6964,7 +6964,7 @@ func Users(ctx context.Context) ([]*model.User, error) <span class="cov0" title=
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">env := tools.GqlCtx(ctx)
+        <span class="cov0" title="0">env := tools.GqlDeps(ctx)
         users, err := user.FindAllUsers(env...)
 
         if err != nil </span><span class="cov0" title="0">{
@@ -7106,7 +7106,7 @@ func ValidateAdmin(ctx context.Context) error <span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">env := GqlCtx(ctx)
+        <span class="cov0" title="0">env := GqlDeps(ctx)
         if !user.Granted(token.UserID.Hex(), "admin", env...) </span><span class="cov0" title="0">{
                 log.Get(env...).Warn("Unauthorized")
                 return errs.Unauthorized
@@ -7117,7 +7117,7 @@ func ValidateAdmin(ctx context.Context) error <span class="cov0" title="0">{
 
 // HeaderToken Token data from Authorization header
 func HeaderToken(ctx context.Context) (*token.Token, error) <span class="cov0" title="0">{
-        env := GqlCtx(ctx)
+        env := GqlDeps(ctx)
 
         tokenString, err := TokenString(ctx)
         if err != nil </span><span class="cov0" title="0">{
@@ -7154,13 +7154,13 @@ import (
         "context"
 )
 
-func GqlCtx(c context.Context) []interface{} <span class="cov0" title="0">{
+func GqlDeps(c context.Context) []interface{} <span class="cov0" title="0">{
 
-        var ctx []interface{}
+        var deps []interface{}
 
-        ctx = append(ctx, gqlLogger(c))
+        deps = append(deps, gqlLogger(c))
 
-        return ctx
+        return deps
 }</span>
 </pre>
 		
@@ -7174,10 +7174,10 @@ import (
         uuid "github.com/satori/go.uuid"
 )
 
-func newLogger(ctx context.Context, env ...interface{}) log.LogRusEntry <span class="cov0" title="0">{
+func newLogger(ctx context.Context, deps ...interface{}) log.LogRusEntry <span class="cov0" title="0">{
         operationContext := graphql.GetOperationContext(ctx)
 
-        return log.Get(env...).
+        return log.Get(deps...).
                 WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(ctx)).
                 WithField(log.LOG_FIELD_CONTROLLER, "Rest").
                 WithField(log.LOG_FIELD_HTTP_METHOD, operationContext.OperationName).
@@ -7237,8 +7237,8 @@ import (
         "github.com/streadway/amqp"
 )
 
-func getChannel(ctx ...interface{}) (RabbitChannel, error) <span class="cov8" title="1">{
-        for _, o := range ctx </span><span class="cov8" title="1">{
+func getChannel(deps ...interface{}) (RabbitChannel, error) <span class="cov8" title="1">{
+        for _, o := range deps </span><span class="cov8" title="1">{
                 if ti, ok := o.(RabbitChannel); ok </span><span class="cov8" title="1">{
                         return ti, nil
                 }</span>
@@ -7246,13 +7246,13 @@ func getChannel(ctx ...interface{}) (RabbitChannel, error) <span class="cov8" ti
 
         <span class="cov0" title="0">conn, err := amqp.Dial(env.Get().RabbitURL)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
         <span class="cov0" title="0">channel, err := conn.Channel()
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -7384,8 +7384,8 @@ import (
 //        @Router                        /rabbit/logout [put]
 //
 // SendLogout envía un broadcast a rabbit con logout
-func SendLogout(token string, ctx ...interface{}) error <span class="cov8" title="1">{
-        logger := log.Get(ctx...).
+func SendLogout(token string, deps ...interface{}) error <span class="cov8" title="1">{
+        logger := log.Get(deps...).
                 WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
                 WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
                 WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
@@ -7397,8 +7397,8 @@ func SendLogout(token string, ctx ...interface{}) error <span class="cov8" title
                 Message:       token,
         }
 
-        ctx = append(ctx, logger)
-        chanel, err := getChannel(ctx...)
+        deps = append(deps, logger)
+        chanel, err := getChannel(deps...)
         if err != nil </span><span class="cov0" title="0">{
                 logger.Error(err)
                 return err
@@ -7480,9 +7480,9 @@ func getUserSignOutRoute() <span class="cov8" title="1">{
 
 func signOut(c *gin.Context) <span class="cov8" title="1">{
         tokenString, _ := server.HeaderAuthorization(c)
-        ctx := server.GinCtx(c)
+        deps := server.GinDeps(c)
 
-        if err := token.Invalidate(tokenString, ctx...); err != nil </span><span class="cov8" title="1">{
+        if err := token.Invalidate(tokenString, deps...); err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
                 return
         }</span>
@@ -7522,8 +7522,8 @@ func getUsersRoute() <span class="cov8" title="1">{
 }</span>
 
 func users(c *gin.Context) <span class="cov8" title="1">{
-        ctx := server.GinCtx(c)
-        result, err := user.FindAllUsers(ctx...)
+        deps := server.GinDeps(c)
+        result, err := user.FindAllUsers(deps...)
 
         if err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
@@ -7567,8 +7567,8 @@ func getUsersCurrentRoute() <span class="cov8" title="1">{
 func currentUser(c *gin.Context) <span class="cov8" title="1">{
         token := server.HeaderToken(c)
 
-        ctx := server.GinCtx(c)
-        user, err := user.Get(token.UserID.Hex(), ctx...)
+        deps := server.GinDeps(c)
+        user, err := user.Get(token.UserID.Hex(), deps...)
         if err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
                 return
@@ -7614,8 +7614,8 @@ func signUp(c *gin.Context) <span class="cov8" title="1">{
                 return
         }</span>
 
-        <span class="cov8" title="1">ctx := server.GinCtx(c)
-        token, err := user.SignUp(&amp;body, ctx...)
+        <span class="cov8" title="1">deps := server.GinDeps(c)
+        token, err := user.SignUp(&amp;body, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
                 return
@@ -7669,8 +7669,8 @@ func changePassword(c *gin.Context) <span class="cov8" title="1">{
         }</span>
         <span class="cov8" title="1">token := server.HeaderToken(c)
 
-        ctx := server.GinCtx(c)
-        if err := user.ChangePassword(token.UserID.Hex(), body.Current, body.New, ctx...); err != nil </span><span class="cov8" title="1">{
+        deps := server.GinDeps(c)
+        if err := user.ChangePassword(token.UserID.Hex(), body.Current, body.New, deps...); err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
                 return
         }</span>
@@ -7713,8 +7713,8 @@ func signIn(c *gin.Context) <span class="cov8" title="1">{
                 return
         }</span>
 
-        <span class="cov8" title="1">ctx := server.GinCtx(c)
-        token, err := user.SignIn(login, ctx...)
+        <span class="cov8" title="1">deps := server.GinDeps(c)
+        token, err := user.SignIn(login, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
                 return
@@ -7758,8 +7758,8 @@ func postUsersIdDisableRoute() <span class="cov8" title="1">{
 func disable(c *gin.Context) <span class="cov8" title="1">{
         userId := c.Param("userID")
 
-        ctx := server.GinCtx(c)
-        if err := user.Disable(userId, ctx...); err != nil </span><span class="cov8" title="1">{
+        deps := server.GinDeps(c)
+        if err := user.Disable(userId, deps...); err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
         }</span>
 }
@@ -7798,9 +7798,9 @@ func postUsersIdEnableRoute() <span class="cov8" title="1">{
 
 func enable(c *gin.Context) <span class="cov8" title="1">{
         userId := c.Param("userID")
-        ctx := server.GinCtx(c)
+        deps := server.GinDeps(c)
 
-        if err := user.Enable(userId, ctx...); err != nil </span><span class="cov8" title="1">{
+        if err := user.Enable(userId, deps...); err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
         }</span>
 }
@@ -7850,8 +7850,8 @@ func grantPermission(c *gin.Context) <span class="cov8" title="1">{
         }</span>
         <span class="cov8" title="1">userId := c.Param("userID")
 
-        ctx := server.GinCtx(c)
-        if err := user.Grant(userId, body.Permissions, ctx...); err != nil </span><span class="cov8" title="1">{
+        deps := server.GinDeps(c)
+        if err := user.Grant(userId, body.Permissions, deps...); err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
                 return
         }</span>
@@ -7903,8 +7903,8 @@ func revokePermission(c *gin.Context) <span class="cov8" title="1">{
 
         <span class="cov8" title="1">userId := c.Param("userID")
 
-        ctx := server.GinCtx(c)
-        if err := user.Revoke(userId, body.Permissions, ctx...); err != nil </span><span class="cov8" title="1">{
+        deps := server.GinDeps(c)
+        if err := user.Revoke(userId, body.Permissions, deps...); err != nil </span><span class="cov8" title="1">{
                 server.AbortWithError(c, err)
                 return
         }</span>
@@ -8053,16 +8053,16 @@ func HeaderToken(c *gin.Context) *token.Token <span class="cov8" title="1">{
 }</span>
 
 func fetchAuthHeader(c *gin.Context) (*token.Token, error) <span class="cov8" title="1">{
-        ctx := GinCtx(c)
+        deps := GinDeps(c)
         tokenString, err := HeaderAuthorization(c)
         if err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
-        <span class="cov8" title="1">payload, err := token.Validate(tokenString, ctx...)
+        <span class="cov8" title="1">payload, err := token.Validate(tokenString, deps...)
         if err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -8080,24 +8080,24 @@ import (
         uuid "github.com/satori/go.uuid"
 )
 
-func newGinLogger(c *gin.Context, ctx ...interface{}) log.LogRusEntry <span class="cov8" title="1">{
-        return log.Get(ctx...).
+func newGinLogger(c *gin.Context, deps ...interface{}) log.LogRusEntry <span class="cov8" title="1">{
+        return log.Get(deps...).
                 WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(c)).
                 WithField(log.LOG_FIELD_CONTROLLER, "Rest").
                 WithField(log.LOG_FIELD_HTTP_METHOD, c.Request.Method).
                 WithField(log.LOG_FIELD_HTTP_PATH, c.Request.URL.Path)
 }</span>
 
-func GinLoggerMiddleware(ctx ...interface{}) gin.HandlerFunc <span class="cov8" title="1">{
+func GinLoggerMiddleware(deps ...interface{}) gin.HandlerFunc <span class="cov8" title="1">{
         return func(c *gin.Context) </span><span class="cov8" title="1">{
-                logger := newGinLogger(c, ctx...)
+                logger := newGinLogger(c, deps...)
                 c.Set("logger", logger)
 
                 c.Next()
 
                 if c.Request.Method != "OPTIONS" </span><span class="cov8" title="1">{
-                        ctx := GinCtx(c)
-                        log.Get(ctx...).WithField(log.LOG_FIELD_HTTP_STATUS, c.Writer.Status()).Info("Completed")
+                        deps := GinDeps(c)
+                        log.Get(deps...).WithField(log.LOG_FIELD_HTTP_STATUS, c.Writer.Status()).Info("Completed")
                 }</span>
         }
 }
@@ -8136,13 +8136,13 @@ import (
 
 var engine *gin.Engine = nil
 
-func Router(ctx ...interface{}) *gin.Engine <span class="cov8" title="1">{
+func Router(deps ...interface{}) *gin.Engine <span class="cov8" title="1">{
         if engine == nil </span><span class="cov8" title="1">{
 
                 engine = gin.Default()
 
                 engine.Use(gzip.Gzip(gzip.DefaultCompression))
-                engine.Use(GinLoggerMiddleware(ctx...))
+                engine.Use(GinLoggerMiddleware(deps...))
 
                 engine.Use(cors.Middleware(cors.Config{
                         Origins:         "*",
@@ -8169,16 +8169,16 @@ func AbortWithError(c *gin.Context, err error) <span class="cov8" title="1">{
 
 // Obtiene el contexto a serivcios externos
 // En prod este contexto esta vacio.
-func GinCtx(c *gin.Context) []interface{} <span class="cov8" title="1">{
-        var ctx []interface{}
-        // mock_ctx solo es para mocks en testing
-        if mocks, ok := c.Get("mock_ctx"); ok </span><span class="cov8" title="1">{
-                ctx = mocks.([]interface{})
+func GinDeps(c *gin.Context) []interface{} <span class="cov8" title="1">{
+        var deps []interface{}
+        // mock_deps solo es para mocks en testing
+        if mocks, ok := c.Get("mock_deps"); ok </span><span class="cov8" title="1">{
+                deps = mocks.([]interface{})
         }</span>
 
-        <span class="cov8" title="1">ctx = append(ctx, ginLogger(c))
+        <span class="cov8" title="1">deps = append(deps, ginLogger(c))
 
-        return ctx</span>
+        return deps</span>
 }
 </pre>
 		
@@ -8197,12 +8197,12 @@ import (
 
 // Obtiene Router engine con el contexto de testing adecuado
 // mockeando interfaces a serivcios externos
-func TestRouter(ctx ...interface{}) *gin.Engine <span class="cov8" title="1">{
+func TestRouter(deps ...interface{}) *gin.Engine <span class="cov8" title="1">{
         engine = nil
-        Router(ctx...)
-        if len(ctx) &gt; 0 </span><span class="cov8" title="1">{
+        Router(deps...)
+        if len(deps) &gt; 0 </span><span class="cov8" title="1">{
                 engine.Use(func(c *gin.Context) </span><span class="cov8" title="1">{
-                        c.Set("mock_ctx", ctx)
+                        c.Set("mock_deps", deps)
                         c.Next()
                 }</span>)
         }
@@ -8277,12 +8277,12 @@ func ValidateAdmin(c *gin.Context) <span class="cov8" title="1">{
                 return
         }</span>
 
-        <span class="cov8" title="1">ctx := GinCtx(c)
-        c.Set("logger", log.Get(ctx...).WithField(log.LOG_FIELD_USER_ID, payload.UserID.Hex()))
-        ctx = GinCtx(c)
+        <span class="cov8" title="1">deps := GinDeps(c)
+        c.Set("logger", log.Get(deps...).WithField(log.LOG_FIELD_USER_ID, payload.UserID.Hex()))
+        deps = GinDeps(c)
 
-        if !user.Granted(payload.UserID.Hex(), "admin", ctx...) </span><span class="cov8" title="1">{
-                log.Get(ctx...).Warn("Unauthorized")
+        if !user.Granted(payload.UserID.Hex(), "admin", deps...) </span><span class="cov8" title="1">{
+                log.Get(deps...).Warn("Unauthorized")
                 c.Error(errs.Unauthorized)
                 c.Abort()
         }</span>
@@ -8306,8 +8306,8 @@ func ValidateLoggedIn(c *gin.Context) <span class="cov8" title="1">{
                 return
         }</span>
 
-        <span class="cov8" title="1">ctx := GinCtx(c)
-        c.Set("logger", log.Get(ctx...).WithField(log.LOG_FIELD_USER_ID, token.UserID.Hex()))</span>
+        <span class="cov8" title="1">deps := GinDeps(c)
+        c.Set("logger", log.Get(deps...).WithField(log.LOG_FIELD_USER_ID, token.UserID.Hex()))</span>
 }
 </pre>
 		
@@ -8358,8 +8358,8 @@ import (
 )
 
 // Create crea un nuevo token y lo almacena en la db
-func Create(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) <span class="cov8" title="1">{
-        token, err := insert(userID, ctx...)
+func Create(userID primitive.ObjectID, deps ...interface{}) (*Token, error) <span class="cov8" title="1">{
+        token, err := insert(userID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
@@ -8373,8 +8373,8 @@ func Create(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) <span
 		<pre class="file" id="file48" style="display: none">package token
 
 // Find busca un token en la db
-func Find(tokenID string, ctx ...interface{}) (*Token, error) <span class="cov8" title="1">{
-        token, err := findByID(tokenID, ctx...)
+func Find(tokenID string, deps ...interface{}) (*Token, error) <span class="cov8" title="1">{
+        token, err := findByID(tokenID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
@@ -8394,21 +8394,21 @@ import (
 )
 
 // Invalidate invalida un token
-func Invalidate(tokenString string, ctx ...interface{}) error <span class="cov8" title="1">{
-        token, err := Validate(tokenString, ctx...)
+func Invalidate(tokenString string, deps ...interface{}) error <span class="cov8" title="1">{
+        token, err := Validate(tokenString, deps...)
         if err != nil </span><span class="cov0" title="0">{
                 return errs.Unauthorized
         }</span>
 
-        <span class="cov8" title="1">if err = delete(token.ID, ctx...); err != nil </span><span class="cov8" title="1">{
+        <span class="cov8" title="1">if err = delete(token.ID, deps...); err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
 
         <span class="cov8" title="1">cacheRemove(token)
 
         go func() </span><span class="cov8" title="1">{
-                if err = rabbit.SendLogout("Bearer "+tokenString, ctx...); err != nil </span><span class="cov0" title="0">{
-                        log.Get(ctx...).Info("Rabbit logout no se pudo enviar")
+                if err = rabbit.SendLogout("Bearer "+tokenString, deps...); err != nil </span><span class="cov0" title="0">{
+                        log.Get(deps...).Info("Rabbit logout no se pudo enviar")
                 }</span>
         }()
 
@@ -8431,8 +8431,8 @@ import (
 
 var collection db.MongoCollection
 
-func dbCollection(ctx ...interface{}) (db.MongoCollection, error) <span class="cov8" title="1">{
-        for _, o := range ctx </span><span class="cov8" title="1">{
+func dbCollection(deps ...interface{}) (db.MongoCollection, error) <span class="cov8" title="1">{
+        for _, o := range deps </span><span class="cov8" title="1">{
                 if tc, ok := o.(db.MongoCollection); ok </span><span class="cov8" title="1">{
                         return tc, nil
                 }</span>
@@ -8442,9 +8442,9 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) <span class="c
                 return collection, nil
         }</span>
 
-        <span class="cov0" title="0">database, err := db.Get(ctx...)
+        <span class="cov0" title="0">database, err := db.Get(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -8459,7 +8459,7 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) <span class="c
                 },
         )
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -8469,10 +8469,10 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) <span class="c
 }
 
 // insert crea un nuevo token y lo almacena en la db
-func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) <span class="cov8" title="1">{
-        collection, err := dbCollection(ctx...)
+func insert(userID primitive.ObjectID, deps ...interface{}) (*Token, error) <span class="cov8" title="1">{
+        collection, err := dbCollection(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -8480,7 +8480,7 @@ func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) <span
 
         _, err = collection.InsertOne(context.Background(), token)
         if err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -8488,16 +8488,16 @@ func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) <span
 }
 
 // findByID busca un token en la db
-func findByID(tokenID string, ctx ...interface{}) (*Token, error) <span class="cov8" title="1">{
-        collection, err := dbCollection(ctx...)
+func findByID(tokenID string, deps ...interface{}) (*Token, error) <span class="cov8" title="1">{
+        collection, err := dbCollection(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
         <span class="cov8" title="1">_id, err := primitive.ObjectIDFromHex(tokenID)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, errs.Unauthorized
         }</span>
 
@@ -8505,7 +8505,7 @@ func findByID(tokenID string, ctx ...interface{}) (*Token, error) <span class="c
         filter := DbTokenIdFilter{ID: _id}
 
         if err = collection.FindOne(context.Background(), filter, token); err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -8513,10 +8513,10 @@ func findByID(tokenID string, ctx ...interface{}) (*Token, error) <span class="c
 }
 
 // delete como deshabilitado un token
-func delete(tokenID primitive.ObjectID, ctx ...interface{}) error <span class="cov8" title="1">{
-        collection, err := dbCollection(ctx...)
+func delete(tokenID primitive.ObjectID, deps ...interface{}) error <span class="cov8" title="1">{
+        collection, err := dbCollection(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return err
         }</span>
 
@@ -8663,7 +8663,7 @@ import (
 )
 
 // Validate dado un tokenString devuelve el Token asociado
-func Validate(tokenString string, ctx ...interface{}) (*Token, error) <span class="cov8" title="1">{
+func Validate(tokenString string, deps ...interface{}) (*Token, error) <span class="cov8" title="1">{
         if token, err := cacheGet(tokenString); err == nil </span><span class="cov8" title="1">{
                 return token, err
         }</span>
@@ -8675,7 +8675,7 @@ func Validate(tokenString string, ctx ...interface{}) (*Token, error) <span clas
         }</span>
 
         // Buscamos el token en la db para validarlo
-        <span class="cov8" title="1">token, err := Find(tokenID, ctx...)
+        <span class="cov8" title="1">token, err := Find(tokenID, deps...)
         if err != nil || !token.Enabled </span><span class="cov8" title="1">{
                 return nil, errs.Unauthorized
         }</span>
@@ -8698,13 +8698,13 @@ import (
 var database *mongo.Database
 
 // Get the mongo database
-func Get(ctx ...interface{}) (*mongo.Database, error) <span class="cov0" title="0">{
+func Get(deps ...interface{}) (*mongo.Database, error) <span class="cov0" title="0">{
         if database == nil </span><span class="cov0" title="0">{
                 clientOptions := options.Client().ApplyURI(env.Get().MongoURL)
 
                 client, err := mongo.Connect(context.TODO(), clientOptions)
                 if err != nil </span><span class="cov0" title="0">{
-                        log.Get(ctx...).Fatal(err)
+                        log.Get(deps...).Fatal(err)
                         return nil, err
                 }</span>
 
@@ -9227,8 +9227,8 @@ const LOG_FIELD_SERVER = "server"
 const LOG_FIELD_USER_ID = "user_id"
 const LOG_FIELD_THREAD = "thread"
 
-func Get(ctx ...interface{}) LogRusEntry <span class="cov8" title="1">{
-        for _, o := range ctx </span><span class="cov8" title="1">{
+func Get(deps ...interface{}) LogRusEntry <span class="cov8" title="1">{
+        for _, o := range deps </span><span class="cov8" title="1">{
                 if ti, ok := o.(LogRusEntry); ok </span><span class="cov8" title="1">{
                         return ti
                 }</span>
@@ -9479,8 +9479,8 @@ func NewTestLogger(ctrl *gomock.Controller, withFieldCount int, errorCount int, 
 		<pre class="file" id="file66" style="display: none">package user
 
 // ChangePassword cambiar la contraseña del usuario indicado
-func ChangePassword(userID string, current string, newPassword string, ctx ...interface{}) error <span class="cov8" title="1">{
-        user, err := findByID(userID, ctx...)
+func ChangePassword(userID string, current string, newPassword string, deps ...interface{}) error <span class="cov8" title="1">{
+        user, err := findByID(userID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
@@ -9493,7 +9493,7 @@ func ChangePassword(userID string, current string, newPassword string, ctx ...in
                 return err
         }</span>
 
-        <span class="cov8" title="1">_, err = update(user, ctx...)
+        <span class="cov8" title="1">_, err = update(user, deps...)
 
         return err</span>
 }
@@ -9502,15 +9502,15 @@ func ChangePassword(userID string, current string, newPassword string, ctx ...in
 		<pre class="file" id="file67" style="display: none">package user
 
 // Disable deshabilita un usuario
-func Disable(userID string, ctx ...interface{}) error <span class="cov8" title="1">{
-        usr, err := findByID(userID, ctx...)
+func Disable(userID string, deps ...interface{}) error <span class="cov8" title="1">{
+        usr, err := findByID(userID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
 
         <span class="cov8" title="1">usr.Enabled = false
 
-        _, err = update(usr, ctx...)
+        _, err = update(usr, deps...)
 
         return err</span>
 }
@@ -9519,14 +9519,14 @@ func Disable(userID string, ctx ...interface{}) error <span class="cov8" title="
 		<pre class="file" id="file68" style="display: none">package user
 
 // Enable habilita un usuario
-func Enable(userID string, ctx ...interface{}) error <span class="cov8" title="1">{
-        usr, err := findByID(userID, ctx...)
+func Enable(userID string, deps ...interface{}) error <span class="cov8" title="1">{
+        usr, err := findByID(userID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
 
         <span class="cov8" title="1">usr.Enabled = true
-        _, err = update(usr, ctx...)
+        _, err = update(usr, deps...)
 
         return err</span>
 }
@@ -9535,9 +9535,9 @@ func Enable(userID string, ctx ...interface{}) error <span class="cov8" title="1
 		<pre class="file" id="file69" style="display: none">package user
 
 // FindAllUsers wrapper para obtener todos los usuarios
-func FindAllUsers(ctx ...interface{}) ([]*UserData, error) <span class="cov8" title="1">{
+func FindAllUsers(deps ...interface{}) ([]*UserData, error) <span class="cov8" title="1">{
 
-        user, err := findAll(ctx...)
+        user, err := findAll(deps...)
 
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
@@ -9565,8 +9565,8 @@ import (
 )
 
 // Get wrapper para obtener un usuario
-func Get(userID string, ctx ...interface{}) (*UserData, error) <span class="cov8" title="1">{
-        user, err := findByID(userID, ctx...)
+func Get(userID string, deps ...interface{}) (*UserData, error) <span class="cov8" title="1">{
+        user, err := findByID(userID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
@@ -9588,8 +9588,8 @@ func Get(userID string, ctx ...interface{}) (*UserData, error) <span class="cov8
 		<pre class="file" id="file71" style="display: none">package user
 
 // Grant Le habilita los permisos enviados por parametros
-func Grant(userID string, permissions []string, ctx ...interface{}) error <span class="cov8" title="1">{
-        user, err := findByID(userID, ctx...)
+func Grant(userID string, permissions []string, deps ...interface{}) error <span class="cov8" title="1">{
+        user, err := findByID(userID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
@@ -9597,7 +9597,7 @@ func Grant(userID string, permissions []string, ctx ...interface{}) error <span 
         <span class="cov8" title="1">for _, value := range permissions </span><span class="cov8" title="1">{
                 user.grant(value)
         }</span>
-        <span class="cov8" title="1">_, err = update(user, ctx...)
+        <span class="cov8" title="1">_, err = update(user, deps...)
 
         return err</span>
 }
@@ -9606,8 +9606,8 @@ func Grant(userID string, permissions []string, ctx ...interface{}) error <span 
 		<pre class="file" id="file72" style="display: none">package user
 
 // Granted verifica si el usuario tiene el permiso
-func Granted(userID string, permission string, ctx ...interface{}) bool <span class="cov8" title="1">{
-        usr, err := findByID(userID, ctx...)
+func Granted(userID string, permission string, deps ...interface{}) bool <span class="cov8" title="1">{
+        usr, err := findByID(userID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return false
         }</span>
@@ -9651,8 +9651,8 @@ type DbUserLoginFilter struct {
         Login string `bson:"login"`
 }
 
-func dbCollection(ctx ...interface{}) (db.MongoCollection, error) <span class="cov8" title="1">{
-        for _, p := range ctx </span><span class="cov8" title="1">{
+func dbCollection(deps ...interface{}) (db.MongoCollection, error) <span class="cov8" title="1">{
+        for _, p := range deps </span><span class="cov8" title="1">{
                 if coll, ok := p.(db.MongoCollection); ok </span><span class="cov8" title="1">{
                         return coll, nil
                 }</span>
@@ -9662,9 +9662,9 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) <span class="c
                 return collection, nil
         }</span>
 
-        <span class="cov0" title="0">database, err := db.Get(ctx...)
+        <span class="cov0" title="0">database, err := db.Get(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -9678,42 +9678,42 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) <span class="c
                 },
         )
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
         }</span>
 
         <span class="cov0" title="0">collection = db.NewMongoCollection(col)
         return collection, nil</span>
 }
 
-func insert(user *User, ctx ...interface{}) (*User, error) <span class="cov8" title="1">{
+func insert(user *User, deps ...interface{}) (*User, error) <span class="cov8" title="1">{
         if err := user.validateSchema(); err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
-        <span class="cov8" title="1">var collection, err = dbCollection(ctx...)
+        <span class="cov8" title="1">var collection, err = dbCollection(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
         <span class="cov8" title="1">if _, err := collection.InsertOne(context.Background(), user); err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
         <span class="cov8" title="1">return user, nil</span>
 }
 
-func update(user *User, ctx ...interface{}) (*User, error) <span class="cov8" title="1">{
+func update(user *User, deps ...interface{}) (*User, error) <span class="cov8" title="1">{
         if err := user.validateSchema(); err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
-        <span class="cov8" title="1">var collection, err = dbCollection(ctx...)
+        <span class="cov8" title="1">var collection, err = dbCollection(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -9733,7 +9733,7 @@ func update(user *User, ctx ...interface{}) (*User, error) <span class="cov8" ti
         )
 
         if err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -9741,17 +9741,17 @@ func update(user *User, ctx ...interface{}) (*User, error) <span class="cov8" ti
 }
 
 // FindAll devuelve todos los usuarios
-func findAll(ctx ...interface{}) ([]*User, error) <span class="cov8" title="1">{
-        var collection, err = dbCollection(ctx...)
+func findAll(deps ...interface{}) ([]*User, error) <span class="cov8" title="1">{
+        var collection, err = dbCollection(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
         <span class="cov8" title="1">filter := bson.D{}
         cur, err := collection.Find(context.Background(), filter)
         if err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
         <span class="cov8" title="1">defer cur.Close(context.Background())
@@ -9769,23 +9769,23 @@ func findAll(ctx ...interface{}) ([]*User, error) <span class="cov8" title="1">{
 }
 
 // FindByID lee un usuario desde la db
-func findByID(userID string, ctx ...interface{}) (*User, error) <span class="cov8" title="1">{
-        var collection, err = dbCollection(ctx...)
+func findByID(userID string, deps ...interface{}) (*User, error) <span class="cov8" title="1">{
+        var collection, err = dbCollection(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
         <span class="cov8" title="1">_id, err := primitive.ObjectIDFromHex(userID)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, ErrID
         }</span>
 
         <span class="cov8" title="1">user := &amp;User{}
         filter := DbUserIdFilter{ID: _id}
         if err = collection.FindOne(context.Background(), filter, user); err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -9793,10 +9793,10 @@ func findByID(userID string, ctx ...interface{}) (*User, error) <span class="cov
 }
 
 // FindByLogin lee un usuario desde la db
-func findByLogin(login string, ctx ...interface{}) (*User, error) <span class="cov8" title="1">{
-        var collection, err = dbCollection(ctx...)
+func findByLogin(login string, deps ...interface{}) (*User, error) <span class="cov8" title="1">{
+        var collection, err = dbCollection(deps...)
         if err != nil </span><span class="cov0" title="0">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
@@ -9804,7 +9804,7 @@ func findByLogin(login string, ctx ...interface{}) (*User, error) <span class="c
         filter := DbUserLoginFilter{Login: login}
         err = collection.FindOne(context.Background(), filter, user)
         if err != nil </span><span class="cov8" title="1">{
-                log.Get(ctx...).Error(err)
+                log.Get(deps...).Error(err)
                 if err == mongo.ErrNoDocuments </span><span class="cov8" title="1">{
                         return nil, ErrLogin
                 }</span>
@@ -9818,8 +9818,8 @@ func findByLogin(login string, ctx ...interface{}) (*User, error) <span class="c
 		<pre class="file" id="file74" style="display: none">package user
 
 // Revoke Le revoca los permisos enviados por parametros
-func Revoke(userID string, permissions []string, ctx ...interface{}) error <span class="cov8" title="1">{
-        user, err := findByID(userID, ctx...)
+func Revoke(userID string, permissions []string, deps ...interface{}) error <span class="cov8" title="1">{
+        user, err := findByID(userID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
@@ -9827,7 +9827,7 @@ func Revoke(userID string, permissions []string, ctx ...interface{}) error <span
         <span class="cov8" title="1">for _, value := range permissions </span><span class="cov8" title="1">{
                 user.revoke(value)
         }</span>
-        <span class="cov8" title="1">_, err = update(user, ctx...)
+        <span class="cov8" title="1">_, err = update(user, deps...)
 
         return err</span>
 }
@@ -9947,8 +9947,8 @@ type TokenResponse struct {
 }
 
 // SignIn is the controller to sign in users
-func SignIn(data SignInRequest, ctx ...interface{}) (*TokenResponse, error) <span class="cov8" title="1">{
-        user, err := findByLogin(data.Login, ctx...)
+func SignIn(data SignInRequest, deps ...interface{}) (*TokenResponse, error) <span class="cov8" title="1">{
+        user, err := findByLogin(data.Login, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
@@ -9961,7 +9961,7 @@ func SignIn(data SignInRequest, ctx ...interface{}) (*TokenResponse, error) <spa
                 return nil, err
         }</span>
 
-        <span class="cov8" title="1">newToken, err := token.Create(user.ID, ctx...)
+        <span class="cov8" title="1">newToken, err := token.Create(user.ID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, errs.Unauthorized
         }</span>
@@ -9990,18 +9990,18 @@ type SignUpRequest struct {
 }
 
 // SignUp is the controller to signup new users
-func SignUp(user *SignUpRequest, ctx ...interface{}) (*TokenResponse, error) <span class="cov8" title="1">{
+func SignUp(user *SignUpRequest, deps ...interface{}) (*TokenResponse, error) <span class="cov8" title="1">{
         newUser := NewUser()
         newUser.Login = user.Login
         newUser.Name = user.Name
         newUser.setPasswordText(user.Password)
 
-        newUser, err := insert(newUser, ctx...)
+        newUser, err := insert(newUser, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
 
-        <span class="cov8" title="1">newToken, err := token.Create(newUser.ID, ctx...)
+        <span class="cov8" title="1">newToken, err := token.Create(newUser.ID, deps...)
         if err != nil </span><span class="cov8" title="1">{
                 return nil, errs.Internal
         }</span>

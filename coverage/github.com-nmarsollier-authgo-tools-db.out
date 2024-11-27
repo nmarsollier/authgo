@@ -1,5 +1,5 @@
 mode: set
-github.com/nmarsollier/authgo/tools/db/connection.go:15.55,16.21 1 0
+github.com/nmarsollier/authgo/tools/db/connection.go:15.56,16.21 1 0
 github.com/nmarsollier/authgo/tools/db/connection.go:16.21,20.17 3 0
 github.com/nmarsollier/authgo/tools/db/connection.go:20.17,23.4 2 0
 github.com/nmarsollier/authgo/tools/db/connection.go:25.3,25.37 1 0

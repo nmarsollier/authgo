@@ -29,8 +29,8 @@ func getUsersRoute() {
 }
 
 func users(c *gin.Context) {
-	ctx := server.GinCtx(c)
-	result, err := user.FindAllUsers(ctx...)
+	deps := server.GinDeps(c)
+	result, err := user.FindAllUsers(deps...)
 
 	if err != nil {
 		server.AbortWithError(c, err)

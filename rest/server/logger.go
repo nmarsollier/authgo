@@ -6,24 +6,24 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func newGinLogger(c *gin.Context, ctx ...interface{}) log.LogRusEntry {
-	return log.Get(ctx...).
+func newGinLogger(c *gin.Context, deps ...interface{}) log.LogRusEntry {
+	return log.Get(deps...).
 		WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(c)).
 		WithField(log.LOG_FIELD_CONTROLLER, "Rest").
 		WithField(log.LOG_FIELD_HTTP_METHOD, c.Request.Method).
 		WithField(log.LOG_FIELD_HTTP_PATH, c.Request.URL.Path)
 }
 
-func GinLoggerMiddleware(ctx ...interface{}) gin.HandlerFunc {
+func GinLoggerMiddleware(deps ...interface{}) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		logger := newGinLogger(c, ctx...)
+		logger := newGinLogger(c, deps...)
 		c.Set("logger", logger)
 
 		c.Next()
 
 		if c.Request.Method != "OPTIONS" {
-			ctx := GinCtx(c)
-			log.Get(ctx...).WithField(log.LOG_FIELD_HTTP_STATUS, c.Writer.Status()).Info("Completed")
+			deps := GinDeps(c)
+			log.Get(deps...).WithField(log.LOG_FIELD_HTTP_STATUS, c.Writer.Status()).Info("Completed")
 		}
 	}
 }

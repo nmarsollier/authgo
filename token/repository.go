@@ -13,8 +13,8 @@ import (
 
 var collection db.MongoCollection
 
-func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
-	for _, o := range ctx {
+func dbCollection(deps ...interface{}) (db.MongoCollection, error) {
+	for _, o := range deps {
 		if tc, ok := o.(db.MongoCollection); ok {
 			return tc, nil
 		}
@@ -24,9 +24,9 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 		return collection, nil
 	}
 
-	database, err := db.Get(ctx...)
+	database, err := db.Get(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -41,7 +41,7 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 		},
 	)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -51,10 +51,10 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 }
 
 // insert crea un nuevo token y lo almacena en la db
-func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) {
-	collection, err := dbCollection(ctx...)
+func insert(userID primitive.ObjectID, deps ...interface{}) (*Token, error) {
+	collection, err := dbCollection(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -62,7 +62,7 @@ func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) {
 
 	_, err = collection.InsertOne(context.Background(), token)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -70,16 +70,16 @@ func insert(userID primitive.ObjectID, ctx ...interface{}) (*Token, error) {
 }
 
 // findByID busca un token en la db
-func findByID(tokenID string, ctx ...interface{}) (*Token, error) {
-	collection, err := dbCollection(ctx...)
+func findByID(tokenID string, deps ...interface{}) (*Token, error) {
+	collection, err := dbCollection(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
 	_id, err := primitive.ObjectIDFromHex(tokenID)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, errs.Unauthorized
 	}
 
@@ -87,7 +87,7 @@ func findByID(tokenID string, ctx ...interface{}) (*Token, error) {
 	filter := DbTokenIdFilter{ID: _id}
 
 	if err = collection.FindOne(context.Background(), filter, token); err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -95,10 +95,10 @@ func findByID(tokenID string, ctx ...interface{}) (*Token, error) {
 }
 
 // delete como deshabilitado un token
-func delete(tokenID primitive.ObjectID, ctx ...interface{}) error {
-	collection, err := dbCollection(ctx...)
+func delete(tokenID primitive.ObjectID, deps ...interface{}) error {
+	collection, err := dbCollection(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return err
 	}
 

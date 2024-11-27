@@ -13,12 +13,12 @@ import (
 
 // Obtiene Router engine con el contexto de testing adecuado
 // mockeando interfaces a serivcios externos
-func TestRouter(ctx ...interface{}) *gin.Engine {
+func TestRouter(deps ...interface{}) *gin.Engine {
 	engine = nil
-	Router(ctx...)
-	if len(ctx) > 0 {
+	Router(deps...)
+	if len(deps) > 0 {
 		engine.Use(func(c *gin.Context) {
-			c.Set("mock_ctx", ctx)
+			c.Set("mock_deps", deps)
 			c.Next()
 		})
 	}

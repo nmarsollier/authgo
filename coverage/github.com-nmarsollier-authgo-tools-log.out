@@ -1,6 +1,6 @@
 mode: set
-github.com/nmarsollier/authgo/tools/log/logger.go:24.42,25.24 1 0
-github.com/nmarsollier/authgo/tools/log/logger.go:25.24,26.36 1 0
+github.com/nmarsollier/authgo/tools/log/logger.go:24.43,25.25 1 0
+github.com/nmarsollier/authgo/tools/log/logger.go:25.25,26.36 1 0
 github.com/nmarsollier/authgo/tools/log/logger.go:26.36,28.4 1 0
 github.com/nmarsollier/authgo/tools/log/logger.go:30.2,35.35 5 0
 github.com/nmarsollier/authgo/tools/log/logger.go:38.45,40.16 2 0

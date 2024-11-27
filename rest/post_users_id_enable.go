@@ -31,9 +31,9 @@ func postUsersIdEnableRoute() {
 
 func enable(c *gin.Context) {
 	userId := c.Param("userID")
-	ctx := server.GinCtx(c)
+	deps := server.GinDeps(c)
 
-	if err := user.Enable(userId, ctx...); err != nil {
+	if err := user.Enable(userId, deps...); err != nil {
 		server.AbortWithError(c, err)
 	}
 }

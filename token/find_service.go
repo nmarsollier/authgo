@@ -1,8 +1,8 @@
 package token
 
 // Find busca un token en la db
-func Find(tokenID string, ctx ...interface{}) (*Token, error) {
-	token, err := findByID(tokenID, ctx...)
+func Find(tokenID string, deps ...interface{}) (*Token, error) {
+	token, err := findByID(tokenID, deps...)
 	if err != nil {
 		return nil, err
 	}

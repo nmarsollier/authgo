@@ -12,7 +12,7 @@ func Grant(ctx context.Context, userID string, permissions []string) (bool, erro
 		return false, err
 	}
 
-	env := tools.GqlCtx(ctx)
+	env := tools.GqlDeps(ctx)
 
 	if err := user.Grant(userID, permissions, env...); err != nil {
 		return false, err

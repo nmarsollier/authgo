@@ -9,7 +9,7 @@ import (
 )
 
 func SignUp(ctx context.Context, name string, login string, password string) (*model.Token, error) {
-	env := tools.GqlCtx(ctx)
+	env := tools.GqlDeps(ctx)
 	token, err := user.SignUp(&user.SignUpRequest{
 		Name:     name,
 		Login:    login,

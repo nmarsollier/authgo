@@ -15,8 +15,8 @@ import (
 //	@Router			/rabbit/logout [put]
 //
 // SendLogout envía un broadcast a rabbit con logout
-func SendLogout(token string, ctx ...interface{}) error {
-	logger := log.Get(ctx...).
+func SendLogout(token string, deps ...interface{}) error {
+	logger := log.Get(deps...).
 		WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
 		WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
 		WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
@@ -28,8 +28,8 @@ func SendLogout(token string, ctx ...interface{}) error {
 		Message:       token,
 	}
 
-	ctx = append(ctx, logger)
-	chanel, err := getChannel(ctx...)
+	deps = append(deps, logger)
+	chanel, err := getChannel(deps...)
 	if err != nil {
 		logger.Error(err)
 		return err

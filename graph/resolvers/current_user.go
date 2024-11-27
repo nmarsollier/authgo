@@ -14,8 +14,8 @@ func CurrentUser(ctx context.Context) (*model.User, error) {
 		return nil, err
 	}
 
-	env := tools.GqlCtx(ctx)
-	user, err := user.Get(token.UserID.Hex(), env...)
+	deps := tools.GqlDeps(ctx)
+	user, err := user.Get(token.UserID.Hex(), deps...)
 	if err != nil {
 		return nil, err
 	}

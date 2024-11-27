@@ -5,7 +5,7 @@ import (
 )
 
 // Validate dado un tokenString devuelve el Token asociado
-func Validate(tokenString string, ctx ...interface{}) (*Token, error) {
+func Validate(tokenString string, deps ...interface{}) (*Token, error) {
 	if token, err := cacheGet(tokenString); err == nil {
 		return token, err
 	}
@@ -17,7 +17,7 @@ func Validate(tokenString string, ctx ...interface{}) (*Token, error) {
 	}
 
 	// Buscamos el token en la db para validarlo
-	token, err := Find(tokenID, ctx...)
+	token, err := Find(tokenID, deps...)
 	if err != nil || !token.Enabled {
 		return nil, errs.Unauthorized
 	}

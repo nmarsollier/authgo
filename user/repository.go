@@ -33,8 +33,8 @@ type DbUserLoginFilter struct {
 	Login string `bson:"login"`
 }
 
-func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
-	for _, p := range ctx {
+func dbCollection(deps ...interface{}) (db.MongoCollection, error) {
+	for _, p := range deps {
 		if coll, ok := p.(db.MongoCollection); ok {
 			return coll, nil
 		}
@@ -44,9 +44,9 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 		return collection, nil
 	}
 
-	database, err := db.Get(ctx...)
+	database, err := db.Get(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -60,42 +60,42 @@ func dbCollection(ctx ...interface{}) (db.MongoCollection, error) {
 		},
 	)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 	}
 
 	collection = db.NewMongoCollection(col)
 	return collection, nil
 }
 
-func insert(user *User, ctx ...interface{}) (*User, error) {
+func insert(user *User, deps ...interface{}) (*User, error) {
 	if err := user.validateSchema(); err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
-	var collection, err = dbCollection(ctx...)
+	var collection, err = dbCollection(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
 	if _, err := collection.InsertOne(context.Background(), user); err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
 	return user, nil
 }
 
-func update(user *User, ctx ...interface{}) (*User, error) {
+func update(user *User, deps ...interface{}) (*User, error) {
 	if err := user.validateSchema(); err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
-	var collection, err = dbCollection(ctx...)
+	var collection, err = dbCollection(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -115,7 +115,7 @@ func update(user *User, ctx ...interface{}) (*User, error) {
 	)
 
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -123,17 +123,17 @@ func update(user *User, ctx ...interface{}) (*User, error) {
 }
 
 // FindAll devuelve todos los usuarios
-func findAll(ctx ...interface{}) ([]*User, error) {
-	var collection, err = dbCollection(ctx...)
+func findAll(deps ...interface{}) ([]*User, error) {
+	var collection, err = dbCollection(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
 	filter := bson.D{}
 	cur, err := collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 	defer cur.Close(context.Background())
@@ -151,23 +151,23 @@ func findAll(ctx ...interface{}) ([]*User, error) {
 }
 
 // FindByID lee un usuario desde la db
-func findByID(userID string, ctx ...interface{}) (*User, error) {
-	var collection, err = dbCollection(ctx...)
+func findByID(userID string, deps ...interface{}) (*User, error) {
+	var collection, err = dbCollection(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
 	_id, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, ErrID
 	}
 
 	user := &User{}
 	filter := DbUserIdFilter{ID: _id}
 	if err = collection.FindOne(context.Background(), filter, user); err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -175,10 +175,10 @@ func findByID(userID string, ctx ...interface{}) (*User, error) {
 }
 
 // FindByLogin lee un usuario desde la db
-func findByLogin(login string, ctx ...interface{}) (*User, error) {
-	var collection, err = dbCollection(ctx...)
+func findByLogin(login string, deps ...interface{}) (*User, error) {
+	var collection, err = dbCollection(deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
@@ -186,7 +186,7 @@ func findByLogin(login string, ctx ...interface{}) (*User, error) {
 	filter := DbUserLoginFilter{Login: login}
 	err = collection.FindOne(context.Background(), filter, user)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		if err == mongo.ErrNoDocuments {
 			return nil, ErrLogin
 		}

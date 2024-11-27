@@ -4,11 +4,11 @@ import (
 	"context"
 )
 
-func GqlCtx(c context.Context) []interface{} {
+func GqlDeps(c context.Context) []interface{} {
 
-	var ctx []interface{}
+	var deps []interface{}
 
-	ctx = append(ctx, gqlLogger(c))
+	deps = append(deps, gqlLogger(c))
 
-	return ctx
+	return deps
 }

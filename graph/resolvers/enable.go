@@ -12,7 +12,7 @@ func Enable(ctx context.Context, userID string) (bool, error) {
 		return false, err
 	}
 
-	env := tools.GqlCtx(ctx)
+	env := tools.GqlDeps(ctx)
 
 	if err := user.Enable(userID, env...); err != nil {
 		return false, err

@@ -26,16 +26,16 @@ func HeaderToken(c *gin.Context) *token.Token {
 }
 
 func fetchAuthHeader(c *gin.Context) (*token.Token, error) {
-	ctx := GinCtx(c)
+	deps := GinDeps(c)
 	tokenString, err := HeaderAuthorization(c)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
-	payload, err := token.Validate(tokenString, ctx...)
+	payload, err := token.Validate(tokenString, deps...)
 	if err != nil {
-		log.Get(ctx...).Error(err)
+		log.Get(deps...).Error(err)
 		return nil, err
 	}
 

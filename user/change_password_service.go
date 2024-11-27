@@ -1,8 +1,8 @@
 package user
 
 // ChangePassword cambiar la contraseña del usuario indicado
-func ChangePassword(userID string, current string, newPassword string, ctx ...interface{}) error {
-	user, err := findByID(userID, ctx...)
+func ChangePassword(userID string, current string, newPassword string, deps ...interface{}) error {
+	user, err := findByID(userID, deps...)
 	if err != nil {
 		return err
 	}
@@ -15,7 +15,7 @@ func ChangePassword(userID string, current string, newPassword string, ctx ...in
 		return err
 	}
 
-	_, err = update(user, ctx...)
+	_, err = update(user, deps...)
 
 	return err
 }

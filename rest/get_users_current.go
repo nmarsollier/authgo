@@ -31,8 +31,8 @@ func getUsersCurrentRoute() {
 func currentUser(c *gin.Context) {
 	token := server.HeaderToken(c)
 
-	ctx := server.GinCtx(c)
-	user, err := user.Get(token.UserID.Hex(), ctx...)
+	deps := server.GinDeps(c)
+	user, err := user.Get(token.UserID.Hex(), deps...)
 	if err != nil {
 		server.AbortWithError(c, err)
 		return

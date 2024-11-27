@@ -1,6 +1,6 @@
 mode: set
-github.com/nmarsollier/authgo/rabbit/rabbit.go:9.60,10.24 1 0
-github.com/nmarsollier/authgo/rabbit/rabbit.go:10.24,11.38 1 0
+github.com/nmarsollier/authgo/rabbit/rabbit.go:9.61,10.25 1 0
+github.com/nmarsollier/authgo/rabbit/rabbit.go:10.25,11.38 1 0
 github.com/nmarsollier/authgo/rabbit/rabbit.go:11.38,13.4 1 0
 github.com/nmarsollier/authgo/rabbit/rabbit.go:16.2,17.16 2 0
 github.com/nmarsollier/authgo/rabbit/rabbit.go:17.16,20.3 2 0
@@ -15,7 +15,7 @@ github.com/nmarsollier/authgo/rabbit/rabbit_channel_mocks.go:37.72,42.2 4 0
 github.com/nmarsollier/authgo/rabbit/rabbit_channel_mocks.go:45.97,48.2 2 0
 github.com/nmarsollier/authgo/rabbit/rabbit_channel_mocks.go:51.85,56.2 4 0
 github.com/nmarsollier/authgo/rabbit/rabbit_channel_mocks.go:59.103,62.2 2 0
-github.com/nmarsollier/authgo/rabbit/send_logout.go:18.57,33.16 6 0
+github.com/nmarsollier/authgo/rabbit/send_logout.go:18.58,33.16 6 0
 github.com/nmarsollier/authgo/rabbit/send_logout.go:33.16,36.3 2 0
 github.com/nmarsollier/authgo/rabbit/send_logout.go:38.2,42.16 2 0
 github.com/nmarsollier/authgo/rabbit/send_logout.go:42.16,45.3 2 0

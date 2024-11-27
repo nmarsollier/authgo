@@ -12,7 +12,7 @@ func Revoke(ctx context.Context, userID string, permissions []string) (bool, err
 		return false, err
 	}
 
-	env := tools.GqlCtx(ctx)
+	env := tools.GqlDeps(ctx)
 
 	if err := user.Revoke(userID, permissions, env...); err != nil {
 		return false, err

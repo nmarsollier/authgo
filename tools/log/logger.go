@@ -21,8 +21,8 @@ const LOG_FIELD_SERVER = "server"
 const LOG_FIELD_USER_ID = "user_id"
 const LOG_FIELD_THREAD = "thread"
 
-func Get(ctx ...interface{}) LogRusEntry {
-	for _, o := range ctx {
+func Get(deps ...interface{}) LogRusEntry {
+	for _, o := range deps {
 		if ti, ok := o.(LogRusEntry); ok {
 			return ti
 		}

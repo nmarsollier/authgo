@@ -13,7 +13,7 @@ func ChangePassword(ctx context.Context, oldPassword string, newPassword string)
 		return false, err
 	}
 
-	env := tools.GqlCtx(ctx)
+	env := tools.GqlDeps(ctx)
 	if err := user.ChangePassword(token.UserID.Hex(), oldPassword, newPassword, env...); err != nil {
 		return false, err
 	}

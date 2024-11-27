@@ -8,10 +8,10 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func newLogger(ctx context.Context, env ...interface{}) log.LogRusEntry {
+func newLogger(ctx context.Context, deps ...interface{}) log.LogRusEntry {
 	operationContext := graphql.GetOperationContext(ctx)
 
-	return log.Get(env...).
+	return log.Get(deps...).
 		WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(ctx)).
 		WithField(log.LOG_FIELD_CONTROLLER, "Rest").
 		WithField(log.LOG_FIELD_HTTP_METHOD, operationContext.OperationName).

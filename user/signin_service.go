@@ -15,8 +15,8 @@ type TokenResponse struct {
 }
 
 // SignIn is the controller to sign in users
-func SignIn(data SignInRequest, ctx ...interface{}) (*TokenResponse, error) {
-	user, err := findByLogin(data.Login, ctx...)
+func SignIn(data SignInRequest, deps ...interface{}) (*TokenResponse, error) {
+	user, err := findByLogin(data.Login, deps...)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func SignIn(data SignInRequest, ctx ...interface{}) (*TokenResponse, error) {
 		return nil, err
 	}
 
-	newToken, err := token.Create(user.ID, ctx...)
+	newToken, err := token.Create(user.ID, deps...)
 	if err != nil {
 		return nil, errs.Unauthorized
 	}

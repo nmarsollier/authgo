@@ -34,8 +34,8 @@ func signIn(c *gin.Context) {
 		return
 	}
 
-	ctx := server.GinCtx(c)
-	token, err := user.SignIn(login, ctx...)
+	deps := server.GinDeps(c)
+	token, err := user.SignIn(login, deps...)
 	if err != nil {
 		server.AbortWithError(c, err)
 		return

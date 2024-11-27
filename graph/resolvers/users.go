@@ -13,7 +13,7 @@ func Users(ctx context.Context) ([]*model.User, error) {
 		return nil, err
 	}
 
-	env := tools.GqlCtx(ctx)
+	env := tools.GqlDeps(ctx)
 	users, err := user.FindAllUsers(env...)
 
 	if err != nil {

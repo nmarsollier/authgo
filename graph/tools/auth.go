@@ -24,7 +24,7 @@ func ValidateAdmin(ctx context.Context) error {
 		return err
 	}
 
-	env := GqlCtx(ctx)
+	env := GqlDeps(ctx)
 	if !user.Granted(token.UserID.Hex(), "admin", env...) {
 		log.Get(env...).Warn("Unauthorized")
 		return errs.Unauthorized
@@ -35,7 +35,7 @@ func ValidateAdmin(ctx context.Context) error {
 
 // HeaderToken Token data from Authorization header
 func HeaderToken(ctx context.Context) (*token.Token, error) {
-	env := GqlCtx(ctx)
+	env := GqlDeps(ctx)
 
 	tokenString, err := TokenString(ctx)
 	if err != nil {

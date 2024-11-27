@@ -1,9 +1,9 @@
 package user
 
 // FindAllUsers wrapper para obtener todos los usuarios
-func FindAllUsers(ctx ...interface{}) ([]*UserData, error) {
+func FindAllUsers(deps ...interface{}) ([]*UserData, error) {
 
-	user, err := findAll(ctx...)
+	user, err := findAll(deps...)
 
 	if err != nil {
 		return nil, err

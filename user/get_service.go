@@ -5,8 +5,8 @@ import (
 )
 
 // Get wrapper para obtener un usuario
-func Get(userID string, ctx ...interface{}) (*UserData, error) {
-	user, err := findByID(userID, ctx...)
+func Get(userID string, deps ...interface{}) (*UserData, error) {
+	user, err := findByID(userID, deps...)
 	if err != nil {
 		return nil, err
 	}

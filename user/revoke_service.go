@@ -1,8 +1,8 @@
 package user
 
 // Revoke Le revoca los permisos enviados por parametros
-func Revoke(userID string, permissions []string, ctx ...interface{}) error {
-	user, err := findByID(userID, ctx...)
+func Revoke(userID string, permissions []string, deps ...interface{}) error {
+	user, err := findByID(userID, deps...)
 	if err != nil {
 		return err
 	}
@@ -10,7 +10,7 @@ func Revoke(userID string, permissions []string, ctx ...interface{}) error {
 	for _, value := range permissions {
 		user.revoke(value)
 	}
-	_, err = update(user, ctx...)
+	_, err = update(user, deps...)
 
 	return err
 }

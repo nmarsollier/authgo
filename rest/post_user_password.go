@@ -42,8 +42,8 @@ func changePassword(c *gin.Context) {
 	}
 	token := server.HeaderToken(c)
 
-	ctx := server.GinCtx(c)
-	if err := user.ChangePassword(token.UserID.Hex(), body.Current, body.New, ctx...); err != nil {
+	deps := server.GinDeps(c)
+	if err := user.ChangePassword(token.UserID.Hex(), body.Current, body.New, deps...); err != nil {
 		server.AbortWithError(c, err)
 		return
 	}

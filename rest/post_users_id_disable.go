@@ -32,8 +32,8 @@ func postUsersIdDisableRoute() {
 func disable(c *gin.Context) {
 	userId := c.Param("userID")
 
-	ctx := server.GinCtx(c)
-	if err := user.Disable(userId, ctx...); err != nil {
+	deps := server.GinDeps(c)
+	if err := user.Disable(userId, deps...); err != nil {
 		server.AbortWithError(c, err)
 	}
 }

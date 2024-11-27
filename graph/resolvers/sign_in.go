@@ -10,7 +10,7 @@ import (
 
 // SignIn is the resolver for the signIn field.
 func SignIn(ctx context.Context, login string, password string) (*model.Token, error) {
-	env := tools.GqlCtx(ctx)
+	env := tools.GqlDeps(ctx)
 
 	tokenString, err := user.SignIn(user.SignInRequest{Login: login, Password: password}, env...)
 	if err != nil {

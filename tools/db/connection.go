@@ -12,13 +12,13 @@ import (
 var database *mongo.Database
 
 // Get the mongo database
-func Get(ctx ...interface{}) (*mongo.Database, error) {
+func Get(deps ...interface{}) (*mongo.Database, error) {
 	if database == nil {
 		clientOptions := options.Client().ApplyURI(env.Get().MongoURL)
 
 		client, err := mongo.Connect(context.TODO(), clientOptions)
 		if err != nil {
-			log.Get(ctx...).Fatal(err)
+			log.Get(deps...).Fatal(err)
 			return nil, err
 		}
 

@@ -27,9 +27,9 @@ func getUserSignOutRoute() {
 
 func signOut(c *gin.Context) {
 	tokenString, _ := server.HeaderAuthorization(c)
-	ctx := server.GinCtx(c)
+	deps := server.GinDeps(c)
 
-	if err := token.Invalidate(tokenString, ctx...); err != nil {
+	if err := token.Invalidate(tokenString, deps...); err != nil {
 		server.AbortWithError(c, err)
 		return
 	}

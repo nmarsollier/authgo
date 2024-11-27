@@ -17,12 +17,12 @@ func ValidateAdmin(c *gin.Context) {
 		return
 	}
 
-	ctx := GinCtx(c)
-	c.Set("logger", log.Get(ctx...).WithField(log.LOG_FIELD_USER_ID, payload.UserID.Hex()))
-	ctx = GinCtx(c)
+	deps := GinDeps(c)
+	c.Set("logger", log.Get(deps...).WithField(log.LOG_FIELD_USER_ID, payload.UserID.Hex()))
+	deps = GinDeps(c)
 
-	if !user.Granted(payload.UserID.Hex(), "admin", ctx...) {
-		log.Get(ctx...).Warn("Unauthorized")
+	if !user.Granted(payload.UserID.Hex(), "admin", deps...) {
+		log.Get(deps...).Warn("Unauthorized")
 		c.Error(errs.Unauthorized)
 		c.Abort()
 	}

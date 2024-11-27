@@ -13,7 +13,7 @@ func SignOut(ctx context.Context) (bool, error) {
 		return false, err
 	}
 
-	env := tools.GqlCtx(ctx)
+	env := tools.GqlDeps(ctx)
 
 	if err := token.Invalidate(tokenString, env...); err != nil {
 		return false, err

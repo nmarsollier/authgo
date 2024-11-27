@@ -1,8 +1,8 @@
 package user
 
 // Grant Le habilita los permisos enviados por parametros
-func Grant(userID string, permissions []string, ctx ...interface{}) error {
-	user, err := findByID(userID, ctx...)
+func Grant(userID string, permissions []string, deps ...interface{}) error {
+	user, err := findByID(userID, deps...)
 	if err != nil {
 		return err
 	}
@@ -10,7 +10,7 @@ func Grant(userID string, permissions []string, ctx ...interface{}) error {
 	for _, value := range permissions {
 		user.grant(value)
 	}
-	_, err = update(user, ctx...)
+	_, err = update(user, deps...)
 
 	return err
 }
