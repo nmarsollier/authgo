@@ -32,7 +32,7 @@ func currentUser(c *gin.Context) {
 	token := server.HeaderToken(c)
 
 	deps := server.GinDeps(c)
-	user, err := user.Get(token.UserID.Hex(), deps...)
+	user, err := user.Get(token.UserID, deps...)
 	if err != nil {
 		server.AbortWithError(c, err)
 		return

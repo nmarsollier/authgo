@@ -4,26 +4,26 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 // User data structure
 type User struct {
-	ID          primitive.ObjectID `bson:"_id"`
-	Name        string             `bson:"name" validate:"required,min=1,max=100"`
-	Login       string             `bson:"login" validate:"required,min=5,max=100"`
-	Password    string             `bson:"password" validate:"required"`
-	Permissions []string           `bson:"permissions"`
-	Enabled     bool               `bson:"enabled"`
-	Created     time.Time          `bson:"created"`
-	Updated     time.Time          `bson:"updated"`
+	ID          string    `dynamodbav:"id"`
+	Name        string    `dynamodbav:"name" validate:"required,min=1,max=100"`
+	Login       string    `dynamodbav:"login" validate:"required,min=5,max=100"`
+	Password    string    `dynamodbav:"password" validate:"required"`
+	Permissions []string  `dynamodbav:"permissions"`
+	Enabled     bool      `dynamodbav:"enabled"`
+	Created     time.Time `dynamodbav:"created"`
+	Updated     time.Time `dynamodbav:"updated"`
 }
 
 // NewUser Nueva instancia de usuario
 func NewUser() *User {
 	return &User{
-		ID:          primitive.NewObjectID(),
+		ID:          uuid.NewV4().String(),
 		Enabled:     true,
 		Created:     time.Now(),
 		Updated:     time.Now(),

@@ -8,11 +8,6 @@ fi
 # Ejecutar el build
 echo "Building the project..."
 
-if ! ./scripts/generate_mocks.sh; then
-    echo "Build failed generating mocks."
-    exit 1
-fi
-
 if ! ./scripts/generate_gql.sh; then
     echo "Build failed generating gql."
     exit 1

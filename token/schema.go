@@ -6,20 +6,20 @@ import (
 	jwt "github.com/dgrijalva/jwt-go/v4"
 	"github.com/nmarsollier/authgo/tools/env"
 	"github.com/nmarsollier/authgo/tools/errs"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Token es una estructura valor que representa un token.
 type Token struct {
-	ID      primitive.ObjectID `bson:"_id"`
-	UserID  primitive.ObjectID `bson:"userId"`
-	Enabled bool               `bson:"enabled"`
+	ID      string `dynamodbav:"id"`
+	UserID  string `dynamodbav:"userId"`
+	Enabled bool   `dynamodbav:"enabled"`
 }
 
 // NewToken crea un nuevo Token con la información minima necesaria
-func newToken(userID primitive.ObjectID) *Token {
+func newToken(userID string) *Token {
 	return &Token{
-		ID:      primitive.NewObjectID(),
+		ID:      uuid.NewV4().String(),
 		UserID:  userID,
 		Enabled: true,
 	}
@@ -28,8 +28,8 @@ func newToken(userID primitive.ObjectID) *Token {
 // Encode codifica un Token obteniendo el tokenString
 func Encode(t *Token) (string, error) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"tokenID": t.ID.Hex(),
-		"userID":  t.UserID.Hex(),
+		"tokenID": t.ID,
+		"userID":  t.UserID,
 	})
 
 	// Sign and get the complete encoded token as a string using the secret

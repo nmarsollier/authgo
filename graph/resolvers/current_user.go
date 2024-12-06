@@ -15,7 +15,7 @@ func CurrentUser(ctx context.Context) (*model.User, error) {
 	}
 
 	deps := tools.GqlDeps(ctx)
-	user, err := user.Get(token.UserID.Hex(), deps...)
+	user, err := user.Get(token.UserID, deps...)
 	if err != nil {
 		return nil, err
 	}

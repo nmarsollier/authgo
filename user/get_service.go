@@ -16,7 +16,7 @@ func Get(userID string, deps ...interface{}) (*UserData, error) {
 	}
 
 	return &UserData{
-		Id:          user.ID.Hex(),
+		Id:          user.ID,
 		Name:        user.Name,
 		Permissions: user.Permissions,
 		Login:       user.Login,

@@ -15,7 +15,7 @@ func ChangePassword(userID string, current string, newPassword string, deps ...i
 		return err
 	}
 
-	_, err = update(user, deps...)
+	err = update(user, deps...)
 
 	return err
 }

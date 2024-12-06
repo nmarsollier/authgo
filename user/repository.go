@@ -1,70 +1,25 @@
 package user
 
 import (
-	"context"
 	"time"
 
-	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/log"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var collection db.MongoCollection
-
 type DbUserUpdateDocumentBody struct {
-	Name        string    `bson:"name" validate:"required,min=1,max=100"`
-	Password    string    `bson:"password" validate:"required"`
-	Permissions []string  `bson:"permissions"`
-	Enabled     bool      `bson:"enabled"`
-	Updated     time.Time `bson:"updated"`
+	Name        string `validate:"required,min=1,max=100"`
+	Password    string `validate:"required"`
+	Permissions []string
+	Enabled     bool
+	Updated     time.Time
 }
 
 type DbUserUpdateDocument struct {
 	Set DbUserUpdateDocumentBody `bson:"$set"`
 }
 
-type DbUserIdFilter struct {
-	ID primitive.ObjectID `bson:"_id"`
-}
 type DbUserLoginFilter struct {
 	Login string `bson:"login"`
-}
-
-func dbCollection(deps ...interface{}) (db.MongoCollection, error) {
-	for _, p := range deps {
-		if coll, ok := p.(db.MongoCollection); ok {
-			return coll, nil
-		}
-	}
-
-	if collection != nil {
-		return collection, nil
-	}
-
-	database, err := db.Get(deps...)
-	if err != nil {
-		log.Get(deps...).Error(err)
-		return nil, err
-	}
-
-	col := database.Collection("users")
-
-	_, err = col.Indexes().CreateOne(
-		context.Background(),
-		mongo.IndexModel{
-			Keys:    DbUserLoginFilter{Login: ""},
-			Options: options.Index().SetUnique(true),
-		},
-	)
-	if err != nil {
-		log.Get(deps...).Error(err)
-	}
-
-	collection = db.NewMongoCollection(col)
-	return collection, nil
 }
 
 func insert(user *User, deps ...interface{}) (*User, error) {
@@ -73,13 +28,13 @@ func insert(user *User, deps ...interface{}) (*User, error) {
 		return nil, err
 	}
 
-	var collection, err = dbCollection(deps...)
+	var collection, err = GetUserDao(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
-	if _, err := collection.InsertOne(context.Background(), user); err != nil {
+	if err := collection.Insert(user); err != nil {
 		log.Get(deps...).Error(err)
 		return nil, err
 	}
@@ -87,111 +42,73 @@ func insert(user *User, deps ...interface{}) (*User, error) {
 	return user, nil
 }
 
-func update(user *User, deps ...interface{}) (*User, error) {
-	if err := user.validateSchema(); err != nil {
+func update(user *User, deps ...interface{}) (err error) {
+	if err = user.validateSchema(); err != nil {
 		log.Get(deps...).Error(err)
-		return nil, err
+		return
 	}
 
-	var collection, err = dbCollection(deps...)
+	collection, err := GetUserDao(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
-		return nil, err
+		return
 	}
 
 	user.Updated = time.Now()
 
-	_, err = collection.UpdateOne(context.Background(),
-		DbUserIdFilter{ID: user.ID},
-		DbUserUpdateDocument{
-			Set: DbUserUpdateDocumentBody{
-				Password:    user.Password,
-				Name:        user.Name,
-				Enabled:     user.Enabled,
-				Updated:     user.Updated,
-				Permissions: user.Permissions,
-			},
-		},
-	)
-
+	err = collection.Update(user)
 	if err != nil {
 		log.Get(deps...).Error(err)
-		return nil, err
+		return
 	}
 
-	return user, nil
+	return
 }
 
 // FindAll devuelve todos los usuarios
-func findAll(deps ...interface{}) ([]*User, error) {
-	var collection, err = dbCollection(deps...)
+func findAll(deps ...interface{}) (users []*User, err error) {
+	collection, err := GetUserDao(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
-		return nil, err
+		return
 	}
 
-	filter := bson.D{}
-	cur, err := collection.Find(context.Background(), filter)
+	users, err = collection.FindAll()
 	if err != nil {
 		log.Get(deps...).Error(err)
-		return nil, err
-	}
-	defer cur.Close(context.Background())
-
-	users := []*User{}
-	for cur.Next(context.Background()) {
-		user := &User{}
-		if err := cur.Decode(user); err != nil {
-			return nil, err
-		}
-		users = append(users, user)
 	}
 
-	return users, nil
+	return
 }
 
 // FindByID lee un usuario desde la db
-func findByID(userID string, deps ...interface{}) (*User, error) {
-	var collection, err = dbCollection(deps...)
+func findByID(userID string, deps ...interface{}) (user *User, err error) {
+	collection, err := GetUserDao(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
-		return nil, err
+		return
 	}
 
-	_id, err := primitive.ObjectIDFromHex(userID)
-	if err != nil {
+	if user, err = collection.FindById(userID); err != nil {
 		log.Get(deps...).Error(err)
-		return nil, ErrID
 	}
 
-	user := &User{}
-	filter := DbUserIdFilter{ID: _id}
-	if err = collection.FindOne(context.Background(), filter, user); err != nil {
-		log.Get(deps...).Error(err)
-		return nil, err
-	}
-
-	return user, nil
+	return
 }
 
 // FindByLogin lee un usuario desde la db
-func findByLogin(login string, deps ...interface{}) (*User, error) {
-	var collection, err = dbCollection(deps...)
+func findByLogin(login string, deps ...interface{}) (user *User, err error) {
+	collection, err := GetUserDao(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
-		return nil, err
+		return
 	}
 
-	user := &User{}
-	filter := DbUserLoginFilter{Login: login}
-	err = collection.FindOne(context.Background(), filter, user)
+	user, err = collection.FindByLogin(login)
 	if err != nil {
 		log.Get(deps...).Error(err)
-		if err == mongo.ErrNoDocuments {
-			return nil, ErrLogin
-		}
-		return nil, err
+		return
 	}
 
-	return user, nil
+	return
 }

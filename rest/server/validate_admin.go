@@ -18,10 +18,10 @@ func ValidateAdmin(c *gin.Context) {
 	}
 
 	deps := GinDeps(c)
-	c.Set("logger", log.Get(deps...).WithField(log.LOG_FIELD_USER_ID, payload.UserID.Hex()))
+	c.Set("logger", log.Get(deps...).WithField(log.LOG_FIELD_USER_ID, payload.UserID))
 	deps = GinDeps(c)
 
-	if !user.Granted(payload.UserID.Hex(), "admin", deps...) {
+	if !user.Granted(payload.UserID, "admin", deps...) {
 		log.Get(deps...).Warn("Unauthorized")
 		c.Error(errs.Unauthorized)
 		c.Abort()

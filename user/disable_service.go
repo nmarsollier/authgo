@@ -9,7 +9,7 @@ func Disable(userID string, deps ...interface{}) error {
 
 	usr.Enabled = false
 
-	_, err = update(usr, deps...)
+	err = update(usr, deps...)
 
 	return err
 }

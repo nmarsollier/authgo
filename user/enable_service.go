@@ -8,7 +8,7 @@ func Enable(userID string, deps ...interface{}) error {
 	}
 
 	usr.Enabled = true
-	_, err = update(usr, deps...)
+	err = update(usr, deps...)
 
 	return err
 }

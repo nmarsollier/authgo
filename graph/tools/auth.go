@@ -25,7 +25,7 @@ func ValidateAdmin(ctx context.Context) error {
 	}
 
 	env := GqlDeps(ctx)
-	if !user.Granted(token.UserID.Hex(), "admin", env...) {
+	if !user.Granted(token.UserID, "admin", env...) {
 		log.Get(env...).Warn("Unauthorized")
 		return errs.Unauthorized
 	}

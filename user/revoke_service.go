@@ -10,7 +10,7 @@ func Revoke(userID string, permissions []string, deps ...interface{}) error {
 	for _, value := range permissions {
 		user.revoke(value)
 	}
-	_, err = update(user, deps...)
+	err = update(user, deps...)
 
 	return err
 }

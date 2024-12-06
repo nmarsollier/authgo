@@ -12,7 +12,7 @@ func FindAllUsers(deps ...interface{}) ([]*UserData, error) {
 	result := []*UserData{}
 	for i := 0; i < len(user); i = i + 1 {
 		result = append(result, &UserData{
-			Id:          user[i].ID.Hex(),
+			Id:          user[i].ID,
 			Name:        user[i].Name,
 			Permissions: user[i].Permissions,
 			Login:       user[i].Login,

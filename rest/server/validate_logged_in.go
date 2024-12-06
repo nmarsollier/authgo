@@ -16,5 +16,5 @@ func ValidateLoggedIn(c *gin.Context) {
 	}
 
 	deps := GinDeps(c)
-	c.Set("logger", log.Get(deps...).WithField(log.LOG_FIELD_USER_ID, token.UserID.Hex()))
+	c.Set("logger", log.Get(deps...).WithField(log.LOG_FIELD_USER_ID, token.UserID))
 }

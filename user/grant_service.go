@@ -10,7 +10,7 @@ func Grant(userID string, permissions []string, deps ...interface{}) error {
 	for _, value := range permissions {
 		user.grant(value)
 	}
-	_, err = update(user, deps...)
+	err = update(user, deps...)
 
 	return err
 }
