@@ -286,7 +286,10 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/user.UserResponse"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/user.UserData"
+                                }
                             }
                         }
                     },
@@ -601,7 +604,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User data",
                         "schema": {
-                            "$ref": "#/definitions/user.UserResponse"
+                            "$ref": "#/definitions/user.UserData"
                         }
                     },
                     "400": {
@@ -751,7 +754,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.UserResponse": {
+        "user.UserData": {
             "type": "object",
             "properties": {
                 "enabled": {

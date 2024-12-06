@@ -79,7 +79,7 @@ definitions:
       token:
         type: string
     type: object
-  user.UserResponse:
+  user.UserData:
     properties:
       enabled:
         type: boolean
@@ -281,7 +281,9 @@ paths:
           description: Users
           schema:
             items:
-              $ref: '#/definitions/user.UserResponse'
+              items:
+                $ref: '#/definitions/user.UserData'
+              type: array
             type: array
         "400":
           description: Bad Request
@@ -495,7 +497,7 @@ paths:
         "200":
           description: User data
           schema:
-            $ref: '#/definitions/user.UserResponse'
+            $ref: '#/definitions/user.UserData'
         "400":
           description: Bad Request
           schema:

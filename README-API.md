@@ -158,7 +158,7 @@ Obtiene información de todos los usuarios. El usuario logueado debe tener permi
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
-| 200 | Users | [ [user.UserResponse](#useruserresponse) ] |
+| 200 | Users | [ [ [user.UserData](#useruserdata) ] ] |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [server.ErrorData](#servererrordata) |
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
@@ -299,7 +299,7 @@ Obtiene información del usuario actual.
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
-| 200 | User data | [user.UserResponse](#useruserresponse) |
+| 200 | User data | [user.UserData](#useruserdata) |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [server.ErrorData](#servererrordata) |
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
@@ -368,7 +368,7 @@ Obtiene información del usuario actual.
 | ---- | ---- | ----------- | -------- |
 | token | string |  | No |
 
-#### user.UserResponse
+#### user.UserData
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
