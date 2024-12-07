@@ -35,6 +35,7 @@ func GetTokenDao(deps ...interface{}) (instance TokenDao, err error) {
 		}
 	}
 
+	var conn_err error
 	once.Do(func() {
 		customCreds := aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(
 			env.Get().AwsAccessKeyId,
@@ -42,22 +43,21 @@ func GetTokenDao(deps ...interface{}) (instance TokenDao, err error) {
 			"",
 		))
 
-		cfg, e := config.LoadDefaultConfig(context.TODO(),
+		cfg, err := config.LoadDefaultConfig(context.TODO(),
 			config.WithRegion(env.Get().AwsRegion),
 			config.WithCredentialsProvider(customCreds),
 		)
-		if e != nil {
-			err = e
+		if err != nil {
+			conn_err = err
+			return
 		}
 
-		client := dynamodb.NewFromConfig(cfg)
-
 		instance = &tokenDao{
-			client: client,
+			client: dynamodb.NewFromConfig(cfg),
 		}
 	})
 
-	return
+	return instance, conn_err
 }
 
 type tokenDao struct {

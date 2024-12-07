@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/nmarsollier/authgo/tools/env"
@@ -32,13 +33,14 @@ type UserDao interface {
 	FindAll() ([]*User, error)
 }
 
-func GetUserDao(deps ...interface{}) (instance UserDao, err error) {
+func GetUserDao(deps ...interface{}) (UserDao, error) {
 	for _, o := range deps {
 		if client, ok := o.(UserDao); ok {
 			return client, nil
 		}
 	}
 
+	var conn_err error
 	once.Do(func() {
 		customCreds := aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(
 			env.Get().AwsAccessKeyId,
@@ -46,22 +48,21 @@ func GetUserDao(deps ...interface{}) (instance UserDao, err error) {
 			"",
 		))
 
-		cfg, e := config.LoadDefaultConfig(context.TODO(),
+		cfg, err := config.LoadDefaultConfig(context.TODO(),
 			config.WithRegion(env.Get().AwsRegion),
 			config.WithCredentialsProvider(customCreds),
 		)
-		if e != nil {
-			err = e
+		if err != nil {
+			conn_err = err
+			return
 		}
 
-		client := dynamodb.NewFromConfig(cfg)
-
 		instance = &authDao{
-			client: client,
+			client: dynamodb.NewFromConfig(cfg),
 		}
 	})
 
-	return
+	return instance, conn_err
 }
 
 type authDao struct {
@@ -92,21 +93,27 @@ func (r *authDao) FindById(key string) (*User, error) {
 }
 
 func (r *authDao) FindByLogin(login string) (*User, error) {
-	user := User{Login: login}
-	loginAttr, err := attributevalue.Marshal(user.ID)
+	expr, err := expression.NewBuilder().WithKeyCondition(
+		expression.Key("login").Equal(expression.Value(login)),
+	).Build()
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := r.client.GetItem(context.TODO(), &dynamodb.GetItemInput{
-		Key: map[string]types.AttributeValue{"login": loginAttr}, TableName: &tableName,
+	response, err := r.client.Query(context.TODO(), &dynamodb.QueryInput{
+		TableName:                 &tableName,
+		IndexName:                 aws.String("login-index"),
+		KeyConditionExpression:    expr.KeyCondition(),
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
 	})
 
-	if err != nil || response == nil || response.Item == nil {
+	if err != nil || len(response.Items) == 0 {
 		return nil, err
 	}
 
-	err = attributevalue.UnmarshalMap(response.Item, &user)
+	var user User
+	err = attributevalue.UnmarshalMap(response.Items[0], &user)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +142,7 @@ func (r *authDao) Insert(user *User) error {
 
 func (r *authDao) Update(user *User) error {
 	userKey, err := attributevalue.MarshalMap(map[string]interface{}{
-		"ID": user.ID,
+		"id": user.ID,
 	})
 	if err != nil {
 		return err
@@ -157,7 +164,7 @@ func (r *authDao) Update(user *User) error {
 		&dynamodb.UpdateItemInput{
 			TableName:                 &tableName,
 			Key:                       userKey,
-			UpdateExpression:          aws.String("SET Name = :name, Password = :password, Permissions = :permissions, Enabled = :enabled, Updated = :updated"),
+			UpdateExpression:          aws.String("SET name = :name, password = :password, permissions = :permissions, enabled = :enabled, updated = :updated"),
 			ExpressionAttributeValues: update,
 		},
 	)

@@ -52,9 +52,11 @@ func load() *Configuration {
 	if value := os.Getenv("AWS_ACCESS_KEY_ID"); len(value) > 0 {
 		result.AwsAccessKeyId = value
 	}
+
 	if value := os.Getenv("AWS_SECRET_ACCESS_KEY"); len(value) > 0 {
 		result.AwsSecret = value
 	}
+
 	if value := os.Getenv("AWS_REGION"); len(value) > 0 {
 		result.AwsRegion = value
 	}

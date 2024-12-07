@@ -28,13 +28,13 @@ func insert(user *User, deps ...interface{}) (*User, error) {
 		return nil, err
 	}
 
-	var collection, err = GetUserDao(deps...)
+	var conn, err = GetUserDao(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
 		return nil, err
 	}
 
-	if err := collection.Insert(user); err != nil {
+	if err := conn.Insert(user); err != nil {
 		log.Get(deps...).Error(err)
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func update(user *User, deps ...interface{}) (err error) {
 		return
 	}
 
-	collection, err := GetUserDao(deps...)
+	conn, err := GetUserDao(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
 		return
@@ -56,7 +56,7 @@ func update(user *User, deps ...interface{}) (err error) {
 
 	user.Updated = time.Now()
 
-	err = collection.Update(user)
+	err = conn.Update(user)
 	if err != nil {
 		log.Get(deps...).Error(err)
 		return
@@ -67,13 +67,13 @@ func update(user *User, deps ...interface{}) (err error) {
 
 // FindAll devuelve todos los usuarios
 func findAll(deps ...interface{}) (users []*User, err error) {
-	collection, err := GetUserDao(deps...)
+	conn, err := GetUserDao(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
 		return
 	}
 
-	users, err = collection.FindAll()
+	users, err = conn.FindAll()
 	if err != nil {
 		log.Get(deps...).Error(err)
 	}
@@ -83,13 +83,14 @@ func findAll(deps ...interface{}) (users []*User, err error) {
 
 // FindByID lee un usuario desde la db
 func findByID(userID string, deps ...interface{}) (user *User, err error) {
-	collection, err := GetUserDao(deps...)
+	conn, err := GetUserDao(deps...)
+
 	if err != nil {
 		log.Get(deps...).Error(err)
 		return
 	}
 
-	if user, err = collection.FindById(userID); err != nil {
+	if user, err = conn.FindById(userID); err != nil {
 		log.Get(deps...).Error(err)
 	}
 
@@ -98,13 +99,13 @@ func findByID(userID string, deps ...interface{}) (user *User, err error) {
 
 // FindByLogin lee un usuario desde la db
 func findByLogin(login string, deps ...interface{}) (user *User, err error) {
-	collection, err := GetUserDao(deps...)
+	conn, err := GetUserDao(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
 		return
 	}
 
-	user, err = collection.FindByLogin(login)
+	user, err = conn.FindByLogin(login)
 	if err != nil {
 		log.Get(deps...).Error(err)
 		return
