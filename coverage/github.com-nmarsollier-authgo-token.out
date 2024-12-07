@@ -51,11 +51,11 @@ github.com/nmarsollier/authgo/token/schema.go:64.2,67.29 3 0
 github.com/nmarsollier/authgo/token/token_dao.go:31.70,32.25 1 0
 github.com/nmarsollier/authgo/token/token_dao.go:32.25,33.37 1 0
 github.com/nmarsollier/authgo/token/token_dao.go:33.37,35.4 1 0
-github.com/nmarsollier/authgo/token/token_dao.go:38.2,38.17 1 0
-github.com/nmarsollier/authgo/token/token_dao.go:38.17,49.15 3 0
-github.com/nmarsollier/authgo/token/token_dao.go:49.15,51.4 1 0
-github.com/nmarsollier/authgo/token/token_dao.go:53.3,57.4 2 0
-github.com/nmarsollier/authgo/token/token_dao.go:60.2,60.8 1 0
+github.com/nmarsollier/authgo/token/token_dao.go:38.2,39.17 2 0
+github.com/nmarsollier/authgo/token/token_dao.go:39.17,50.17 3 0
+github.com/nmarsollier/authgo/token/token_dao.go:50.17,53.4 2 0
+github.com/nmarsollier/authgo/token/token_dao.go:55.3,57.4 1 0
+github.com/nmarsollier/authgo/token/token_dao.go:60.2,60.27 1 0
 github.com/nmarsollier/authgo/token/token_dao.go:67.56,70.16 3 0
 github.com/nmarsollier/authgo/token/token_dao.go:70.16,72.3 1 0
 github.com/nmarsollier/authgo/token/token_dao.go:74.2,78.59 2 0
