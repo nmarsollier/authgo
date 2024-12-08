@@ -14,12 +14,18 @@ type SignUpRequest struct {
 
 // SignUp is the controller to signup new users
 func SignUp(user *SignUpRequest, deps ...interface{}) (*TokenResponse, error) {
+
+	existing, err := findByLogin(user.Login, deps...)
+	if err == nil && existing != nil {
+		return nil, errs.AlreadyExist
+	}
+
 	newUser := NewUser()
 	newUser.Login = user.Login
 	newUser.Name = user.Name
 	newUser.setPasswordText(user.Password)
 
-	newUser, err := insert(newUser, deps...)
+	newUser, err = insert(newUser, deps...)
 	if err != nil {
 		return nil, err
 	}
