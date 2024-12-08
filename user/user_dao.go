@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/nmarsollier/authgo/tools/env"
+	"github.com/nmarsollier/authgo/tools/errs"
 )
 
 var tableName = "users"
@@ -69,27 +70,22 @@ type authDao struct {
 	client *dynamodb.Client
 }
 
-func (r *authDao) FindById(key string) (*User, error) {
-	user := User{ID: key}
-	userId, err := attributevalue.Marshal(user.ID)
-	if err != nil {
-		return nil, err
-	}
-
+func (r *authDao) FindById(key string) (user *User, err error) {
 	response, err := r.client.GetItem(context.TODO(), &dynamodb.GetItemInput{
-		Key: map[string]types.AttributeValue{"id": userId}, TableName: &tableName,
+		Key: map[string]types.AttributeValue{
+			"id": &types.AttributeValueMemberS{
+				Value: key,
+			}},
+		TableName: &tableName,
 	})
 
 	if err != nil || response == nil || response.Item == nil {
-		return nil, err
+		return nil, errs.NotFound
 	}
 
 	err = attributevalue.UnmarshalMap(response.Item, &user)
-	if err != nil {
-		return nil, err
-	}
 
-	return &user, nil
+	return
 }
 
 func (r *authDao) FindByLogin(login string) (*User, error) {

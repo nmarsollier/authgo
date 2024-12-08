@@ -1,58 +1,75 @@
 package token
 
 import (
+	"context"
+
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/nmarsollier/authgo/tools/db"
+	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/tools/log"
 )
 
+var tableName = "tokens"
+
 // insert crea un nuevo token y lo almacena en la db
-func insert(userID string, deps ...interface{}) (token *Token, err error) {
-	collection, err := GetTokenDao(deps...)
+func insert(userID string, deps ...interface{}) (*Token, error) {
+	token := newToken(userID)
+
+	tokenToInsert, err := attributevalue.MarshalMap(token)
 	if err != nil {
 		log.Get(deps...).Error(err)
-		return
+
+		return nil, err
 	}
 
-	token = newToken(userID)
-
-	err = collection.Insert(token)
+	_, err = db.Get(deps...).PutItem(
+		context.TODO(),
+		&dynamodb.PutItemInput{
+			TableName: &tableName,
+			Item:      tokenToInsert,
+		},
+	)
 	if err != nil {
 		log.Get(deps...).Error(err)
+
+		return nil, err
 	}
 
-	return
+	return token, nil
 }
 
 // findByID busca un token en la db
 func findByID(tokenID string, deps ...interface{}) (token *Token, err error) {
-	collection, err := GetTokenDao(deps...)
-	if err != nil {
+	response, err := db.Get().GetItem(context.TODO(), &dynamodb.GetItemInput{
+		Key: map[string]types.AttributeValue{
+			"id": &types.AttributeValueMemberS{
+				Value: tokenID,
+			}},
+		TableName: &tableName,
+	})
+
+	if err != nil || response == nil || response.Item == nil {
 		log.Get(deps...).Error(err)
-		return
+
+		return nil, errs.NotFound
 	}
 
-	if token, err = collection.FindById(tokenID); err != nil {
-		log.Get(deps...).Error(err)
-	}
-
+	err = attributevalue.UnmarshalMap(response.Item, &token)
 	return
 }
 
 // delete como deshabilitado un token
 func delete(tokenID string, deps ...interface{}) (err error) {
-	collection, err := GetTokenDao(deps...)
+	_, err = db.Get(deps...).DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
+		Key: map[string]types.AttributeValue{"id": &types.AttributeValueMemberS{
+			Value: tokenID,
+		}}, TableName: &tableName,
+	})
+
 	if err != nil {
 		log.Get(deps...).Error(err)
-		return
 	}
-
-	err = collection.Delete(tokenID)
 	return
-}
-
-type DbDeleteTokenBody struct {
-	Enabled bool `bson:"enabled"`
-}
-
-type DbDeleteTokenDocument struct {
-	Set DbDeleteTokenBody `bson:"$set"`
 }
