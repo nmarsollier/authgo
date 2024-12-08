@@ -159,11 +159,11 @@
 				
 				<option value="file51">github.com/nmarsollier/authgo/token/schema.go (0.0%)</option>
 				
-				<option value="file52">github.com/nmarsollier/authgo/token/token_dao.go (0.0%)</option>
+				<option value="file52">github.com/nmarsollier/authgo/token/validate_service.go (0.0%)</option>
 				
-				<option value="file53">github.com/nmarsollier/authgo/token/validate_service.go (0.0%)</option>
+				<option value="file53">github.com/nmarsollier/authgo/tools/db/conn.go (0.0%)</option>
 				
-				<option value="file54">github.com/nmarsollier/authgo/tools/env/env.go (66.7%)</option>
+				<option value="file54">github.com/nmarsollier/authgo/tools/env/env.go (79.2%)</option>
 				
 				<option value="file55">github.com/nmarsollier/authgo/tools/errs/rest_error.go (0.0%)</option>
 				
@@ -8385,60 +8385,77 @@ func Invalidate(tokenString string, deps ...interface{}) error <span class="cov0
 		<pre class="file" id="file50" style="display: none">package token
 
 import (
+        "context"
+
+        "github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+        "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+        "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+        "github.com/nmarsollier/authgo/tools/db"
+        "github.com/nmarsollier/authgo/tools/errs"
         "github.com/nmarsollier/authgo/tools/log"
 )
 
+var tableName = "tokens"
+
 // insert crea un nuevo token y lo almacena en la db
-func insert(userID string, deps ...interface{}) (token *Token, err error) <span class="cov0" title="0">{
-        collection, err := GetTokenDao(deps...)
+func insert(userID string, deps ...interface{}) (*Token, error) <span class="cov0" title="0">{
+        token := newToken(userID)
+
+        tokenToInsert, err := attributevalue.MarshalMap(token)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
-                return
+
+                return nil, err
         }</span>
 
-        <span class="cov0" title="0">token = newToken(userID)
-
-        err = collection.Insert(token)
+        <span class="cov0" title="0">_, err = db.Get(deps...).PutItem(
+                context.TODO(),
+                &amp;dynamodb.PutItemInput{
+                        TableName: &amp;tableName,
+                        Item:      tokenToInsert,
+                },
+        )
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
+
+                return nil, err
         }</span>
 
-        <span class="cov0" title="0">return</span>
+        <span class="cov0" title="0">return token, nil</span>
 }
 
 // findByID busca un token en la db
 func findByID(tokenID string, deps ...interface{}) (token *Token, err error) <span class="cov0" title="0">{
-        collection, err := GetTokenDao(deps...)
-        if err != nil </span><span class="cov0" title="0">{
+        response, err := db.Get().GetItem(context.TODO(), &amp;dynamodb.GetItemInput{
+                Key: map[string]types.AttributeValue{
+                        "id": &amp;types.AttributeValueMemberS{
+                                Value: tokenID,
+                        }},
+                TableName: &amp;tableName,
+        })
+
+        if err != nil || response == nil || response.Item == nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
-                return
+
+                return nil, errs.NotFound
         }</span>
 
-        <span class="cov0" title="0">if token, err = collection.FindById(tokenID); err != nil </span><span class="cov0" title="0">{
-                log.Get(deps...).Error(err)
-        }</span>
-
-        <span class="cov0" title="0">return</span>
+        <span class="cov0" title="0">err = attributevalue.UnmarshalMap(response.Item, &amp;token)
+        return</span>
 }
 
 // delete como deshabilitado un token
 func delete(tokenID string, deps ...interface{}) (err error) <span class="cov0" title="0">{
-        collection, err := GetTokenDao(deps...)
+        _, err = db.Get(deps...).DeleteItem(context.TODO(), &amp;dynamodb.DeleteItemInput{
+                Key: map[string]types.AttributeValue{"id": &amp;types.AttributeValueMemberS{
+                        Value: tokenID,
+                }}, TableName: &amp;tableName,
+        })
+
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
-                return
         }</span>
-
-        <span class="cov0" title="0">err = collection.Delete(tokenID)
-        return</span>
-}
-
-type DbDeleteTokenBody struct {
-        Enabled bool `bson:"enabled"`
-}
-
-type DbDeleteTokenDocument struct {
-        Set DbDeleteTokenBody `bson:"$set"`
+        <span class="cov0" title="0">return</span>
 }
 </pre>
 		
@@ -8515,133 +8532,6 @@ func ExtractPayload(tokenString string) (string, string, error) <span class="cov
 		<pre class="file" id="file52" style="display: none">package token
 
 import (
-        "context"
-        "sync"
-
-        "github.com/aws/aws-sdk-go-v2/aws"
-        "github.com/aws/aws-sdk-go-v2/config"
-        "github.com/aws/aws-sdk-go-v2/credentials"
-        "github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
-        "github.com/aws/aws-sdk-go-v2/service/dynamodb"
-        "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-        "github.com/nmarsollier/authgo/tools/env"
-)
-
-var tableName = "tokens"
-
-var (
-        once     sync.Once
-        instance TokenDao
-)
-
-type TokenDao interface {
-        FindById(id string) (token *Token, err error)
-
-        Insert(user *Token) (err error)
-
-        Delete(id string) (err error)
-}
-
-func GetTokenDao(deps ...interface{}) (instance TokenDao, err error) <span class="cov0" title="0">{
-        for _, o := range deps </span><span class="cov0" title="0">{
-                if client, ok := o.(TokenDao); ok </span><span class="cov0" title="0">{
-                        return client, nil
-                }</span>
-        }
-
-        <span class="cov0" title="0">var conn_err error
-        once.Do(func() </span><span class="cov0" title="0">{
-                customCreds := aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(
-                        env.Get().AwsAccessKeyId,
-                        env.Get().AwsSecret,
-                        "",
-                ))
-
-                cfg, err := config.LoadDefaultConfig(context.TODO(),
-                        config.WithRegion(env.Get().AwsRegion),
-                        config.WithCredentialsProvider(customCreds),
-                )
-                if err != nil </span><span class="cov0" title="0">{
-                        conn_err = err
-                        return
-                }</span>
-
-                <span class="cov0" title="0">instance = &amp;tokenDao{
-                        client: dynamodb.NewFromConfig(cfg),
-                }</span>
-        })
-
-        <span class="cov0" title="0">return instance, conn_err</span>
-}
-
-type tokenDao struct {
-        client *dynamodb.Client
-}
-
-func (r *tokenDao) FindById(id string) (*Token, error) <span class="cov0" title="0">{
-        token := Token{ID: id}
-        tokenId, err := attributevalue.Marshal(token.ID)
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-
-        <span class="cov0" title="0">response, err := r.client.GetItem(context.TODO(), &amp;dynamodb.GetItemInput{
-                Key: map[string]types.AttributeValue{"id": tokenId}, TableName: &amp;tableName,
-        })
-
-        if err != nil || response == nil || response.Item == nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-
-        <span class="cov0" title="0">err = attributevalue.UnmarshalMap(response.Item, &amp;token)
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-
-        <span class="cov0" title="0">return &amp;token, nil</span>
-}
-
-func (r *tokenDao) Insert(user *Token) error <span class="cov0" title="0">{
-        tokenToInsert, err := attributevalue.MarshalMap(user)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        <span class="cov0" title="0">_, err = r.client.PutItem(
-                context.TODO(),
-                &amp;dynamodb.PutItemInput{
-                        TableName: &amp;tableName,
-                        Item:      tokenToInsert,
-                },
-        )
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-        <span class="cov0" title="0">return nil</span>
-}
-
-func (r *tokenDao) Delete(id string) error <span class="cov0" title="0">{
-        token := Token{ID: id}
-        tokenId, err := attributevalue.Marshal(token.ID)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        <span class="cov0" title="0">_, err = r.client.DeleteItem(context.TODO(), &amp;dynamodb.DeleteItemInput{
-                Key: map[string]types.AttributeValue{"id": tokenId}, TableName: &amp;tableName,
-        })
-
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-
-        <span class="cov0" title="0">return nil</span>
-}
-</pre>
-		
-		<pre class="file" id="file53" style="display: none">package token
-
-import (
         "github.com/nmarsollier/authgo/tools/errs"
 )
 
@@ -8664,6 +8554,50 @@ func Validate(tokenString string, deps ...interface{}) (*Token, error) <span cla
         }</span>
 
         <span class="cov0" title="0">return token, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file53" style="display: none">package db
+
+import (
+        "context"
+        "log"
+        "sync"
+
+        "github.com/aws/aws-sdk-go-v2/aws"
+        "github.com/aws/aws-sdk-go-v2/config"
+        "github.com/aws/aws-sdk-go-v2/credentials"
+        "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+        "github.com/nmarsollier/authgo/tools/env"
+)
+
+var (
+        once     sync.Once
+        instance *dynamodb.Client
+)
+
+func Get(deps ...interface{}) *dynamodb.Client <span class="cov0" title="0">{
+        once.Do(func() </span><span class="cov0" title="0">{
+                customCreds := aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(
+                        env.Get().AwsAccessKeyId,
+                        env.Get().AwsSecret,
+                        "",
+                ))
+
+                cfg, err := config.LoadDefaultConfig(context.TODO(),
+                        config.WithRegion(env.Get().AwsRegion),
+                        config.WithCredentialsProvider(customCreds),
+                )
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Fatalf("Error cargando la configuración: %v", err)
+                }</span>
+
+                <span class="cov0" title="0">client := dynamodb.NewFromConfig(cfg)
+
+                instance = client</span>
+        })
+
+        <span class="cov0" title="0">return instance</span>
 }
 </pre>
 		
@@ -8718,15 +8652,15 @@ func load() *Configuration <span class="cov8" title="1">{
                 result.RabbitURL = value
         }</span>
 
-        <span class="cov8" title="1">if value := os.Getenv("AWS_ACCESS_KEY_ID"); len(value) &gt; 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if value := os.Getenv("AWS_ACCESS_KEY_ID"); len(value) &gt; 0 </span><span class="cov8" title="1">{
                 result.AwsAccessKeyId = value
         }</span>
 
-        <span class="cov8" title="1">if value := os.Getenv("AWS_SECRET_ACCESS_KEY"); len(value) &gt; 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if value := os.Getenv("AWS_SECRET_ACCESS_KEY"); len(value) &gt; 0 </span><span class="cov8" title="1">{
                 result.AwsSecret = value
         }</span>
 
-        <span class="cov8" title="1">if value := os.Getenv("AWS_REGION"); len(value) &gt; 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if value := os.Getenv("AWS_REGION"); len(value) &gt; 0 </span><span class="cov8" title="1">{
                 result.AwsRegion = value
         }</span>
 
@@ -9592,6 +9526,7 @@ import (
         "github.com/aws/aws-sdk-go-v2/service/dynamodb"
         "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
         "github.com/nmarsollier/authgo/tools/env"
+        "github.com/nmarsollier/authgo/tools/errs"
 )
 
 var tableName = "users"
@@ -9649,27 +9584,22 @@ type authDao struct {
         client *dynamodb.Client
 }
 
-func (r *authDao) FindById(key string) (*User, error) <span class="cov0" title="0">{
-        user := User{ID: key}
-        userId, err := attributevalue.Marshal(user.ID)
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-
-        <span class="cov0" title="0">response, err := r.client.GetItem(context.TODO(), &amp;dynamodb.GetItemInput{
-                Key: map[string]types.AttributeValue{"id": userId}, TableName: &amp;tableName,
+func (r *authDao) FindById(key string) (user *User, err error) <span class="cov0" title="0">{
+        response, err := r.client.GetItem(context.TODO(), &amp;dynamodb.GetItemInput{
+                Key: map[string]types.AttributeValue{
+                        "id": &amp;types.AttributeValueMemberS{
+                                Value: key,
+                        }},
+                TableName: &amp;tableName,
         })
 
         if err != nil || response == nil || response.Item == nil </span><span class="cov0" title="0">{
-                return nil, err
+                return nil, errs.NotFound
         }</span>
 
         <span class="cov0" title="0">err = attributevalue.UnmarshalMap(response.Item, &amp;user)
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
 
-        <span class="cov0" title="0">return &amp;user, nil</span>
+        return</span>
 }
 
 func (r *authDao) FindByLogin(login string) (*User, error) <span class="cov0" title="0">{

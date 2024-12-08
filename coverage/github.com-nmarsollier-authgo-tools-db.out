@@ -1,0 +1,6 @@
+mode: set
+github.com/nmarsollier/authgo/tools/db/conn.go:20.48,21.17 1 0
+github.com/nmarsollier/authgo/tools/db/conn.go:21.17,32.17 3 0
+github.com/nmarsollier/authgo/tools/db/conn.go:32.17,34.4 1 0
+github.com/nmarsollier/authgo/tools/db/conn.go:36.3,38.20 2 0
+github.com/nmarsollier/authgo/tools/db/conn.go:41.2,41.17 1 0
