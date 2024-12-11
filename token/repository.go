@@ -3,37 +3,26 @@ package token
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/nmarsollier/authgo/tools/db"
 	"github.com/nmarsollier/authgo/tools/errs"
 	"github.com/nmarsollier/authgo/tools/log"
 )
 
-var tableName = "tokens"
-
 // insert crea un nuevo token y lo almacena en la db
-func insert(userID string, deps ...interface{}) (*Token, error) {
-	token := newToken(userID)
+func insert(userID string, deps ...interface{}) (token *Token, err error) {
+	token = newToken(userID)
 
-	tokenToInsert, err := attributevalue.MarshalMap(token)
+	conn, err := db.GetPostgresClient(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
 
 		return nil, err
 	}
 
-	_, err = db.Get(deps...).PutItem(
-		context.TODO(),
-		&dynamodb.PutItemInput{
-			TableName: &tableName,
-			Item:      tokenToInsert,
-		},
-	)
+	query := `INSERT INTO Tokens (ID, UserID, Enabled) VALUES ($1, $2, $3)`
+	_, err = conn.Exec(context.TODO(), query, token.ID, token.UserID, token.Enabled)
 	if err != nil {
 		log.Get(deps...).Error(err)
-
 		return nil, err
 	}
 
@@ -41,35 +30,36 @@ func insert(userID string, deps ...interface{}) (*Token, error) {
 }
 
 // findByID busca un token en la db
-func findByID(tokenID string, deps ...interface{}) (token *Token, err error) {
-	response, err := db.Get().GetItem(context.TODO(), &dynamodb.GetItemInput{
-		Key: map[string]types.AttributeValue{
-			"id": &types.AttributeValueMemberS{
-				Value: tokenID,
-			}},
-		TableName: &tableName,
-	})
-
-	if err != nil || response == nil || response.Item == nil {
+func findByID(tokenID string, deps ...interface{}) (*Token, error) {
+	conn, err := db.GetPostgresClient(deps...)
+	if err != nil {
 		log.Get(deps...).Error(err)
 
+		return nil, err
+	}
+
+	var token Token
+	err = conn.QueryRow(context.Background(), "SELECT * FROM Tokens WHERE id=$1", tokenID).Scan(&token)
+	if err != nil {
 		return nil, errs.NotFound
 	}
 
-	err = attributevalue.UnmarshalMap(response.Item, &token)
-	return
+	return &token, nil
 }
 
 // delete como deshabilitado un token
 func delete(tokenID string, deps ...interface{}) (err error) {
-	_, err = db.Get(deps...).DeleteItem(context.TODO(), &dynamodb.DeleteItemInput{
-		Key: map[string]types.AttributeValue{"id": &types.AttributeValueMemberS{
-			Value: tokenID,
-		}}, TableName: &tableName,
-	})
-
+	conn, err := db.GetPostgresClient(deps...)
 	if err != nil {
 		log.Get(deps...).Error(err)
+
+		return err
 	}
+
+	_, err = conn.Exec(context.Background(), "UPDATE Tokens set enabled=FALSE WHERE id=$1", tokenID)
+	if err != nil {
+		return errs.NotFound
+	}
+
 	return
 }

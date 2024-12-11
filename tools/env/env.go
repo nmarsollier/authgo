@@ -7,28 +7,24 @@ import (
 
 // Configuration properties
 type Configuration struct {
-	Port           int    `json:"port"`
-	GqlPort        int    `json:"gqlPort"`
-	RabbitURL      string `json:"rabbitUrl"`
-	JWTSecret      string `json:"jwtSecret"`
-	FluentUrl      string `json:"fluentUrl"`
-	AwsAccessKeyId string `json:"AwsAccessKeyId"`
-	AwsSecret      string `json:"AwsSecret"`
-	AwsRegion      string `json:"AwsRegion"`
+	Port        int    `json:"port"`
+	GqlPort     int    `json:"gqlPort"`
+	RabbitURL   string `json:"rabbitUrl"`
+	JWTSecret   string `json:"jwtSecret"`
+	FluentUrl   string `json:"fluentUrl"`
+	PostgresURL string `json:"postgresUrl"`
 }
 
 var config *Configuration
 
 func new() *Configuration {
 	return &Configuration{
-		Port:           3000,
-		GqlPort:        4000,
-		RabbitURL:      "amqp://localhost",
-		JWTSecret:      "ecb6d3479ac3823f1da7f314d871989b",
-		FluentUrl:      "localhost:24224",
-		AwsAccessKeyId: "placeholder_value",
-		AwsSecret:      "placeholder_value",
-		AwsRegion:      "placeholder_value",
+		Port:        3000,
+		GqlPort:     4000,
+		RabbitURL:   "amqp://localhost",
+		JWTSecret:   "ecb6d3479ac3823f1da7f314d871989b",
+		FluentUrl:   "localhost:24224",
+		PostgresURL: "postgres://postgres@localhost:5432/postgres",
 	}
 }
 
@@ -49,16 +45,8 @@ func load() *Configuration {
 		result.RabbitURL = value
 	}
 
-	if value := os.Getenv("AWS_ACCESS_KEY_ID"); len(value) > 0 {
-		result.AwsAccessKeyId = value
-	}
-
-	if value := os.Getenv("AWS_SECRET_ACCESS_KEY"); len(value) > 0 {
-		result.AwsSecret = value
-	}
-
-	if value := os.Getenv("AWS_REGION"); len(value) > 0 {
-		result.AwsRegion = value
+	if value := os.Getenv("POSTGRES_URL"); len(value) > 0 {
+		result.PostgresURL = value
 	}
 
 	if value := os.Getenv("FLUENT_URL"); len(value) > 0 {

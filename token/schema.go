@@ -11,9 +11,9 @@ import (
 
 // Token es una estructura valor que representa un token.
 type Token struct {
-	ID      string `dynamodbav:"id"`
-	UserID  string `dynamodbav:"userId"`
-	Enabled bool   `dynamodbav:"enabled"`
+	ID      string
+	UserID  string
+	Enabled bool
 }
 
 // NewToken crea un nuevo Token con la información minima necesaria

@@ -10,14 +10,14 @@ import (
 
 // User data structure
 type User struct {
-	ID          string    `dynamodbav:"id"`
-	Name        string    `dynamodbav:"name" validate:"required,min=1,max=100"`
-	Login       string    `dynamodbav:"login" validate:"required,min=5,max=100"`
-	Password    string    `dynamodbav:"password" validate:"required"`
-	Permissions []string  `dynamodbav:"permissions"`
-	Enabled     bool      `dynamodbav:"enabled"`
-	Created     time.Time `dynamodbav:"created"`
-	Updated     time.Time `dynamodbav:"updated"`
+	ID          string
+	Name        string
+	Login       string
+	Password    string
+	Permissions []string
+	Enabled     bool
+	Created     time.Time
+	Updated     time.Time
 }
 
 // NewUser Nueva instancia de usuario
