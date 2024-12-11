@@ -163,7 +163,7 @@
 				
 				<option value="file53">github.com/nmarsollier/authgo/tools/db/conn.go (0.0%)</option>
 				
-				<option value="file54">github.com/nmarsollier/authgo/tools/env/env.go (79.2%)</option>
+				<option value="file54">github.com/nmarsollier/authgo/tools/env/env.go (70.0%)</option>
 				
 				<option value="file55">github.com/nmarsollier/authgo/tools/errs/rest_error.go (0.0%)</option>
 				
@@ -8385,37 +8385,26 @@ func Invalidate(tokenString string, deps ...interface{}) error <span class="cov0
 import (
         "context"
 
-        "github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
-        "github.com/aws/aws-sdk-go-v2/service/dynamodb"
-        "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
         "github.com/nmarsollier/authgo/tools/db"
         "github.com/nmarsollier/authgo/tools/errs"
         "github.com/nmarsollier/authgo/tools/log"
 )
 
-var tableName = "tokens"
-
 // insert crea un nuevo token y lo almacena en la db
-func insert(userID string, deps ...interface{}) (*Token, error) <span class="cov0" title="0">{
-        token := newToken(userID)
+func insert(userID string, deps ...interface{}) (token *Token, err error) <span class="cov0" title="0">{
+        token = newToken(userID)
 
-        tokenToInsert, err := attributevalue.MarshalMap(token)
+        conn, err := db.GetPostgresClient(deps...)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
 
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">_, err = db.Get(deps...).PutItem(
-                context.TODO(),
-                &amp;dynamodb.PutItemInput{
-                        TableName: &amp;tableName,
-                        Item:      tokenToInsert,
-                },
-        )
+        <span class="cov0" title="0">query := `INSERT INTO Tokens (ID, UserID, Enabled) VALUES ($1, $2, $3)`
+        _, err = conn.Exec(context.TODO(), query, token.ID, token.UserID, token.Enabled)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
-
                 return nil, err
         }</span>
 
@@ -8423,36 +8412,37 @@ func insert(userID string, deps ...interface{}) (*Token, error) <span class="cov
 }
 
 // findByID busca un token en la db
-func findByID(tokenID string, deps ...interface{}) (token *Token, err error) <span class="cov0" title="0">{
-        response, err := db.Get().GetItem(context.TODO(), &amp;dynamodb.GetItemInput{
-                Key: map[string]types.AttributeValue{
-                        "id": &amp;types.AttributeValueMemberS{
-                                Value: tokenID,
-                        }},
-                TableName: &amp;tableName,
-        })
-
-        if err != nil || response == nil || response.Item == nil </span><span class="cov0" title="0">{
+func findByID(tokenID string, deps ...interface{}) (*Token, error) <span class="cov0" title="0">{
+        conn, err := db.GetPostgresClient(deps...)
+        if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
 
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">var token Token
+        err = conn.QueryRow(context.Background(), "SELECT * FROM Tokens WHERE id=$1", tokenID).Scan(&amp;token)
+        if err != nil </span><span class="cov0" title="0">{
                 return nil, errs.NotFound
         }</span>
 
-        <span class="cov0" title="0">err = attributevalue.UnmarshalMap(response.Item, &amp;token)
-        return</span>
+        <span class="cov0" title="0">return &amp;token, nil</span>
 }
 
 // delete como deshabilitado un token
 func delete(tokenID string, deps ...interface{}) (err error) <span class="cov0" title="0">{
-        _, err = db.Get(deps...).DeleteItem(context.TODO(), &amp;dynamodb.DeleteItemInput{
-                Key: map[string]types.AttributeValue{"id": &amp;types.AttributeValueMemberS{
-                        Value: tokenID,
-                }}, TableName: &amp;tableName,
-        })
-
+        conn, err := db.GetPostgresClient(deps...)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
+
+                return err
         }</span>
+
+        <span class="cov0" title="0">_, err = conn.Exec(context.Background(), "UPDATE Tokens set enabled=FALSE WHERE id=$1", tokenID)
+        if err != nil </span><span class="cov0" title="0">{
+                return errs.NotFound
+        }</span>
+
         <span class="cov0" title="0">return</span>
 }
 </pre>
@@ -8470,9 +8460,9 @@ import (
 
 // Token es una estructura valor que representa un token.
 type Token struct {
-        ID      string `dynamodbav:"id"`
-        UserID  string `dynamodbav:"userId"`
-        Enabled bool   `dynamodbav:"enabled"`
+        ID      string
+        UserID  string
+        Enabled bool
 }
 
 // NewToken crea un nuevo Token con la información minima necesaria
@@ -8559,43 +8549,40 @@ func Validate(tokenString string, deps ...interface{}) (*Token, error) <span cla
 
 import (
         "context"
-        "log"
-        "sync"
 
-        "github.com/aws/aws-sdk-go-v2/aws"
-        "github.com/aws/aws-sdk-go-v2/config"
-        "github.com/aws/aws-sdk-go-v2/credentials"
-        "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+        "github.com/jackc/pgx/v5/pgxpool"
+
         "github.com/nmarsollier/authgo/tools/env"
+        "github.com/nmarsollier/authgo/tools/log"
 )
 
 var (
-        once     sync.Once
-        instance *dynamodb.Client
+        instance *pgxpool.Pool
 )
 
-func Get(deps ...interface{}) *dynamodb.Client <span class="cov0" title="0">{
-        once.Do(func() </span><span class="cov0" title="0">{
-                customCreds := aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(
-                        env.Get().AwsAccessKeyId,
-                        env.Get().AwsSecret,
-                        "",
-                ))
-
-                cfg, err := config.LoadDefaultConfig(context.TODO(),
-                        config.WithRegion(env.Get().AwsRegion),
-                        config.WithCredentialsProvider(customCreds),
-                )
+func GetPostgresClient(deps ...interface{}) (*pgxpool.Pool, error) <span class="cov0" title="0">{
+        if instance == nil </span><span class="cov0" title="0">{
+                config, err := pgxpool.ParseConfig(env.Get().PostgresURL)
                 if err != nil </span><span class="cov0" title="0">{
-                        log.Fatalf("Error cargando la configuración: %v", err)
+                        log.Get(deps...).Error(err)
+                        return nil, err
                 }</span>
 
-                <span class="cov0" title="0">client := dynamodb.NewFromConfig(cfg)
+                <span class="cov0" title="0">instance, err = pgxpool.NewWithConfig(context.Background(), config)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Get(deps...).Error(err)
+                        return nil, err
+                }</span>
 
-                instance = client</span>
-        })
+                <span class="cov0" title="0">_, err = instance.Exec(context.Background(), "SET search_path TO authgo")
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Get(deps...).Error(err)
+                }</span>
 
-        <span class="cov0" title="0">return instance</span>
+                <span class="cov0" title="0">log.Get(deps...).Info("Postgres Connected")</span>
+        }
+
+        <span class="cov0" title="0">return instance, nil</span>
 }
 </pre>
 		
@@ -8608,28 +8595,24 @@ import (
 
 // Configuration properties
 type Configuration struct {
-        Port           int    `json:"port"`
-        GqlPort        int    `json:"gqlPort"`
-        RabbitURL      string `json:"rabbitUrl"`
-        JWTSecret      string `json:"jwtSecret"`
-        FluentUrl      string `json:"fluentUrl"`
-        AwsAccessKeyId string `json:"AwsAccessKeyId"`
-        AwsSecret      string `json:"AwsSecret"`
-        AwsRegion      string `json:"AwsRegion"`
+        Port        int    `json:"port"`
+        GqlPort     int    `json:"gqlPort"`
+        RabbitURL   string `json:"rabbitUrl"`
+        JWTSecret   string `json:"jwtSecret"`
+        FluentUrl   string `json:"fluentUrl"`
+        PostgresURL string `json:"postgresUrl"`
 }
 
 var config *Configuration
 
 func new() *Configuration <span class="cov8" title="1">{
         return &amp;Configuration{
-                Port:           3000,
-                GqlPort:        4000,
-                RabbitURL:      "amqp://localhost",
-                JWTSecret:      "ecb6d3479ac3823f1da7f314d871989b",
-                FluentUrl:      "localhost:24224",
-                AwsAccessKeyId: "placeholder_value",
-                AwsSecret:      "placeholder_value",
-                AwsRegion:      "placeholder_value",
+                Port:        3000,
+                GqlPort:     4000,
+                RabbitURL:   "amqp://localhost",
+                JWTSecret:   "ecb6d3479ac3823f1da7f314d871989b",
+                FluentUrl:   "localhost:24224",
+                PostgresURL: "postgres://postgres@localhost:5432/postgres",
         }
 }</span>
 
@@ -8650,16 +8633,8 @@ func load() *Configuration <span class="cov8" title="1">{
                 result.RabbitURL = value
         }</span>
 
-        <span class="cov8" title="1">if value := os.Getenv("AWS_ACCESS_KEY_ID"); len(value) &gt; 0 </span><span class="cov8" title="1">{
-                result.AwsAccessKeyId = value
-        }</span>
-
-        <span class="cov8" title="1">if value := os.Getenv("AWS_SECRET_ACCESS_KEY"); len(value) &gt; 0 </span><span class="cov8" title="1">{
-                result.AwsSecret = value
-        }</span>
-
-        <span class="cov8" title="1">if value := os.Getenv("AWS_REGION"); len(value) &gt; 0 </span><span class="cov8" title="1">{
-                result.AwsRegion = value
+        <span class="cov8" title="1">if value := os.Getenv("POSTGRES_URL"); len(value) &gt; 0 </span><span class="cov0" title="0">{
+                result.PostgresURL = value
         }</span>
 
         <span class="cov8" title="1">if value := os.Getenv("FLUENT_URL"); len(value) &gt; 0 </span><span class="cov8" title="1">{
@@ -9197,13 +9172,9 @@ func Granted(userID string, permission string, deps ...interface{}) bool <span c
 
 import (
         "context"
+        "database/sql"
         "time"
 
-        "github.com/aws/aws-sdk-go-v2/aws"
-        "github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
-        "github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
-        "github.com/aws/aws-sdk-go-v2/service/dynamodb"
-        "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
         "github.com/nmarsollier/authgo/tools/db"
         "github.com/nmarsollier/authgo/tools/errs"
         "github.com/nmarsollier/authgo/tools/log"
@@ -9220,70 +9191,39 @@ type DbUserUpdateDocumentBody struct {
 }
 
 func insert(user *User, deps ...interface{}) (_ *User, err error) <span class="cov0" title="0">{
-        if err = user.validateSchema(); err != nil </span><span class="cov0" title="0">{
+        conn, err := db.GetPostgresClient(deps...)
+        if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">userToInsert, err := attributevalue.MarshalMap(user)
+        <span class="cov0" title="0">query := `INSERT INTO Users (ID, Name, Login, Password, Permissions, Enabled, Created, Updated) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+        _, err = conn.Exec(context.TODO(), query, user.ID, user.Name, user.Login, user.Password, user.Permissions, user.Enabled, user.Created, user.Updated)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
-                return
-        }</span>
-
-        <span class="cov0" title="0">_, err = db.Get(deps...).PutItem(
-                context.TODO(),
-                &amp;dynamodb.PutItemInput{
-                        TableName: &amp;tableName,
-                        Item:      userToInsert,
-                },
-        )
-
-        if err != nil </span><span class="cov0" title="0">{
-                log.Get(deps...).Error(err)
-                return
+                return nil, err
         }</span>
 
         <span class="cov0" title="0">return user, nil</span>
 }
 
 func update(user *User, deps ...interface{}) (err error) <span class="cov0" title="0">{
-        if err = user.validateSchema(); err != nil </span><span class="cov0" title="0">{
+        if err := user.validateSchema(); err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
-                return
-        }</span>
-
-        <span class="cov0" title="0">userKey, err := attributevalue.MarshalMap(map[string]interface{}{
-                "id": user.ID,
-        })
-        if err != nil </span><span class="cov0" title="0">{
-                log.Get(deps...).Error(err)
-                return
-        }</span>
-
-        <span class="cov0" title="0">update, err := attributevalue.MarshalMap(map[string]interface{}{
-                ":name":        user.Name,
-                ":password":    user.Password,
-                ":permissions": user.Permissions,
-                ":enabled":     user.Enabled,
-                ":updated":     user.Updated,
-        })
-        if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">_, err = db.Get(deps...).UpdateItem(
-                context.TODO(),
-                &amp;dynamodb.UpdateItemInput{
-                        TableName:                 &amp;tableName,
-                        Key:                       userKey,
-                        UpdateExpression:          aws.String("SET name = :name, password = :password, permissions = :permissions, enabled = :enabled, updated = :updated"),
-                        ExpressionAttributeValues: update,
-                },
-        )
-
+        <span class="cov0" title="0">conn, err := db.GetPostgresClient(deps...)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
+                return err
+        }</span>
+
+        <span class="cov0" title="0">query := `UPDATE Users SET Name=$1, Password=$2, Permissions=$3, Enabled=$4, Updated=$5 WHERE ID=$6`
+        _, err = conn.Exec(context.TODO(), query, user.Name, user.Password, user.Permissions, user.Enabled, user.Updated, user.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Get(deps...).Error(err)
+                return err
         }</span>
 
         <span class="cov0" title="0">return nil</span>
@@ -9291,74 +9231,80 @@ func update(user *User, deps ...interface{}) (err error) <span class="cov0" titl
 
 // FindAll devuelve todos los usuarios
 func findAll(deps ...interface{}) (users []*User, err error) <span class="cov0" title="0">{
-        result, err := db.Get(deps...).Scan(context.TODO(), &amp;dynamodb.ScanInput{
-                TableName: &amp;tableName,
-        })
+        conn, err := db.GetPostgresClient(deps...)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
-                return
-        }</span>
-
-        <span class="cov0" title="0">err = attributevalue.UnmarshalListOfMaps(result.Items, &amp;users)
-        if err != nil </span><span class="cov0" title="0">{
-                log.Get(deps...).Error(err)
-        }</span>
-
-        <span class="cov0" title="0">return</span>
-}
-
-// FindByID lee un usuario desde la db
-func findByID(userID string, deps ...interface{}) (user *User, err error) <span class="cov0" title="0">{
-        response, err := db.Get(deps...).GetItem(context.TODO(), &amp;dynamodb.GetItemInput{
-                Key: map[string]types.AttributeValue{
-                        "id": &amp;types.AttributeValueMemberS{
-                                Value: userID,
-                        }},
-                TableName: &amp;tableName,
-        })
-
-        if err != nil || response == nil || response.Item == nil </span><span class="cov0" title="0">{
-                log.Get(deps...).Error(err)
-
-                return nil, errs.NotFound
-        }</span>
-
-        <span class="cov0" title="0">err = attributevalue.UnmarshalMap(response.Item, &amp;user)
-        if err != nil </span><span class="cov0" title="0">{
-                log.Get(deps...).Error(err)
-        }</span>
-
-        <span class="cov0" title="0">return</span>
-}
-
-// FindByLogin lee un usuario desde la db
-func findByLogin(login string, deps ...interface{}) (user *User, err error) <span class="cov0" title="0">{
-        expr, err := expression.NewBuilder().WithKeyCondition(
-                expression.Key("login").Equal(expression.Value(login)),
-        ).Build()
-        if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">response, err := db.Get(deps...).Query(context.TODO(), &amp;dynamodb.QueryInput{
-                TableName:                 &amp;tableName,
-                IndexName:                 aws.String("login-index"),
-                KeyConditionExpression:    expr.KeyCondition(),
-                ExpressionAttributeNames:  expr.Names(),
-                ExpressionAttributeValues: expr.Values(),
-        })
-
-        if err != nil || len(response.Items) == 0 </span><span class="cov0" title="0">{
-                log.Get(deps...).Error(err)
-                return
-        }</span>
-
-        <span class="cov0" title="0">err = attributevalue.UnmarshalMap(response.Items[0], &amp;user)
+        <span class="cov0" title="0">query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM Users`
+        rows, err := conn.Query(context.TODO(), query)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">defer rows.Close()
+
+        for rows.Next() </span><span class="cov0" title="0">{
+                var user User
+                err := rows.Scan(&amp;user.ID, &amp;user.Name, &amp;user.Login, &amp;user.Password, &amp;user.Permissions, &amp;user.Enabled, &amp;user.Created, &amp;user.Updated)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Get(deps...).Error(err)
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">users = append(users, &amp;user)</span>
+        }
+
+        <span class="cov0" title="0">if err = rows.Err(); err != nil </span><span class="cov0" title="0">{
+                log.Get(deps...).Error(err)
+                return nil, err
         }</span>
 
-        <span class="cov0" title="0">return</span>
+        <span class="cov0" title="0">return users, nil</span>
+}
+
+// FindByID lee un usuario desde la db
+func findByID(userID string, deps ...interface{}) (*User, error) <span class="cov0" title="0">{
+        conn, err := db.GetPostgresClient(deps...)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Get(deps...).Error(err)
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">var user User
+        query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM Users WHERE ID=$1`
+        err = conn.QueryRow(context.TODO(), query, userID).Scan(&amp;user.ID, &amp;user.Name, &amp;user.Login, &amp;user.Password, &amp;user.Permissions, &amp;user.Enabled, &amp;user.Created, &amp;user.Updated)
+        if err != nil </span><span class="cov0" title="0">{
+                if err == sql.ErrNoRows </span><span class="cov0" title="0">{
+                        return nil, errs.NotFound
+                }</span>
+                <span class="cov0" title="0">log.Get(deps...).Error(err)
+                return nil, err</span>
+        }
+
+        <span class="cov0" title="0">return &amp;user, err</span>
+}
+
+// FindByLogin lee un usuario desde la db
+func findByLogin(login string, deps ...interface{}) (*User, error) <span class="cov0" title="0">{
+        conn, err := db.GetPostgresClient(deps...)
+        if err != nil </span><span class="cov0" title="0">{
+                log.Get(deps...).Error(err)
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">var user User
+        query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM Users WHERE Login=$1`
+        err = conn.QueryRow(context.TODO(), query, login).Scan(&amp;user.ID, &amp;user.Name, &amp;user.Login, &amp;user.Password, &amp;user.Permissions, &amp;user.Enabled, &amp;user.Created, &amp;user.Updated)
+        if err != nil </span><span class="cov0" title="0">{
+                if err == sql.ErrNoRows </span><span class="cov0" title="0">{
+                        return nil, errs.NotFound
+                }</span>
+                <span class="cov0" title="0">log.Get(deps...).Error(err)
+                return nil, err</span>
+        }
+
+        <span class="cov0" title="0">return &amp;user, err</span>
 }
 </pre>
 		
@@ -9392,14 +9338,14 @@ import (
 
 // User data structure
 type User struct {
-        ID          string    `dynamodbav:"id"`
-        Name        string    `dynamodbav:"name" validate:"required,min=1,max=100"`
-        Login       string    `dynamodbav:"login" validate:"required,min=5,max=100"`
-        Password    string    `dynamodbav:"password" validate:"required"`
-        Permissions []string  `dynamodbav:"permissions"`
-        Enabled     bool      `dynamodbav:"enabled"`
-        Created     time.Time `dynamodbav:"created"`
-        Updated     time.Time `dynamodbav:"updated"`
+        ID          string
+        Name        string
+        Login       string
+        Password    string
+        Permissions []string
+        Enabled     bool
+        Created     time.Time
+        Updated     time.Time
 }
 
 // NewUser Nueva instancia de usuario

@@ -1,6 +1,10 @@
 mode: set
-github.com/nmarsollier/authgo/tools/db/conn.go:20.48,21.17 1 0
-github.com/nmarsollier/authgo/tools/db/conn.go:21.17,32.17 3 0
-github.com/nmarsollier/authgo/tools/db/conn.go:32.17,34.4 1 0
-github.com/nmarsollier/authgo/tools/db/conn.go:36.3,38.20 2 0
-github.com/nmarsollier/authgo/tools/db/conn.go:41.2,41.17 1 0
+github.com/nmarsollier/authgo/tools/db/conn.go:16.68,17.21 1 0
+github.com/nmarsollier/authgo/tools/db/conn.go:17.21,19.17 2 0
+github.com/nmarsollier/authgo/tools/db/conn.go:19.17,22.4 2 0
+github.com/nmarsollier/authgo/tools/db/conn.go:24.3,25.17 2 0
+github.com/nmarsollier/authgo/tools/db/conn.go:25.17,28.4 2 0
+github.com/nmarsollier/authgo/tools/db/conn.go:30.3,31.17 2 0
+github.com/nmarsollier/authgo/tools/db/conn.go:31.17,33.4 1 0
+github.com/nmarsollier/authgo/tools/db/conn.go:35.3,35.46 1 0
+github.com/nmarsollier/authgo/tools/db/conn.go:38.2,38.22 1 0
