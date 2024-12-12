@@ -39,7 +39,7 @@ func findByID(tokenID string, deps ...interface{}) (*Token, error) {
 	}
 
 	var token Token
-	err = conn.QueryRow(context.Background(), "SELECT * FROM Tokens WHERE id=$1", tokenID).Scan(&token)
+	err = conn.QueryRow(context.Background(), "SELECT id, userId, enabled FROM Tokens WHERE id=$1 and enabled=true", tokenID).Scan(&token.ID, &token.UserID, &token.Enabled)
 	if err != nil {
 		return nil, errs.NotFound
 	}
