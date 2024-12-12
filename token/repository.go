@@ -19,7 +19,7 @@ func insert(userID string, deps ...interface{}) (token *Token, err error) {
 		return nil, err
 	}
 
-	query := `INSERT INTO Tokens (ID, UserID, Enabled) VALUES ($1, $2, $3)`
+	query := `INSERT INTO authgo.Tokens (ID, UserID, Enabled) VALUES ($1, $2, $3)`
 	_, err = conn.Exec(context.TODO(), query, token.ID, token.UserID, token.Enabled)
 	if err != nil {
 		log.Get(deps...).Error(err)
@@ -39,7 +39,7 @@ func findByID(tokenID string, deps ...interface{}) (*Token, error) {
 	}
 
 	var token Token
-	err = conn.QueryRow(context.Background(), "SELECT id, userId, enabled FROM Tokens WHERE id=$1 and enabled=true", tokenID).Scan(&token.ID, &token.UserID, &token.Enabled)
+	err = conn.QueryRow(context.Background(), "SELECT id, userId, enabled FROM authgo.Tokens WHERE id=$1 and enabled=true", tokenID).Scan(&token.ID, &token.UserID, &token.Enabled)
 	if err != nil {
 		return nil, errs.NotFound
 	}
@@ -56,7 +56,7 @@ func delete(tokenID string, deps ...interface{}) (err error) {
 		return err
 	}
 
-	_, err = conn.Exec(context.Background(), "UPDATE Tokens set enabled=FALSE WHERE id=$1", tokenID)
+	_, err = conn.Exec(context.Background(), "UPDATE authgo.Tokens set enabled=FALSE WHERE id=$1", tokenID)
 	if err != nil {
 		return errs.NotFound
 	}

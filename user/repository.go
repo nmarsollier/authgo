@@ -27,7 +27,7 @@ func insert(user *User, deps ...interface{}) (_ *User, err error) {
 		return nil, err
 	}
 
-	query := `INSERT INTO Users (ID, Name, Login, Password, Permissions, Enabled, Created, Updated) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+	query := `INSERT INTO authgo.Users (ID, Name, Login, Password, Permissions, Enabled, Created, Updated) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 	_, err = conn.Exec(context.TODO(), query, user.ID, user.Name, user.Login, user.Password, user.Permissions, user.Enabled, user.Created, user.Updated)
 	if err != nil {
 		log.Get(deps...).Error(err)
@@ -49,7 +49,7 @@ func update(user *User, deps ...interface{}) (err error) {
 		return err
 	}
 
-	query := `UPDATE Users SET Name=$1, Password=$2, Permissions=$3, Enabled=$4, Updated=$5 WHERE ID=$6`
+	query := `UPDATE authgo.Users SET Name=$1, Password=$2, Permissions=$3, Enabled=$4, Updated=$5 WHERE ID=$6`
 	_, err = conn.Exec(context.TODO(), query, user.Name, user.Password, user.Permissions, user.Enabled, user.Updated, user.ID)
 	if err != nil {
 		log.Get(deps...).Error(err)
@@ -67,7 +67,7 @@ func findAll(deps ...interface{}) (users []*User, err error) {
 		return nil, err
 	}
 
-	query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM Users`
+	query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM authgo.Users`
 	rows, err := conn.Query(context.TODO(), query)
 	if err != nil {
 		log.Get(deps...).Error(err)
@@ -102,7 +102,7 @@ func findByID(userID string, deps ...interface{}) (*User, error) {
 	}
 
 	var user User
-	query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM Users WHERE ID=$1`
+	query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM authgo.Users WHERE ID=$1`
 	err = conn.QueryRow(context.TODO(), query, userID).Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.Permissions, &user.Enabled, &user.Created, &user.Updated)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -124,7 +124,7 @@ func findByLogin(login string, deps ...interface{}) (*User, error) {
 	}
 
 	var user User
-	query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM Users WHERE Login=$1`
+	query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM authgo.Users WHERE Login=$1`
 	err = conn.QueryRow(context.TODO(), query, login).Scan(&user.ID, &user.Name, &user.Login, &user.Password, &user.Permissions, &user.Enabled, &user.Created, &user.Updated)
 	if err != nil {
 		if err == sql.ErrNoRows {
