@@ -8421,7 +8421,7 @@ func findByID(tokenID string, deps ...interface{}) (*Token, error) <span class="
         }</span>
 
         <span class="cov0" title="0">var token Token
-        err = conn.QueryRow(context.Background(), "SELECT * FROM Tokens WHERE id=$1", tokenID).Scan(&amp;token)
+        err = conn.QueryRow(context.Background(), "SELECT id, userId, enabled FROM Tokens WHERE id=$1 and enabled=true", tokenID).Scan(&amp;token.ID, &amp;token.UserID, &amp;token.Enabled)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, errs.NotFound
         }</span>
