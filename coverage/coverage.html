@@ -8401,7 +8401,7 @@ func insert(userID string, deps ...interface{}) (token *Token, err error) <span 
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">query := `INSERT INTO Tokens (ID, UserID, Enabled) VALUES ($1, $2, $3)`
+        <span class="cov0" title="0">query := `INSERT INTO authgo.Tokens (ID, UserID, Enabled) VALUES ($1, $2, $3)`
         _, err = conn.Exec(context.TODO(), query, token.ID, token.UserID, token.Enabled)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
@@ -8421,7 +8421,7 @@ func findByID(tokenID string, deps ...interface{}) (*Token, error) <span class="
         }</span>
 
         <span class="cov0" title="0">var token Token
-        err = conn.QueryRow(context.Background(), "SELECT id, userId, enabled FROM Tokens WHERE id=$1 and enabled=true", tokenID).Scan(&amp;token.ID, &amp;token.UserID, &amp;token.Enabled)
+        err = conn.QueryRow(context.Background(), "SELECT id, userId, enabled FROM authgo.Tokens WHERE id=$1 and enabled=true", tokenID).Scan(&amp;token.ID, &amp;token.UserID, &amp;token.Enabled)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, errs.NotFound
         }</span>
@@ -8438,7 +8438,7 @@ func delete(tokenID string, deps ...interface{}) (err error) <span class="cov0" 
                 return err
         }</span>
 
-        <span class="cov0" title="0">_, err = conn.Exec(context.Background(), "UPDATE Tokens set enabled=FALSE WHERE id=$1", tokenID)
+        <span class="cov0" title="0">_, err = conn.Exec(context.Background(), "UPDATE authgo.Tokens set enabled=FALSE WHERE id=$1", tokenID)
         if err != nil </span><span class="cov0" title="0">{
                 return errs.NotFound
         }</span>
@@ -8572,11 +8572,6 @@ func GetPostgresClient(deps ...interface{}) (*pgxpool.Pool, error) <span class="
                 if err != nil </span><span class="cov0" title="0">{
                         log.Get(deps...).Error(err)
                         return nil, err
-                }</span>
-
-                <span class="cov0" title="0">_, err = instance.Exec(context.Background(), "SET search_path TO authgo")
-                if err != nil </span><span class="cov0" title="0">{
-                        log.Get(deps...).Error(err)
                 }</span>
 
                 <span class="cov0" title="0">log.Get(deps...).Info("Postgres Connected")</span>
@@ -9197,7 +9192,7 @@ func insert(user *User, deps ...interface{}) (_ *User, err error) <span class="c
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">query := `INSERT INTO Users (ID, Name, Login, Password, Permissions, Enabled, Created, Updated) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+        <span class="cov0" title="0">query := `INSERT INTO authgo.Users (ID, Name, Login, Password, Permissions, Enabled, Created, Updated) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
         _, err = conn.Exec(context.TODO(), query, user.ID, user.Name, user.Login, user.Password, user.Permissions, user.Enabled, user.Created, user.Updated)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
@@ -9219,7 +9214,7 @@ func update(user *User, deps ...interface{}) (err error) <span class="cov0" titl
                 return err
         }</span>
 
-        <span class="cov0" title="0">query := `UPDATE Users SET Name=$1, Password=$2, Permissions=$3, Enabled=$4, Updated=$5 WHERE ID=$6`
+        <span class="cov0" title="0">query := `UPDATE authgo.Users SET Name=$1, Password=$2, Permissions=$3, Enabled=$4, Updated=$5 WHERE ID=$6`
         _, err = conn.Exec(context.TODO(), query, user.Name, user.Password, user.Permissions, user.Enabled, user.Updated, user.ID)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
@@ -9237,7 +9232,7 @@ func findAll(deps ...interface{}) (users []*User, err error) <span class="cov0" 
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM Users`
+        <span class="cov0" title="0">query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM authgo.Users`
         rows, err := conn.Query(context.TODO(), query)
         if err != nil </span><span class="cov0" title="0">{
                 log.Get(deps...).Error(err)
@@ -9272,7 +9267,7 @@ func findByID(userID string, deps ...interface{}) (*User, error) <span class="co
         }</span>
 
         <span class="cov0" title="0">var user User
-        query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM Users WHERE ID=$1`
+        query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM authgo.Users WHERE ID=$1`
         err = conn.QueryRow(context.TODO(), query, userID).Scan(&amp;user.ID, &amp;user.Name, &amp;user.Login, &amp;user.Password, &amp;user.Permissions, &amp;user.Enabled, &amp;user.Created, &amp;user.Updated)
         if err != nil </span><span class="cov0" title="0">{
                 if err == sql.ErrNoRows </span><span class="cov0" title="0">{
@@ -9294,7 +9289,7 @@ func findByLogin(login string, deps ...interface{}) (*User, error) <span class="
         }</span>
 
         <span class="cov0" title="0">var user User
-        query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM Users WHERE Login=$1`
+        query := `SELECT ID, Name, Login, Password, Permissions, Enabled, Created, Updated FROM authgo.Users WHERE Login=$1`
         err = conn.QueryRow(context.TODO(), query, login).Scan(&amp;user.ID, &amp;user.Name, &amp;user.Login, &amp;user.Password, &amp;user.Permissions, &amp;user.Enabled, &amp;user.Created, &amp;user.Updated)
         if err != nil </span><span class="cov0" title="0">{
                 if err == sql.ErrNoRows </span><span class="cov0" title="0">{

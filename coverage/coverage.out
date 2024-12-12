@@ -2300,10 +2300,8 @@ github.com/nmarsollier/authgo/tools/db/conn.go:17.21,19.17 2 0
 github.com/nmarsollier/authgo/tools/db/conn.go:19.17,22.4 2 0
 github.com/nmarsollier/authgo/tools/db/conn.go:24.3,25.17 2 0
 github.com/nmarsollier/authgo/tools/db/conn.go:25.17,28.4 2 0
-github.com/nmarsollier/authgo/tools/db/conn.go:30.3,31.17 2 0
-github.com/nmarsollier/authgo/tools/db/conn.go:31.17,33.4 1 0
-github.com/nmarsollier/authgo/tools/db/conn.go:35.3,35.46 1 0
-github.com/nmarsollier/authgo/tools/db/conn.go:38.2,38.22 1 0
+github.com/nmarsollier/authgo/tools/db/conn.go:30.3,30.46 1 0
+github.com/nmarsollier/authgo/tools/db/conn.go:33.2,33.22 1 0
 github.com/nmarsollier/authgo/tools/env/env.go:20.27,29.2 1 1
 github.com/nmarsollier/authgo/tools/env/env.go:32.27,33.19 1 0
 github.com/nmarsollier/authgo/tools/env/env.go:33.19,35.3 1 0
