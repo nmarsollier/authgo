@@ -3,7 +3,6 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/rest/server"
-	"github.com/nmarsollier/authgo/user"
 )
 
 //	@Summary		Haiblitar permisos
@@ -19,13 +18,13 @@ import (
 //	@Failure		401				{object}	server.ErrorData	"Unauthorized"
 //	@Failure		404				{object}	server.ErrorData	"Not Found"
 //	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
-//	@Router			/v1/users/:userID/grant [post]
+//	@Router			/users/:userID/grant [post]
 //
 // Otorga permisos al usuario indicado.
-func postUsersIdGrantRoute() {
-	server.Router().POST(
-		"/v1/users/:userID/grant",
-		server.ValidateAdmin,
+func postUsersIdGrantRoute(engine *gin.Engine) {
+	engine.POST(
+		"/users/:userID/grant",
+		server.IsAdminMiddleware,
 		grantPermission,
 	)
 }
@@ -42,8 +41,8 @@ func grantPermission(c *gin.Context) {
 	}
 	userId := c.Param("userID")
 
-	deps := server.GinDeps(c)
-	if err := user.Grant(userId, body.Permissions, deps...); err != nil {
+	di := server.GinDi(c)
+	if err := di.UserService().Grant(userId, body.Permissions); err != nil {
 		server.AbortWithError(c, err)
 		return
 	}

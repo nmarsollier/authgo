@@ -3,7 +3,6 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/rest/server"
-	"github.com/nmarsollier/authgo/user"
 )
 
 //	@Summary		Deshabilitar Usuario
@@ -18,13 +17,13 @@ import (
 //	@Failure		401				{object}	server.ErrorData	"Unauthorized"
 //	@Failure		404				{object}	server.ErrorData	"Not Found"
 //	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
-//	@Router			/v1/users/:userId/disable [post]
+//	@Router			/users/:userId/disable [post]
 //
 // Deshabilitar Usuario
-func postUsersIdDisableRoute() {
-	server.Router().POST(
-		"/v1/users/:userID/disable",
-		server.ValidateAdmin,
+func postUsersIdDisableRoute(engine *gin.Engine) {
+	engine.POST(
+		"/users/:userID/disable",
+		server.IsAdminMiddleware,
 		disable,
 	)
 }
@@ -32,8 +31,8 @@ func postUsersIdDisableRoute() {
 func disable(c *gin.Context) {
 	userId := c.Param("userID")
 
-	deps := server.GinDeps(c)
-	if err := user.Disable(userId, deps...); err != nil {
+	di := server.GinDi(c)
+	if err := di.UserService().Disable(userId); err != nil {
 		server.AbortWithError(c, err)
 	}
 }

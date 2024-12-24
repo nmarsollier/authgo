@@ -1,0 +1,24 @@
+mode: set
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:27.75,31.2 3 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:34.73,36.2 1 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:39.96,45.2 5 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:48.87,51.2 2 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:54.89,59.2 4 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:62.93,65.2 2 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:68.105,74.2 5 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:77.94,80.2 2 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:83.105,89.2 5 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:92.100,95.2 2 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:109.57,113.2 3 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:116.55,118.2 1 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:121.55,126.2 4 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:129.71,132.2 2 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:135.52,140.2 4 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:143.72,146.2 2 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:149.53,154.2 4 0
+github.com/nmarsollier/authgo/tests/engine/db/mongo_collection_mocks.go:157.70,160.2 2 0
+github.com/nmarsollier/authgo/tests/engine/db/test_tools.go:26.74,28.72 1 0
+github.com/nmarsollier/authgo/tests/engine/db/test_tools.go:28.72,30.4 1 0
+github.com/nmarsollier/authgo/tests/engine/db/test_tools.go:33.76,35.2 1 0
+github.com/nmarsollier/authgo/tests/engine/db/test_tools.go:37.76,39.2 1 0
+github.com/nmarsollier/authgo/tests/engine/db/test_tools.go:41.60,43.2 1 0

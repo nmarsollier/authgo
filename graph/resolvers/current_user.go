@@ -5,7 +5,6 @@ import (
 
 	"github.com/nmarsollier/authgo/graph/model"
 	"github.com/nmarsollier/authgo/graph/tools"
-	"github.com/nmarsollier/authgo/user"
 )
 
 func CurrentUser(ctx context.Context) (*model.User, error) {
@@ -14,8 +13,8 @@ func CurrentUser(ctx context.Context) (*model.User, error) {
 		return nil, err
 	}
 
-	deps := tools.GqlDeps(ctx)
-	user, err := user.Get(token.UserID.Hex(), deps...)
+	di := tools.GqlDi(ctx)
+	user, err := di.UserService().FindById(token.UserID.Hex())
 	if err != nil {
 		return nil, err
 	}

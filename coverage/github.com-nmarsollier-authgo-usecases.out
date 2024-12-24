@@ -1,0 +1,26 @@
+mode: set
+github.com/nmarsollier/authgo/usecases/invalidate_token.go:17.26,23.2 1 0
+github.com/nmarsollier/authgo/usecases/invalidate_token.go:31.70,34.16 2 0
+github.com/nmarsollier/authgo/usecases/invalidate_token.go:34.16,36.3 1 0
+github.com/nmarsollier/authgo/usecases/invalidate_token.go:38.2,38.12 1 0
+github.com/nmarsollier/authgo/usecases/invalidate_token.go:38.12,39.22 1 0
+github.com/nmarsollier/authgo/usecases/invalidate_token.go:39.22,42.4 2 0
+github.com/nmarsollier/authgo/usecases/invalidate_token.go:44.3,44.63 1 0
+github.com/nmarsollier/authgo/usecases/invalidate_token.go:44.63,46.4 1 0
+github.com/nmarsollier/authgo/usecases/invalidate_token.go:49.2,49.12 1 0
+github.com/nmarsollier/authgo/usecases/sign_in.go:13.100,18.2 1 0
+github.com/nmarsollier/authgo/usecases/sign_in.go:30.80,32.16 2 0
+github.com/nmarsollier/authgo/usecases/sign_in.go:32.16,34.3 1 0
+github.com/nmarsollier/authgo/usecases/sign_in.go:36.2,37.16 2 0
+github.com/nmarsollier/authgo/usecases/sign_in.go:37.16,39.3 1 0
+github.com/nmarsollier/authgo/usecases/sign_in.go:41.2,42.16 2 0
+github.com/nmarsollier/authgo/usecases/sign_in.go:42.16,44.3 1 0
+github.com/nmarsollier/authgo/usecases/sign_in.go:46.2,46.48 1 0
+github.com/nmarsollier/authgo/usecases/sign_up.go:13.100,18.2 1 0
+github.com/nmarsollier/authgo/usecases/sign_up.go:35.80,37.16 2 0
+github.com/nmarsollier/authgo/usecases/sign_up.go:37.16,39.3 1 0
+github.com/nmarsollier/authgo/usecases/sign_up.go:41.2,43.16 2 0
+github.com/nmarsollier/authgo/usecases/sign_up.go:43.16,45.3 1 0
+github.com/nmarsollier/authgo/usecases/sign_up.go:47.2,48.16 2 0
+github.com/nmarsollier/authgo/usecases/sign_up.go:48.16,50.3 1 0
+github.com/nmarsollier/authgo/usecases/sign_up.go:52.2,52.48 1 0

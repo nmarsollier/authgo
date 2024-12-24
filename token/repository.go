@@ -3,106 +3,65 @@ package token
 import (
 	"context"
 
-	"github.com/nmarsollier/authgo/tools/db"
-	"github.com/nmarsollier/authgo/tools/errs"
-	"github.com/nmarsollier/authgo/tools/log"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/nmarsollier/authgo/engine/db"
+	"github.com/nmarsollier/authgo/engine/errs"
+	"github.com/nmarsollier/authgo/engine/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var collection db.MongoCollection
-
-func dbCollection(deps ...interface{}) (db.MongoCollection, error) {
-	for _, o := range deps {
-		if tc, ok := o.(db.MongoCollection); ok {
-			return tc, nil
-		}
-	}
-
-	if collection != nil {
-		return collection, nil
-	}
-
-	database, err := db.Get(deps...)
-	if err != nil {
-		log.Get(deps...).Error(err)
-		return nil, err
-	}
-
-	_collection := database.Collection("tokens")
-
-	_, err = _collection.Indexes().CreateOne(
-		context.Background(),
-		mongo.IndexModel{
-			Keys: bson.M{
-				"userId": 1, // index in ascending order
-			}, Options: nil,
-		},
-	)
-	if err != nil {
-		log.Get(deps...).Error(err)
-		return nil, err
-	}
-
-	collection = db.NewMongoCollection(_collection)
-
-	return collection, nil
+type TokenRepository interface {
+	Insert(userID primitive.ObjectID) (*Token, error)
+	FindByID(tokenID string) (*Token, error)
+	Delete(tokenID primitive.ObjectID) error
 }
 
-// insert crea un nuevo token y lo almacena en la db
-func insert(userID primitive.ObjectID, deps ...interface{}) (*Token, error) {
-	collection, err := dbCollection(deps...)
-	if err != nil {
-		log.Get(deps...).Error(err)
-		return nil, err
-	}
+func NewTokenRepository(
+	log log.LogRusEntry,
+	collection db.MongoCollection,
+) (TokenRepository, error) {
+	return &tokenRepository{
+		log:        log,
+		collection: collection,
+	}, nil
+}
 
+type tokenRepository struct {
+	log        log.LogRusEntry
+	collection db.MongoCollection
+}
+
+func (r *tokenRepository) Insert(userID primitive.ObjectID) (*Token, error) {
 	token := newToken(userID)
 
-	_, err = collection.InsertOne(context.Background(), token)
+	_, err := r.collection.InsertOne(context.Background(), token)
 	if err != nil {
-		log.Get(deps...).Error(err)
+		r.log.Error(err)
 		return nil, err
 	}
 
 	return token, nil
 }
 
-// findByID busca un token en la db
-func findByID(tokenID string, deps ...interface{}) (*Token, error) {
-	collection, err := dbCollection(deps...)
-	if err != nil {
-		log.Get(deps...).Error(err)
-		return nil, err
-	}
-
+func (r *tokenRepository) FindByID(tokenID string) (*Token, error) {
 	_id, err := primitive.ObjectIDFromHex(tokenID)
 	if err != nil {
-		log.Get(deps...).Error(err)
+		r.log.Error(err)
 		return nil, errs.Unauthorized
 	}
 
 	token := &Token{}
 	filter := DbTokenIdFilter{ID: _id}
 
-	if err = collection.FindOne(context.Background(), filter, token); err != nil {
-		log.Get(deps...).Error(err)
+	if err = r.collection.FindOne(context.Background(), filter, token); err != nil {
+		r.log.Error(err)
 		return nil, err
 	}
 
 	return token, nil
 }
 
-// delete como deshabilitado un token
-func delete(tokenID primitive.ObjectID, deps ...interface{}) error {
-	collection, err := dbCollection(deps...)
-	if err != nil {
-		log.Get(deps...).Error(err)
-		return err
-	}
-
-	_, err = collection.UpdateOne(context.Background(),
+func (r *tokenRepository) Delete(tokenID primitive.ObjectID) error {
+	_, err := r.collection.UpdateOne(context.Background(),
 		DbTokenIdFilter{ID: tokenID},
 		DbDeleteTokenDocument{Set: DbDeleteTokenBody{Enabled: false}},
 	)

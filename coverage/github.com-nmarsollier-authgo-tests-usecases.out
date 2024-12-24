@@ -1,0 +1,13 @@
+mode: set
+github.com/nmarsollier/authgo/tests/usecases/invalidate_token_mocks.go:25.89,29.2 3 0
+github.com/nmarsollier/authgo/tests/usecases/invalidate_token_mocks.go:32.87,34.2 1 0
+github.com/nmarsollier/authgo/tests/usecases/invalidate_token_mocks.go:37.74,42.2 4 0
+github.com/nmarsollier/authgo/tests/usecases/invalidate_token_mocks.go:45.99,48.2 2 0
+github.com/nmarsollier/authgo/tests/usecases/sign_in_mocks.go:26.71,30.2 3 0
+github.com/nmarsollier/authgo/tests/usecases/sign_in_mocks.go:33.69,35.2 1 0
+github.com/nmarsollier/authgo/tests/usecases/sign_in_mocks.go:38.102,44.2 5 0
+github.com/nmarsollier/authgo/tests/usecases/sign_in_mocks.go:47.83,50.2 2 0
+github.com/nmarsollier/authgo/tests/usecases/sign_up_mocks.go:26.71,30.2 3 0
+github.com/nmarsollier/authgo/tests/usecases/sign_up_mocks.go:33.69,35.2 1 0
+github.com/nmarsollier/authgo/tests/usecases/sign_up_mocks.go:38.102,44.2 5 0
+github.com/nmarsollier/authgo/tests/usecases/sign_up_mocks.go:47.83,50.2 2 0

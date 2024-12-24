@@ -5,10 +5,8 @@ import (
 	"strings"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/nmarsollier/authgo/engine/errs"
 	"github.com/nmarsollier/authgo/token"
-	"github.com/nmarsollier/authgo/tools/errs"
-	"github.com/nmarsollier/authgo/tools/log"
-	"github.com/nmarsollier/authgo/user"
 )
 
 func ValidateLoggedIn(ctx context.Context) error {
@@ -24,9 +22,9 @@ func ValidateAdmin(ctx context.Context) error {
 		return err
 	}
 
-	env := GqlDeps(ctx)
-	if !user.Granted(token.UserID.Hex(), "admin", env...) {
-		log.Get(env...).Warn("Unauthorized")
+	di := GqlDi(ctx)
+	if !di.UserService().Granted(token.UserID.Hex(), "admin") {
+		di.Logger().Warn("Unauthorized")
 		return errs.Unauthorized
 	}
 
@@ -35,16 +33,16 @@ func ValidateAdmin(ctx context.Context) error {
 
 // HeaderToken Token data from Authorization header
 func HeaderToken(ctx context.Context) (*token.Token, error) {
-	env := GqlDeps(ctx)
+	di := GqlDi(ctx)
 
 	tokenString, err := TokenString(ctx)
 	if err != nil {
 		return nil, errs.Unauthorized
 	}
 
-	payload, err := token.Validate(tokenString, env...)
+	payload, err := di.TokenService().Validate(tokenString)
 	if err != nil {
-		log.Get(env...).Error(err)
+		di.Logger().Error(err)
 		return nil, err
 	}
 

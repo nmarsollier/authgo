@@ -9,3 +9,13 @@ type UserData struct {
 }
 
 func (UserData) IsEntity() {}
+
+func NewUserData(user *User) *UserData {
+	return &UserData{
+		Id:          user.ID.Hex(),
+		Name:        user.Name,
+		Permissions: user.Permissions,
+		Login:       user.Login,
+		Enabled:     user.Enabled,
+	}
+}

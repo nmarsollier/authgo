@@ -3,7 +3,6 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/rest/server"
-	"github.com/nmarsollier/authgo/user"
 )
 
 //	@Summary		Usuario Actual
@@ -12,18 +11,18 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string				true	"Bearer {token}"
-//	@Success		200				{object}	user.UserResponse	"User data"
+//	@Success		200				{object}	user.UserData		"User data"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
 //	@Failure		401				{object}	server.ErrorData	"Unauthorized"
 //	@Failure		404				{object}	server.ErrorData	"Not Found"
 //	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
-//	@Router			/v1/users/current [get]
+//	@Router			/users/current [get]
 //
 // Obtiene información del usuario actual.
-func getUsersCurrentRoute() {
-	server.Router().GET(
-		"/v1/users/current",
-		server.ValidateLoggedIn,
+func getUsersCurrentRoute(engine *gin.Engine) {
+	engine.GET(
+		"/users/current",
+		server.IsAuthenticatedMiddleware,
 		currentUser,
 	)
 }
@@ -31,8 +30,8 @@ func getUsersCurrentRoute() {
 func currentUser(c *gin.Context) {
 	token := server.HeaderToken(c)
 
-	deps := server.GinDeps(c)
-	user, err := user.Get(token.UserID.Hex(), deps...)
+	di := server.GinDi(c)
+	user, err := di.UserService().FindById(token.UserID.Hex())
 	if err != nil {
 		server.AbortWithError(c, err)
 		return

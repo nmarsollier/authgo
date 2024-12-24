@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/nmarsollier/authgo/graph/tools"
-	"github.com/nmarsollier/authgo/user"
 )
 
 func Revoke(ctx context.Context, userID string, permissions []string) (bool, error) {
@@ -12,9 +11,9 @@ func Revoke(ctx context.Context, userID string, permissions []string) (bool, err
 		return false, err
 	}
 
-	env := tools.GqlDeps(ctx)
+	di := tools.GqlDi(ctx)
 
-	if err := user.Revoke(userID, permissions, env...); err != nil {
+	if err := di.UserService().Revoke(userID, permissions); err != nil {
 		return false, err
 	}
 

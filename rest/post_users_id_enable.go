@@ -3,7 +3,6 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/rest/server"
-	"github.com/nmarsollier/authgo/user"
 )
 
 //	@Summary		Enable User
@@ -18,22 +17,22 @@ import (
 //	@Failure		401				{object}	server.ErrorData	"Unauthorized"
 //	@Failure		404				{object}	server.ErrorData	"Not Found"
 //	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
-//	@Router			/v1/users/:userId/enable [post]
+//	@Router			/users/:userId/enable [post]
 //
 // Habilita un usuario en el sistema.
-func postUsersIdEnableRoute() {
-	server.Router().POST(
-		"/v1/users/:userID/enable",
-		server.ValidateAdmin,
+func postUsersIdEnableRoute(engine *gin.Engine) {
+	engine.POST(
+		"/users/:userID/enable",
+		server.IsAdminMiddleware,
 		enable,
 	)
 }
 
 func enable(c *gin.Context) {
 	userId := c.Param("userID")
-	deps := server.GinDeps(c)
+	di := server.GinDi(c)
 
-	if err := user.Enable(userId, deps...); err != nil {
+	if err := di.UserService().Enable(userId); err != nil {
 		server.AbortWithError(c, err)
 	}
 }

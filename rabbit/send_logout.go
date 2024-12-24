@@ -3,8 +3,27 @@ package rabbit
 import (
 	"encoding/json"
 
-	"github.com/nmarsollier/authgo/tools/log"
+	"github.com/nmarsollier/authgo/engine/log"
 )
+
+type SendLogoutService interface {
+	SendLogout(token string) error
+}
+
+type sendLogoutService struct {
+	channel RabbitChannel
+	log     log.LogRusEntry
+}
+
+func NewSendLogoutService(
+	log log.LogRusEntry,
+	channel RabbitChannel,
+) (SendLogoutService, error) {
+	return &sendLogoutService{
+		channel: channel,
+		log:     log,
+	}, nil
+}
 
 //	@Summary		Mensage Rabbit
 //	@Description	SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.
@@ -15,8 +34,8 @@ import (
 //	@Router			/rabbit/logout [put]
 //
 // SendLogout envía un broadcast a rabbit con logout
-func SendLogout(token string, deps ...interface{}) error {
-	logger := log.Get(deps...).
+func (s *sendLogoutService) SendLogout(token string) error {
+	logger := s.log.
 		WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
 		WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
 		WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
@@ -28,14 +47,7 @@ func SendLogout(token string, deps ...interface{}) error {
 		Message:       token,
 	}
 
-	deps = append(deps, logger)
-	chanel, err := getChannel(deps...)
-	if err != nil {
-		logger.Error(err)
-		return err
-	}
-
-	err = chanel.ExchangeDeclare(
+	err := s.channel.ExchangeDeclare(
 		"auth",   // name
 		"fanout", // type
 	)
@@ -50,7 +62,7 @@ func SendLogout(token string, deps ...interface{}) error {
 		return err
 	}
 
-	err = chanel.Publish(
+	err = s.channel.Publish(
 		"auth", // exchange
 		"",     // routing key
 		body)

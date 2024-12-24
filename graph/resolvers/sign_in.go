@@ -5,14 +5,14 @@ import (
 
 	"github.com/nmarsollier/authgo/graph/model"
 	"github.com/nmarsollier/authgo/graph/tools"
-	"github.com/nmarsollier/authgo/user"
+	"github.com/nmarsollier/authgo/usecases"
 )
 
 // SignIn is the resolver for the signIn field.
 func SignIn(ctx context.Context, login string, password string) (*model.Token, error) {
-	env := tools.GqlDeps(ctx)
+	env := tools.GqlDi(ctx)
 
-	tokenString, err := user.SignIn(user.SignInRequest{Login: login, Password: password}, env...)
+	tokenString, err := env.SignInUseCase().SignIn(&usecases.SignInRequest{Login: login, Password: password})
 	if err != nil {
 		return nil, err
 	}

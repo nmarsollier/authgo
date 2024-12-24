@@ -3,25 +3,41 @@ package token
 import (
 	"time"
 
-	"github.com/nmarsollier/authgo/tools/errs"
+	"github.com/nmarsollier/authgo/engine/errs"
 	gocache "github.com/patrickmn/go-cache"
 )
 
-var cache = gocache.New(60*time.Minute, 10*time.Minute)
+type TokenCache interface {
+	Add(token *Token) error
+	Get(tokenString string) (*Token, error)
+	Remove(token string)
+}
+
+func NewTokenCache() TokenCache {
+	cache := gocache.New(60*time.Minute, 10*time.Minute)
+
+	return &tokenCache{
+		cache: cache,
+	}
+}
+
+type tokenCache struct {
+	cache *gocache.Cache
+}
 
 // Add genera un nuevo token al cache
-func cacheAdd(token *Token) error {
+func (c *tokenCache) Add(token *Token) error {
 	tokenString, err := Encode(token)
 	if err != nil {
 		return err
 	}
-	cache.Set(tokenString, token, gocache.DefaultExpiration)
+	c.cache.Set(tokenString, token, gocache.DefaultExpiration)
 	return nil
 }
 
-func cacheGet(tokenString string) (*Token, error) {
+func (c *tokenCache) Get(tokenString string) (*Token, error) {
 	// Si esta en cache, retornamos el cache
-	if found, ok := cache.Get(tokenString); ok {
+	if found, ok := c.cache.Get(tokenString); ok {
 		if token, ok := found.(*Token); ok {
 			return token, nil
 		}
@@ -31,8 +47,6 @@ func cacheGet(tokenString string) (*Token, error) {
 }
 
 // Remove elimia un token del cache
-func cacheRemove(token *Token) {
-	if tokenString, err := Encode(token); err == nil {
-		cache.Delete(tokenString)
-	}
+func (c *tokenCache) Remove(tokenString string) {
+	c.cache.Delete(tokenString)
 }

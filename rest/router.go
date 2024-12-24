@@ -3,25 +3,26 @@ package rest
 import (
 	"fmt"
 
+	"github.com/gin-gonic/gin"
+	"github.com/nmarsollier/authgo/engine/env"
 	"github.com/nmarsollier/authgo/rest/server"
-	"github.com/nmarsollier/authgo/tools/env"
 )
 
 // Start this server
 func Start() {
-	InitRoutes()
+	InitRoutes(server.Router())
 	server.Router().Run(fmt.Sprintf(":%d", env.Get().Port))
 }
 
-func InitRoutes() {
-	getUserSignOutRoute()
-	getUsersCurrentRoute()
-	getUsersRoute()
-	getUserPasswordRoute()
-	postUserSignInRoute()
-	postUsersRoute()
-	postUsersIdDisableRoute()
-	postUsersIdEnableRoute()
-	postUsersIdGrantRoute()
-	postUsersIdRevokeRoute()
+func InitRoutes(engine *gin.Engine) {
+	getUserSignOutRoute(engine)
+	getUsersCurrentRoute(engine)
+	getUsersRoute(engine)
+	getUserPasswordRoute(engine)
+	postUserSignInRoute(engine)
+	postUsersRoute(engine)
+	postUsersIdDisableRoute(engine)
+	postUsersIdEnableRoute(engine)
+	postUsersIdGrantRoute(engine)
+	postUsersIdRevokeRoute(engine)
 }

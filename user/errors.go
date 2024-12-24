@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/nmarsollier/authgo/tools/errs"
+	"github.com/nmarsollier/authgo/engine/errs"
 )
 
 // ErrID el id del documento es invalido

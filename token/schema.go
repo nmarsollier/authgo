@@ -4,19 +4,17 @@ import (
 	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go/v4"
-	"github.com/nmarsollier/authgo/tools/env"
-	"github.com/nmarsollier/authgo/tools/errs"
+	"github.com/nmarsollier/authgo/engine/env"
+	"github.com/nmarsollier/authgo/engine/errs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Token es una estructura valor que representa un token.
 type Token struct {
 	ID      primitive.ObjectID `bson:"_id"`
 	UserID  primitive.ObjectID `bson:"userId"`
 	Enabled bool               `bson:"enabled"`
 }
 
-// NewToken crea un nuevo Token con la información minima necesaria
 func newToken(userID primitive.ObjectID) *Token {
 	return &Token{
 		ID:      primitive.NewObjectID(),
@@ -25,7 +23,6 @@ func newToken(userID primitive.ObjectID) *Token {
 	}
 }
 
-// Encode codifica un Token obteniendo el tokenString
 func Encode(t *Token) (string, error) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"tokenID": t.ID.Hex(),
@@ -41,7 +38,6 @@ func Encode(t *Token) (string, error) {
 	return tokenString, nil
 }
 
-// descifra el token string y devuelve los datos del payload
 func ExtractPayload(tokenString string) (string, string, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

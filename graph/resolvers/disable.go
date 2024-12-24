@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/nmarsollier/authgo/graph/tools"
-	"github.com/nmarsollier/authgo/user"
 )
 
 func Disable(ctx context.Context, userID string) (bool, error) {
@@ -12,9 +11,9 @@ func Disable(ctx context.Context, userID string) (bool, error) {
 		return false, err
 	}
 
-	env := tools.GqlDeps(ctx)
+	di := tools.GqlDi(ctx)
 
-	if err := user.Disable(userID, env...); err != nil {
+	if err := di.UserService().Disable(userID); err != nil {
 		return false, err
 	}
 

@@ -1,5 +1,5 @@
 schema:
-  - graph/*.graphqls
+  - graph/schema/*.graphqls
 
 exec:
   filename: graph/model/schema.go
@@ -11,14 +11,10 @@ model:
 
 resolver:
   layout: follow-schema
-  dir: graph
-  package: graph
+  dir: graph/schema
+  package: schema
 
 call_argument_directives_with_null: true
-
-autobind:
-#  - "github.com/nmarsollier/authgo/user"
-#  - "github.com/nmarsollier/authgo/token"
 
 federation:
   filename: graph/model/federation.go

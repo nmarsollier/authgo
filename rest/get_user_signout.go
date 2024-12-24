@@ -3,7 +3,6 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/rest/server"
-	"github.com/nmarsollier/authgo/token"
 )
 
 // @Summary		Logout
@@ -14,22 +13,22 @@ import (
 // @Param			Authorization	header	string	true	"Bearer {token}"
 // @Success		200				"No Content"
 // @Failure		500				{object}	server.ErrorData	"Error response"
-// @Router			/v1/user/signout [get]
+// @Router			/users/signout [get]
 //
 // Desloguea un usuario en el sistema, invalida el token.
-func getUserSignOutRoute() {
-	server.Router().GET(
-		"/v1/user/signout",
-		server.ValidateLoggedIn,
+func getUserSignOutRoute(engine *gin.Engine) {
+	engine.GET(
+		"/users/signout",
+		server.IsAuthenticatedMiddleware,
 		signOut,
 	)
 }
 
 func signOut(c *gin.Context) {
 	tokenString, _ := server.HeaderAuthorization(c)
-	deps := server.GinDeps(c)
+	di := server.GinDi(c)
 
-	if err := token.Invalidate(tokenString, deps...); err != nil {
+	if err := di.InvalidateTokenUseCase().InvalidateToken(tokenString); err != nil {
 		server.AbortWithError(c, err)
 		return
 	}

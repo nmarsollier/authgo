@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/nmarsollier/authgo/graph/tools"
-	"github.com/nmarsollier/authgo/user"
 )
 
 func ChangePassword(ctx context.Context, oldPassword string, newPassword string) (bool, error) {
@@ -13,8 +12,8 @@ func ChangePassword(ctx context.Context, oldPassword string, newPassword string)
 		return false, err
 	}
 
-	env := tools.GqlDeps(ctx)
-	if err := user.ChangePassword(token.UserID.Hex(), oldPassword, newPassword, env...); err != nil {
+	di := tools.GqlDi(ctx)
+	if err := di.UserService().ChangePassword(token.UserID.Hex(), oldPassword, newPassword); err != nil {
 		return false, err
 	}
 

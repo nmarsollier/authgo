@@ -2,13 +2,19 @@ package tools
 
 import (
 	"context"
+
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/nmarsollier/authgo/engine/di"
 )
 
-func GqlDeps(c context.Context) []interface{} {
+func GqlDi(c context.Context) di.Injector {
+	operationContext := graphql.GetOperationContext(c)
+	context_deps, exist := operationContext.Variables["di"]
+	if exist {
+		return context_deps.(di.Injector)
+	}
 
-	var deps []interface{}
-
-	deps = append(deps, gqlLogger(c))
-
+	deps := di.NewInjector(newLogger(c))
+	operationContext.Variables["di"] = deps
 	return deps
 }

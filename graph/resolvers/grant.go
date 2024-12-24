@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/nmarsollier/authgo/graph/tools"
-	"github.com/nmarsollier/authgo/user"
 )
 
 func Grant(ctx context.Context, userID string, permissions []string) (bool, error) {
@@ -12,9 +11,9 @@ func Grant(ctx context.Context, userID string, permissions []string) (bool, erro
 		return false, err
 	}
 
-	env := tools.GqlDeps(ctx)
+	di := tools.GqlDi(ctx)
 
-	if err := user.Grant(userID, permissions, env...); err != nil {
+	if err := di.UserService().Grant(userID, permissions); err != nil {
 		return false, err
 	}
 

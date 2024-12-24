@@ -1,0 +1,14 @@
+mode: set
+github.com/nmarsollier/authgo/tests/router/server/assertion_tools.go:14.69,21.2 4 0
+github.com/nmarsollier/authgo/tests/router/server/assertion_tools.go:23.73,29.2 4 0
+github.com/nmarsollier/authgo/tests/router/server/assertion_tools.go:31.76,33.2 1 0
+github.com/nmarsollier/authgo/tests/router/server/assertion_tools.go:35.72,37.2 1 0
+github.com/nmarsollier/authgo/tests/router/server/request_tools.go:13.97,15.26 2 0
+github.com/nmarsollier/authgo/tests/router/server/request_tools.go:15.26,17.3 1 0
+github.com/nmarsollier/authgo/tests/router/server/request_tools.go:18.2,19.15 2 0
+github.com/nmarsollier/authgo/tests/router/server/request_tools.go:22.116,26.26 3 0
+github.com/nmarsollier/authgo/tests/router/server/request_tools.go:26.26,28.3 1 0
+github.com/nmarsollier/authgo/tests/router/server/request_tools.go:29.2,30.15 2 0
+github.com/nmarsollier/authgo/tests/router/server/test_router.go:12.72,14.34 2 0
+github.com/nmarsollier/authgo/tests/router/server/test_router.go:14.34,17.3 2 0
+github.com/nmarsollier/authgo/tests/router/server/test_router.go:19.2,23.15 4 0

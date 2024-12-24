@@ -3,7 +3,6 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/rest/server"
-	"github.com/nmarsollier/authgo/user"
 )
 
 //	@Summary		Quitar permisos
@@ -19,13 +18,13 @@ import (
 //	@Failure		401				{object}	server.ErrorData	"Unauthorized"
 //	@Failure		404				{object}	server.ErrorData	"Not Found"
 //	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
-//	@Router			/v1/users/:userID/revoke [post]
+//	@Router			/users/:userID/revoke [post]
 //
 // Quita permisos al usuario indicado.
-func postUsersIdRevokeRoute() {
-	server.Router().POST(
-		"/v1/users/:userID/revoke",
-		server.ValidateAdmin,
+func postUsersIdRevokeRoute(engine *gin.Engine) {
+	engine.POST(
+		"/users/:userID/revoke",
+		server.IsAdminMiddleware,
 		revokePermission,
 	)
 }
@@ -43,8 +42,8 @@ func revokePermission(c *gin.Context) {
 
 	userId := c.Param("userID")
 
-	deps := server.GinDeps(c)
-	if err := user.Revoke(userId, body.Permissions, deps...); err != nil {
+	di := server.GinDi(c)
+	if err := di.UserService().Revoke(userId, body.Permissions); err != nil {
 		server.AbortWithError(c, err)
 		return
 	}

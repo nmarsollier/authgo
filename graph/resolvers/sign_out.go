@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/nmarsollier/authgo/graph/tools"
-	"github.com/nmarsollier/authgo/token"
 )
 
 func SignOut(ctx context.Context) (bool, error) {
@@ -13,9 +12,9 @@ func SignOut(ctx context.Context) (bool, error) {
 		return false, err
 	}
 
-	env := tools.GqlDeps(ctx)
+	env := tools.GqlDi(ctx)
 
-	if err := token.Invalidate(tokenString, env...); err != nil {
+	if err := env.InvalidateTokenUseCase().InvalidateToken(tokenString); err != nil {
 		return false, err
 	}
 
