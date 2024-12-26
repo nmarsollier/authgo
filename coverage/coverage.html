@@ -284,68 +284,6 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/user/password": {
-            "post": {
-                "description": "Cambia la contraseña del usuario actual.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Seguridad"
-                ],
-                "summary": "Cambiar Password",
-                "parameters": [
-                    {
-                        "description": "Passwords",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/rest.changePasswordBody"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer {token}",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "No Content"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errs.ValidationErr"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    }
-                }
-            }
-        },
         "/users/:userID/grant": {
             "post": {
                 "description": "Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso \"admin\".",
@@ -691,6 +629,68 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/user.UserData"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errs.ValidationErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/password": {
+            "post": {
+                "description": "Cambia la contraseña del usuario actual.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Cambiar Password",
+                "parameters": [
+                    {
+                        "description": "Passwords",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.changePasswordBody"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -1265,7 +1265,7 @@ func (i *Deps) Database() *mongo.Database <span class="cov0" title="0">{
                 return database
         }</span>
 
-        <span class="cov0" title="0">database, err := db.NewDatabase(env.Get().MongoURL, "authgo")
+        <span class="cov0" title="0">database, err := db.NewDatabase(env.Get().MongoURL, "auth")
         if err != nil </span><span class="cov0" title="0">{
                 i.CurrLog.Fatal(err)
                 return nil
@@ -8355,7 +8355,7 @@ import (
 //        @Failure                401                                {object}        server.ErrorData        "Unauthorized"
 //        @Failure                404                                {object}        server.ErrorData        "Not Found"
 //        @Failure                500                                {object}        server.ErrorData        "Internal Server Error"
-//        @Router                        /user/password [post]
+//        @Router                        /users/password [post]
 //
 // Cambia la contraseña del usuario actual.
 func getUserPasswordRoute(engine *gin.Engine) <span class="cov8" title="1">{
