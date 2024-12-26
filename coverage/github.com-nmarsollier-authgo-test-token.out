@@ -1,0 +1,6 @@
+mode: set
+github.com/nmarsollier/authgo/test/token/tools.go:13.41,23.2 3 0
+github.com/nmarsollier/authgo/test/token/tools.go:25.87,27.82 1 0
+github.com/nmarsollier/authgo/test/token/tools.go:27.82,31.4 2 0
+github.com/nmarsollier/authgo/test/token/tools.go:35.94,37.89 1 0
+github.com/nmarsollier/authgo/test/token/tools.go:37.89,42.4 3 0

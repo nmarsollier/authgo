@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/nmarsollier/authgo/graph"
-	routes "github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/internal/graph"
+	routes "github.com/nmarsollier/authgo/internal/rest"
 )
 
 //	@title			AuthGo
