@@ -12,19 +12,19 @@ import (
 	"github.com/nmarsollier/authgo/test/engine/db"
 	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
+	"github.com/nmarsollier/authgo/test/mockgen"
 	"github.com/nmarsollier/authgo/test/rabbit"
-	ttoken "github.com/nmarsollier/authgo/test/token"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetUserSignOutHappyPath(t *testing.T) {
-	tokenData, tokenString := ttoken.TestToken()
+	tokenData, tokenString := mock.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 
-	mongo := mock.NewMockCollection(ctrl)
-	ttoken.ExpectTokenAuthFindOne(t, mongo, tokenData)
+	mongo := mockgen.NewMockCollection(ctrl)
+	mock.ExpectTokenAuthFindOne(t, mongo, tokenData)
 
 	mongo.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 		func(arg1 interface{}, filter token.DbTokenIdFilter, update token.DbDeleteTokenDocument) (int64, error) {
@@ -65,13 +65,13 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 }
 
 func TestGetUserSignOutDbUpdateError(t *testing.T) {
-	tokenData, tokenString := ttoken.TestToken()
+	tokenData, tokenString := mock.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 
-	mongo := mock.NewMockCollection(ctrl)
-	ttoken.ExpectTokenAuthFindOne(t, mongo, tokenData)
+	mongo := mockgen.NewMockCollection(ctrl)
+	mock.ExpectTokenAuthFindOne(t, mongo, tokenData)
 	db.ExpectUpdateOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
@@ -105,11 +105,11 @@ func TestGetUserSignOutInvalidToken(t *testing.T) {
 }
 
 func TestGetUserSignOutDbFindError(t *testing.T) {
-	_, tokenString := ttoken.TestToken()
+	_, tokenString := mock.TestToken()
 
 	// Db Mocks
 	ctrl := gomock.NewController(t)
-	mongo := mock.NewMockCollection(ctrl)
+	mongo := mockgen.NewMockCollection(ctrl)
 	db.ExpectFindOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST

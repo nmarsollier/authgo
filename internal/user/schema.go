@@ -31,8 +31,8 @@ func NewUser() *User {
 	}
 }
 
-// setPasswordText Asigna la contraseña en modo texto, la encripta
-func (e *User) setPasswordText(pwd string) error {
+// SetPasswordText Asigna la contraseña en modo texto, la encripta
+func (e *User) SetPasswordText(pwd string) error {
 	hash, err := encryptPassword(pwd)
 	if err != nil {
 		return ErrPassword

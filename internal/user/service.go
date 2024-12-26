@@ -37,7 +37,7 @@ func (s *userService) ChangePassword(userID string, current string, newPassword 
 		return err
 	}
 
-	if err = user.setPasswordText(newPassword); err != nil {
+	if err = user.SetPasswordText(newPassword); err != nil {
 		return err
 	}
 
@@ -77,7 +77,7 @@ func (s *userService) New(login string, name string, password string) (*UserData
 	newUser := NewUser()
 	newUser.Login = login
 	newUser.Name = name
-	newUser.setPasswordText(password)
+	newUser.SetPasswordText(password)
 
 	result, err := s.repository.Insert(newUser)
 	return NewUserData(result), err
@@ -166,6 +166,10 @@ func (s *userService) FindById(userID string) (*UserData, error) {
 	user, err := s.repository.FindByID(userID)
 	if err != nil {
 		return nil, err
+	}
+
+	if !user.Enabled {
+		return nil, errs.NotFound
 	}
 
 	return NewUserData(user), err

@@ -11,7 +11,7 @@ import (
 	"github.com/nmarsollier/authgo/internal/usecases"
 	"github.com/nmarsollier/authgo/internal/user"
 	tlog "github.com/nmarsollier/authgo/test/engine/log"
-	"github.com/nmarsollier/authgo/test/mock"
+	"github.com/nmarsollier/authgo/test/mockgen"
 	trabbit "github.com/nmarsollier/authgo/test/rabbit"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -30,7 +30,7 @@ func NewTestInjector(
 		},
 	}
 
-	mongo := mock.NewMockCollection(ctrl)
+	mongo := mockgen.NewMockCollection(ctrl)
 	result.SetTokenCollection(mongo)
 	result.SetUserCollection(mongo)
 	result.SetRabbitChannel(trabbit.DefaultMockRabbitChannel(ctrl, 0))
