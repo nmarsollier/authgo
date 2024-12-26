@@ -1,13 +1,13 @@
 mode: set
 github.com/nmarsollier/authgo/internal/token/cache.go:16.33,22.2 2 0
-github.com/nmarsollier/authgo/internal/token/cache.go:29.46,31.16 2 0
-github.com/nmarsollier/authgo/internal/token/cache.go:31.16,33.3 1 0
-github.com/nmarsollier/authgo/internal/token/cache.go:34.2,35.12 2 0
-github.com/nmarsollier/authgo/internal/token/cache.go:38.62,40.47 1 0
-github.com/nmarsollier/authgo/internal/token/cache.go:40.47,41.38 1 0
-github.com/nmarsollier/authgo/internal/token/cache.go:41.38,43.4 1 0
-github.com/nmarsollier/authgo/internal/token/cache.go:46.2,46.27 1 0
-github.com/nmarsollier/authgo/internal/token/cache.go:50.49,52.2 1 0
+github.com/nmarsollier/authgo/internal/token/cache.go:28.46,30.16 2 0
+github.com/nmarsollier/authgo/internal/token/cache.go:30.16,32.3 1 0
+github.com/nmarsollier/authgo/internal/token/cache.go:33.2,34.12 2 0
+github.com/nmarsollier/authgo/internal/token/cache.go:37.62,38.47 1 0
+github.com/nmarsollier/authgo/internal/token/cache.go:38.47,39.38 1 0
+github.com/nmarsollier/authgo/internal/token/cache.go:39.38,41.4 1 0
+github.com/nmarsollier/authgo/internal/token/cache.go:44.2,44.27 1 0
+github.com/nmarsollier/authgo/internal/token/cache.go:47.49,49.2 1 0
 github.com/nmarsollier/authgo/internal/token/repository.go:21.28,26.2 1 0
 github.com/nmarsollier/authgo/internal/token/repository.go:33.77,37.16 3 0
 github.com/nmarsollier/authgo/internal/token/repository.go:37.16,40.3 2 0

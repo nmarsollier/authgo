@@ -98,4 +98,6 @@ github.com/nmarsollier/authgo/internal/user/service.go:155.16,157.3 1 0
 github.com/nmarsollier/authgo/internal/user/service.go:159.2,162.12 3 0
 github.com/nmarsollier/authgo/internal/user/service.go:165.66,167.16 2 0
 github.com/nmarsollier/authgo/internal/user/service.go:167.16,169.3 1 0
-github.com/nmarsollier/authgo/internal/user/service.go:171.2,171.31 1 0
+github.com/nmarsollier/authgo/internal/user/service.go:171.2,171.19 1 0
+github.com/nmarsollier/authgo/internal/user/service.go:171.19,173.3 1 0
+github.com/nmarsollier/authgo/internal/user/service.go:175.2,175.31 1 0

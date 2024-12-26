@@ -1,8 +1,4 @@
 mode: set
-github.com/nmarsollier/authgo/internal/rest/get_user_signout.go:19.46,25.2 1 0
-github.com/nmarsollier/authgo/internal/rest/get_user_signout.go:27.30,31.81 3 0
-github.com/nmarsollier/authgo/internal/rest/get_user_signout.go:31.81,34.3 2 0
-github.com/nmarsollier/authgo/internal/rest/get_user_signout.go:36.2,36.10 1 0
 github.com/nmarsollier/authgo/internal/rest/get_users_all.go:22.40,28.2 1 0
 github.com/nmarsollier/authgo/internal/rest/get_users_all.go:30.28,34.16 3 0
 github.com/nmarsollier/authgo/internal/rest/get_users_all.go:34.16,37.3 2 0
@@ -11,6 +7,10 @@ github.com/nmarsollier/authgo/internal/rest/get_users_current.go:22.47,28.2 1 0
 github.com/nmarsollier/authgo/internal/rest/get_users_current.go:30.34,35.16 4 0
 github.com/nmarsollier/authgo/internal/rest/get_users_current.go:35.16,38.3 2 0
 github.com/nmarsollier/authgo/internal/rest/get_users_current.go:40.2,40.19 1 0
+github.com/nmarsollier/authgo/internal/rest/get_users_signout.go:19.46,25.2 1 0
+github.com/nmarsollier/authgo/internal/rest/get_users_signout.go:27.30,31.81 3 0
+github.com/nmarsollier/authgo/internal/rest/get_users_signout.go:31.81,34.3 2 0
+github.com/nmarsollier/authgo/internal/rest/get_users_signout.go:36.2,36.10 1 0
 github.com/nmarsollier/authgo/internal/rest/post_users_id_disable.go:23.50,29.2 1 0
 github.com/nmarsollier/authgo/internal/rest/post_users_id_disable.go:31.30,35.57 3 0
 github.com/nmarsollier/authgo/internal/rest/post_users_id_disable.go:35.57,37.3 1 0
