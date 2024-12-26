@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/nmarsollier/authgo/graph/server"
-	routes "github.com/nmarsollier/authgo/rest"
+	"github.com/nmarsollier/authgo/internal/graph"
+	routes "github.com/nmarsollier/authgo/internal/rest"
 )
 
 //	@title			AuthGo
@@ -15,7 +15,7 @@ import (
 // @host		localhost:3000
 // @BasePath	/v1
 func main() {
-	go server.Start()
+	go graph.Start()
 
 	routes.Start()
 }

@@ -49,7 +49,6 @@ cd $GOPATH/src/github.com/nmarsollier/authgo
 ## Instalar Librerías requeridas
 
 ```bash
-git config core.hooksPath .githooks
 go install github.com/swaggo/gin-swagger/swaggerFiles
 go install github.com/swaggo/gin-swagger
 go install github.com/swaggo/swag/cmd/swag

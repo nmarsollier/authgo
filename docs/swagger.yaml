@@ -51,7 +51,7 @@ definitions:
       error:
         type: string
     type: object
-  user.SignInRequest:
+  usecases.SignInRequest:
     properties:
       login:
         type: string
@@ -61,7 +61,7 @@ definitions:
     - login
     - password
     type: object
-  user.SignUpRequest:
+  usecases.SignUpRequest:
     properties:
       login:
         type: string
@@ -74,12 +74,12 @@ definitions:
     - name
     - password
     type: object
-  user.TokenResponse:
+  usecases.TokenResponse:
     properties:
       token:
         type: string
     type: object
-  user.UserResponse:
+  user.UserData:
     properties:
       enabled:
         type: boolean
@@ -122,187 +122,7 @@ paths:
       summary: Mensage Rabbit
       tags:
       - Rabbit
-  /v1/user:
-    post:
-      consumes:
-      - application/json
-      description: Registra un nuevo usuario en el sistema.
-      parameters:
-      - description: Informacion de ususario
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/user.SignUpRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: User Token
-          schema:
-            $ref: '#/definitions/user.TokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.ValidationErr'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-      summary: Registrar Usuario
-      tags:
-      - Seguridad
-  /v1/user/password:
-    post:
-      consumes:
-      - application/json
-      description: Cambia la contraseña del usuario actual.
-      parameters:
-      - description: Passwords
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/rest.changePasswordBody'
-      - description: Bearer {token}
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.ValidationErr'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-      summary: Cambiar Password
-      tags:
-      - Seguridad
-  /v1/user/signin:
-    post:
-      consumes:
-      - application/json
-      description: Loguea un usuario en el sistema.
-      parameters:
-      - description: Sign in information
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/user.SignInRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: User Token
-          schema:
-            $ref: '#/definitions/user.TokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.ValidationErr'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-      summary: Login
-      tags:
-      - Seguridad
-  /v1/user/signout:
-    get:
-      consumes:
-      - application/json
-      description: Desloguea un usuario en el sistema, invalida el token.
-      parameters:
-      - description: Bearer {token}
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: No Content
-        "500":
-          description: Error response
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-      summary: Logout
-      tags:
-      - Seguridad
-  /v1/users:
-    get:
-      consumes:
-      - application/json
-      description: Obtiene información de todos los usuarios. El usuario logueado
-        debe tener permisos "admin".
-      parameters:
-      - description: Bearer {token}
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Users
-          schema:
-            items:
-              $ref: '#/definitions/user.UserResponse'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.ValidationErr'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-      summary: Listar Usuarios
-      tags:
-      - Seguridad
-  /v1/users/:userID/grant:
+  /users/:userID/grant:
     post:
       consumes:
       - application/json
@@ -349,7 +169,7 @@ paths:
       summary: Haiblitar permisos
       tags:
       - Seguridad
-  /v1/users/:userID/revoke:
+  /users/:userID/revoke:
     post:
       consumes:
       - application/json
@@ -396,7 +216,7 @@ paths:
       summary: Quitar permisos
       tags:
       - Seguridad
-  /v1/users/:userId/disable:
+  /users/:userId/disable:
     post:
       consumes:
       - application/json
@@ -437,7 +257,7 @@ paths:
       summary: Deshabilitar Usuario
       tags:
       - Seguridad
-  /v1/users/:userId/enable:
+  /users/:userId/enable:
     post:
       consumes:
       - application/json
@@ -478,7 +298,47 @@ paths:
       summary: Enable User
       tags:
       - Seguridad
-  /v1/users/current:
+  /users/all:
+    get:
+      consumes:
+      - application/json
+      description: Obtiene información de todos los usuarios. El usuario logueado
+        debe tener permisos "admin".
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users
+          schema:
+            items:
+              $ref: '#/definitions/user.UserData'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.ValidationErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+      summary: Listar Usuarios
+      tags:
+      - Seguridad
+  /users/current:
     get:
       consumes:
       - application/json
@@ -495,7 +355,7 @@ paths:
         "200":
           description: User data
           schema:
-            $ref: '#/definitions/user.UserResponse'
+            $ref: '#/definitions/user.UserData'
         "400":
           description: Bad Request
           schema:
@@ -513,6 +373,146 @@ paths:
           schema:
             $ref: '#/definitions/server.ErrorData'
       summary: Usuario Actual
+      tags:
+      - Seguridad
+  /users/password:
+    post:
+      consumes:
+      - application/json
+      description: Cambia la contraseña del usuario actual.
+      parameters:
+      - description: Passwords
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.changePasswordBody'
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.ValidationErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+      summary: Cambiar Password
+      tags:
+      - Seguridad
+  /users/signin:
+    post:
+      consumes:
+      - application/json
+      description: Loguea un usuario en el sistema.
+      parameters:
+      - description: Sign in information
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Token
+          schema:
+            $ref: '#/definitions/usecases.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.ValidationErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+      summary: Login
+      tags:
+      - Seguridad
+  /users/signout:
+    get:
+      consumes:
+      - application/json
+      description: Desloguea un usuario en el sistema, invalida el token.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "500":
+          description: Error response
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+      summary: Logout
+      tags:
+      - Seguridad
+  /users/signup:
+    post:
+      consumes:
+      - application/json
+      description: Registra un nuevo usuario en el sistema.
+      parameters:
+      - description: Informacion de ususario
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Token
+          schema:
+            $ref: '#/definitions/usecases.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.ValidationErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+      summary: Registrar Usuario
       tags:
       - Seguridad
 swagger: "2.0"

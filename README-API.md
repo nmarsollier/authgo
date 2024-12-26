@@ -31,140 +31,7 @@ SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.
 | ---- | ----------- |
 
 ---
-### /v1/user
-
-#### POST
-##### Summary
-
-Registrar Usuario
-
-##### Description
-
-Registra un nuevo usuario en el sistema.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ------ |
-| body | body | Informacion de ususario | Yes | [user.SignUpRequest](#usersignuprequest) |
-
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | User Token | [user.TokenResponse](#usertokenresponse) |
-| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
-| 404 | Not Found | [server.ErrorData](#servererrordata) |
-| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
-
-### /v1/user/password
-
-#### POST
-##### Summary
-
-Cambiar Password
-
-##### Description
-
-Cambia la contraseña del usuario actual.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ------ |
-| body | body | Passwords | Yes | [rest.changePasswordBody](#restchangepasswordbody) |
-| Authorization | header | Bearer {token} | Yes | string |
-
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | No Content |  |
-| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
-| 404 | Not Found | [server.ErrorData](#servererrordata) |
-| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
-
-### /v1/user/signin
-
-#### POST
-##### Summary
-
-Login
-
-##### Description
-
-Loguea un usuario en el sistema.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ------ |
-| body | body | Sign in information | Yes | [user.SignInRequest](#usersigninrequest) |
-
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | User Token | [user.TokenResponse](#usertokenresponse) |
-| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
-| 404 | Not Found | [server.ErrorData](#servererrordata) |
-| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
-
-### /v1/user/signout
-
-#### GET
-##### Summary
-
-Logout
-
-##### Description
-
-Desloguea un usuario en el sistema, invalida el token.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ------ |
-| Authorization | header | Bearer {token} | Yes | string |
-
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | No Content |  |
-| 500 | Error response | [server.ErrorData](#servererrordata) |
-
-### /v1/users
-
-#### GET
-##### Summary
-
-Listar Usuarios
-
-##### Description
-
-Obtiene información de todos los usuarios. El usuario logueado debe tener permisos "admin".
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ------ |
-| Authorization | header | Bearer {token} | Yes | string |
-
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | Users | [ [user.UserResponse](#useruserresponse) ] |
-| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
-| 404 | Not Found | [server.ErrorData](#servererrordata) |
-| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
-
-### /v1/users/:userID/grant
+### /users/:userID/grant
 
 #### POST
 ##### Summary
@@ -193,7 +60,7 @@ Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
 | 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
-### /v1/users/:userID/revoke
+### /users/:userID/revoke
 
 #### POST
 ##### Summary
@@ -222,7 +89,7 @@ Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso 
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
 | 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
-### /v1/users/:userId/disable
+### /users/:userId/disable
 
 #### POST
 ##### Summary
@@ -250,7 +117,7 @@ Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos "a
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
 | 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
-### /v1/users/:userId/enable
+### /users/:userId/enable
 
 #### POST
 ##### Summary
@@ -278,7 +145,34 @@ Habilita un usuario en el sistema. El usuario logueado debe tener permisos "admi
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
 | 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
-### /v1/users/current
+### /users/all
+
+#### GET
+##### Summary
+
+Listar Usuarios
+
+##### Description
+
+Obtiene información de todos los usuarios. El usuario logueado debe tener permisos "admin".
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| Authorization | header | Bearer {token} | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Users | [ [user.UserData](#useruserdata) ] |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
+
+### /users/current
 
 #### GET
 ##### Summary
@@ -299,7 +193,113 @@ Obtiene información del usuario actual.
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
-| 200 | User data | [user.UserResponse](#useruserresponse) |
+| 200 | User data | [user.UserData](#useruserdata) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
+
+### /users/password
+
+#### POST
+##### Summary
+
+Cambiar Password
+
+##### Description
+
+Cambia la contraseña del usuario actual.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| body | body | Passwords | Yes | [rest.changePasswordBody](#restchangepasswordbody) |
+| Authorization | header | Bearer {token} | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | No Content |  |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
+
+### /users/signin
+
+#### POST
+##### Summary
+
+Login
+
+##### Description
+
+Loguea un usuario en el sistema.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| body | body | Sign in information | Yes | [usecases.SignInRequest](#usecasessigninrequest) |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | User Token | [usecases.TokenResponse](#usecasestokenresponse) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
+
+### /users/signout
+
+#### GET
+##### Summary
+
+Logout
+
+##### Description
+
+Desloguea un usuario en el sistema, invalida el token.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| Authorization | header | Bearer {token} | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | No Content |  |
+| 500 | Error response | [server.ErrorData](#servererrordata) |
+
+### /users/signup
+
+#### POST
+##### Summary
+
+Registrar Usuario
+
+##### Description
+
+Registra un nuevo usuario en el sistema.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| body | body | Informacion de ususario | Yes | [usecases.SignUpRequest](#usecasessignuprequest) |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | User Token | [usecases.TokenResponse](#usecasestokenresponse) |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [server.ErrorData](#servererrordata) |
 | 404 | Not Found | [server.ErrorData](#servererrordata) |
@@ -347,14 +347,14 @@ Obtiene información del usuario actual.
 | ---- | ---- | ----------- | -------- |
 | error | string |  | No |
 
-#### user.SignInRequest
+#### usecases.SignInRequest
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | login | string |  | Yes |
 | password | string |  | Yes |
 
-#### user.SignUpRequest
+#### usecases.SignUpRequest
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -362,13 +362,13 @@ Obtiene información del usuario actual.
 | name | string |  | Yes |
 | password | string |  | Yes |
 
-#### user.TokenResponse
+#### usecases.TokenResponse
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | token | string |  | No |
 
-#### user.UserResponse
+#### user.UserData
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

@@ -45,279 +45,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/v1/user": {
-            "post": {
-                "description": "Registra un nuevo usuario en el sistema.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Seguridad"
-                ],
-                "summary": "Registrar Usuario",
-                "parameters": [
-                    {
-                        "description": "Informacion de ususario",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user.SignUpRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User Token",
-                        "schema": {
-                            "$ref": "#/definitions/user.TokenResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errs.ValidationErr"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/user/password": {
-            "post": {
-                "description": "Cambia la contraseña del usuario actual.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Seguridad"
-                ],
-                "summary": "Cambiar Password",
-                "parameters": [
-                    {
-                        "description": "Passwords",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/rest.changePasswordBody"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer {token}",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "No Content"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errs.ValidationErr"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/user/signin": {
-            "post": {
-                "description": "Loguea un usuario en el sistema.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Seguridad"
-                ],
-                "summary": "Login",
-                "parameters": [
-                    {
-                        "description": "Sign in information",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user.SignInRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User Token",
-                        "schema": {
-                            "$ref": "#/definitions/user.TokenResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errs.ValidationErr"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/user/signout": {
-            "get": {
-                "description": "Desloguea un usuario en el sistema, invalida el token.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Seguridad"
-                ],
-                "summary": "Logout",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer {token}",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "No Content"
-                    },
-                    "500": {
-                        "description": "Error response",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/users": {
-            "get": {
-                "description": "Obtiene información de todos los usuarios. El usuario logueado debe tener permisos \"admin\".",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Seguridad"
-                ],
-                "summary": "Listar Usuarios",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer {token}",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Users",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/user.UserResponse"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/errs.ValidationErr"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/server.ErrorData"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/users/:userID/grant": {
+        "/users/:userID/grant": {
             "post": {
                 "description": "Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso \"admin\".",
                 "consumes": [
@@ -386,7 +114,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/:userID/revoke": {
+        "/users/:userID/revoke": {
             "post": {
                 "description": "Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso \"admin\".",
                 "consumes": [
@@ -455,7 +183,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/:userId/disable": {
+        "/users/:userId/disable": {
             "post": {
                 "description": "Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos \"admin\".",
                 "consumes": [
@@ -515,7 +243,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/:userId/enable": {
+        "/users/:userId/enable": {
             "post": {
                 "description": "Habilita un usuario en el sistema. El usuario logueado debe tener permisos \"admin\".",
                 "consumes": [
@@ -575,7 +303,66 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/current": {
+        "/users/all": {
+            "get": {
+                "description": "Obtiene información de todos los usuarios. El usuario logueado debe tener permisos \"admin\".",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Listar Usuarios",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Users",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/user.UserData"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errs.ValidationErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/current": {
             "get": {
                 "description": "Obtiene información del usuario actual.",
                 "consumes": [
@@ -601,7 +388,220 @@ const docTemplate = `{
                     "200": {
                         "description": "User data",
                         "schema": {
-                            "$ref": "#/definitions/user.UserResponse"
+                            "$ref": "#/definitions/user.UserData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errs.ValidationErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/password": {
+            "post": {
+                "description": "Cambia la contraseña del usuario actual.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Cambiar Password",
+                "parameters": [
+                    {
+                        "description": "Passwords",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.changePasswordBody"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errs.ValidationErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/signin": {
+            "post": {
+                "description": "Loguea un usuario en el sistema.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Sign in information",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecases.SignInRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Token",
+                        "schema": {
+                            "$ref": "#/definitions/usecases.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/errs.ValidationErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/signout": {
+            "get": {
+                "description": "Desloguea un usuario en el sistema, invalida el token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Logout",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "No Content"
+                    },
+                    "500": {
+                        "description": "Error response",
+                        "schema": {
+                            "$ref": "#/definitions/server.ErrorData"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/signup": {
+            "post": {
+                "description": "Registra un nuevo usuario en el sistema.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seguridad"
+                ],
+                "summary": "Registrar Usuario",
+                "parameters": [
+                    {
+                        "description": "Informacion de ususario",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecases.SignUpRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Token",
+                        "schema": {
+                            "$ref": "#/definitions/usecases.TokenResponse"
                         }
                     },
                     "400": {
@@ -709,7 +709,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.SignInRequest": {
+        "usecases.SignInRequest": {
             "type": "object",
             "required": [
                 "login",
@@ -724,7 +724,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.SignUpRequest": {
+        "usecases.SignUpRequest": {
             "type": "object",
             "required": [
                 "login",
@@ -743,7 +743,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.TokenResponse": {
+        "usecases.TokenResponse": {
             "type": "object",
             "properties": {
                 "token": {
@@ -751,7 +751,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.UserResponse": {
+        "user.UserData": {
             "type": "object",
             "properties": {
                 "enabled": {

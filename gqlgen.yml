@@ -1,27 +1,23 @@
 schema:
-  - graph/*.graphqls
+  - internal/graph/schema/*.graphqls
 
 exec:
-  filename: graph/model/schema.go
+  filename: internal/graph/model/schema.go
   package: model
 
 model:
-  filename: graph/model/models_gen.go
+  filename: internal/graph/model/models_gen.go
   package: model
 
 resolver:
   layout: follow-schema
-  dir: graph
-  package: graph
+  dir: internal/graph/schema
+  package: schema
 
 call_argument_directives_with_null: true
 
-autobind:
-#  - "github.com/nmarsollier/authgo/user"
-#  - "github.com/nmarsollier/authgo/token"
-
 federation:
-  filename: graph/model/federation.go
+  filename: internal/graph/model/federation.go
   package: model
 
 models:

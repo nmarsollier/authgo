@@ -1,0 +1,15 @@
+mode: set
+github.com/nmarsollier/authgo/internal/engine/log/factory.go:25.15,33.2 5 0
+github.com/nmarsollier/authgo/internal/engine/log/factory.go:35.63,37.16 2 0
+github.com/nmarsollier/authgo/internal/engine/log/factory.go:37.16,48.3 3 0
+github.com/nmarsollier/authgo/internal/engine/log/factory.go:56.67,58.16 2 0
+github.com/nmarsollier/authgo/internal/engine/log/factory.go:58.16,60.3 1 0
+github.com/nmarsollier/authgo/internal/engine/log/factory.go:61.2,61.12 1 0
+github.com/nmarsollier/authgo/internal/engine/log/factory.go:64.59,66.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/factory.go:68.49,71.2 2 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:18.49,20.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:22.75,26.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:28.48,30.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:32.48,34.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:36.49,38.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:40.43,42.2 1 0
