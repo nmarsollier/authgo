@@ -31,34 +31,6 @@ SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.
 | ---- | ----------- |
 
 ---
-### /user/password
-
-#### POST
-##### Summary
-
-Cambiar Password
-
-##### Description
-
-Cambia la contraseña del usuario actual.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ------ |
-| body | body | Passwords | Yes | [rest.changePasswordBody](#restchangepasswordbody) |
-| Authorization | header | Bearer {token} | Yes | string |
-
-##### Responses
-
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | No Content |  |
-| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
-| 404 | Not Found | [server.ErrorData](#servererrordata) |
-| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
-
 ### /users/:userID/grant
 
 #### POST
@@ -222,6 +194,34 @@ Obtiene información del usuario actual.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | User data | [user.UserData](#useruserdata) |
+| 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
+
+### /users/password
+
+#### POST
+##### Summary
+
+Cambiar Password
+
+##### Description
+
+Cambia la contraseña del usuario actual.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ------ |
+| body | body | Passwords | Yes | [rest.changePasswordBody](#restchangepasswordbody) |
+| Authorization | header | Bearer {token} | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | No Content |  |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
 | 401 | Unauthorized | [server.ErrorData](#servererrordata) |
 | 404 | Not Found | [server.ErrorData](#servererrordata) |

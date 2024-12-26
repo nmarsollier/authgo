@@ -122,47 +122,6 @@ paths:
       summary: Mensage Rabbit
       tags:
       - Rabbit
-  /user/password:
-    post:
-      consumes:
-      - application/json
-      description: Cambia la contraseña del usuario actual.
-      parameters:
-      - description: Passwords
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/rest.changePasswordBody'
-      - description: Bearer {token}
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/errs.ValidationErr'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/server.ErrorData'
-      summary: Cambiar Password
-      tags:
-      - Seguridad
   /users/:userID/grant:
     post:
       consumes:
@@ -414,6 +373,47 @@ paths:
           schema:
             $ref: '#/definitions/server.ErrorData'
       summary: Usuario Actual
+      tags:
+      - Seguridad
+  /users/password:
+    post:
+      consumes:
+      - application/json
+      description: Cambia la contraseña del usuario actual.
+      parameters:
+      - description: Passwords
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.changePasswordBody'
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errs.ValidationErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.ErrorData'
+      summary: Cambiar Password
       tags:
       - Seguridad
   /users/signin:

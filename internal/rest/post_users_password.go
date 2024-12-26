@@ -17,7 +17,7 @@ import (
 //	@Failure		401				{object}	server.ErrorData	"Unauthorized"
 //	@Failure		404				{object}	server.ErrorData	"Not Found"
 //	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
-//	@Router			/user/password [post]
+//	@Router			/users/password [post]
 //
 // Cambia la contraseña del usuario actual.
 func getUserPasswordRoute(engine *gin.Engine) {

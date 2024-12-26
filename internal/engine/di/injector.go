@@ -68,7 +68,7 @@ func (i *Deps) Database() *mongo.Database {
 		return database
 	}
 
-	database, err := db.NewDatabase(env.Get().MongoURL, "authgo")
+	database, err := db.NewDatabase(env.Get().MongoURL, "auth")
 	if err != nil {
 		i.CurrLog.Fatal(err)
 		return nil
