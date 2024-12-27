@@ -17,12 +17,18 @@ type sendLogoutService struct {
 }
 
 func NewSendLogoutService(
-	log log.LogRusEntry,
+	fluentUrl string,
 	channel rbt.RabbitChannel,
 ) (SendLogoutService, error) {
+	logger := log.Get(fluentUrl).
+		WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
+		WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
+		WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
+		WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
+
 	return &sendLogoutService{
 		channel: channel,
-		log:     log,
+		log:     logger,
 	}, nil
 }
 
@@ -36,13 +42,8 @@ func NewSendLogoutService(
 //
 // SendLogout envía un broadcast a rabbit con logout
 func (s *sendLogoutService) SendLogout(token string) error {
-	logger := s.log.
-		WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
-		WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
-		WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
-		WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
 
-	corrId, _ := logger.Data()[log.LOG_FIELD_CORRELATION_ID].(string)
+	corrId, _ := s.log.Data()[log.LOG_FIELD_CORRELATION_ID].(string)
 	send := message{
 		CorrelationId: corrId,
 		Message:       token,
@@ -53,13 +54,13 @@ func (s *sendLogoutService) SendLogout(token string) error {
 		"fanout", // type
 	)
 	if err != nil {
-		logger.Error(err)
+		s.log.Error(err)
 		return err
 	}
 
 	body, err := json.Marshal(send)
 	if err != nil {
-		logger.Error(err)
+		s.log.Error(err)
 		return err
 	}
 
@@ -68,11 +69,11 @@ func (s *sendLogoutService) SendLogout(token string) error {
 		"",     // routing key
 		body)
 	if err != nil {
-		logger.Error(err)
+		s.log.Error(err)
 		return err
 	}
 
-	logger.Info("Rabbit logout enviado", string(body))
+	s.log.Info("Rabbit logout enviado", string(body))
 	return nil
 }
 

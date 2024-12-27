@@ -71,9 +71,9 @@
 				
 				<option value="file7">github.com/nmarsollier/authgo/internal/engine/errs/validation.go (50.0%)</option>
 				
-				<option value="file8">github.com/nmarsollier/authgo/internal/engine/log/factory.go (0.0%)</option>
+				<option value="file8">github.com/nmarsollier/authgo/internal/engine/log/factory.go (88.2%)</option>
 				
-				<option value="file9">github.com/nmarsollier/authgo/internal/engine/log/logger.go (0.0%)</option>
+				<option value="file9">github.com/nmarsollier/authgo/internal/engine/log/logger.go (57.1%)</option>
 				
 				<option value="file10">github.com/nmarsollier/authgo/internal/engine/rbt/rabbit_channel.go (0.0%)</option>
 				
@@ -197,7 +197,7 @@
 				
 				<option value="file70">github.com/nmarsollier/authgo/test/mockgen/invalidate_token_mocks.go (0.0%)</option>
 				
-				<option value="file71">github.com/nmarsollier/authgo/test/mockgen/logger_mocks.go (77.3%)</option>
+				<option value="file71">github.com/nmarsollier/authgo/test/mockgen/logger_mocks.go (68.2%)</option>
 				
 				<option value="file72">github.com/nmarsollier/authgo/test/mockgen/mongo_collection_mocks.go (32.1%)</option>
 				
@@ -1376,7 +1376,7 @@ func (i *Deps) SendLogoutService() rabbit.SendLogoutService <span class="cov8" t
                 return i.CurrSendLogoutService
         }</span>
 
-        <span class="cov8" title="1">i.CurrSendLogoutService, _ = rabbit.NewSendLogoutService(i.CurrLog, i.RabbitChannel())
+        <span class="cov8" title="1">i.CurrSendLogoutService, _ = rabbit.NewSendLogoutService(env.Get().FluentUrl, i.RabbitChannel())
 
         return i.CurrSendLogoutService</span>
 }
@@ -1629,7 +1629,7 @@ const LOG_FIELD_THREAD = "thread"
 
 func Get(
         fluentUrl string,
-) LogRusEntry <span class="cov0" title="0">{
+) LogRusEntry <span class="cov8" title="1">{
         logger := logrus.New()
         configureFluent(logger, fluentUrl)
 
@@ -1639,9 +1639,9 @@ func Get(
         return logRusEntry{entry: logEntry}
 }</span>
 
-func configureFluent(logger *logrus.Logger, fluentUrl string) <span class="cov0" title="0">{
+func configureFluent(logger *logrus.Logger, fluentUrl string) <span class="cov8" title="1">{
         conn, err := net.Dial("tcp", fluentUrl)
-        if err == nil </span><span class="cov0" title="0">{
+        if err == nil </span><span class="cov8" title="1">{
                 logger.SetFormatter(&amp;logrus.JSONFormatter{})
                 logger.SetOutput(conn)
                 logger.AddHook(&amp;logrusConnectionHook{
@@ -1660,15 +1660,15 @@ type logrusConnectionHook struct {
         fmt  logrus.Formatter
 }
 
-func (hook *logrusConnectionHook) Fire(entry *logrus.Entry) error <span class="cov0" title="0">{
+func (hook *logrusConnectionHook) Fire(entry *logrus.Entry) error <span class="cov8" title="1">{
         msg, err := hook.fmt.Format(entry)
-        if err == nil </span><span class="cov0" title="0">{
+        if err == nil </span><span class="cov8" title="1">{
                 fmt.Println(string(msg))
         }</span>
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
-func (hook *logrusConnectionHook) Levels() []logrus.Level <span class="cov0" title="0">{
+func (hook *logrusConnectionHook) Levels() []logrus.Level <span class="cov8" title="1">{
         return logrus.AllLevels
 }</span>
 
@@ -1699,13 +1699,12 @@ func (l logRusEntry) Error(args ...interface{}) <span class="cov0" title="0">{
         l.entry.Error(args...)
 }</span>
 
-func (l logRusEntry) WithField(key string, value interface{}) LogRusEntry <span class="cov0" title="0">{
-        return logRusEntry{
-                entry: l.entry.WithField(key, value),
-        }
+func (l logRusEntry) WithField(key string, value interface{}) LogRusEntry <span class="cov8" title="1">{
+        l.entry.WithField(key, value)
+        return l
 }</span>
 
-func (l logRusEntry) Info(args ...interface{}) <span class="cov0" title="0">{
+func (l logRusEntry) Info(args ...interface{}) <span class="cov8" title="1">{
         l.entry.Info(args...)
 }</span>
 
@@ -1717,7 +1716,7 @@ func (l logRusEntry) Fatal(args ...interface{}) <span class="cov0" title="0">{
         l.entry.Fatal(args...)
 }</span>
 
-func (l logRusEntry) Data() logrus.Fields <span class="cov0" title="0">{
+func (l logRusEntry) Data() logrus.Fields <span class="cov8" title="1">{
         return l.entry.Data
 }</span>
 </pre>
@@ -7964,12 +7963,18 @@ type sendLogoutService struct {
 }
 
 func NewSendLogoutService(
-        log log.LogRusEntry,
+        fluentUrl string,
         channel rbt.RabbitChannel,
 ) (SendLogoutService, error) <span class="cov8" title="1">{
+        logger := log.Get(fluentUrl).
+                WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
+                WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
+                WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
+                WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
+
         return &amp;sendLogoutService{
                 channel: channel,
-                log:     log,
+                log:     logger,
         }, nil
 }</span>
 
@@ -7983,13 +7988,8 @@ func NewSendLogoutService(
 //
 // SendLogout envía un broadcast a rabbit con logout
 func (s *sendLogoutService) SendLogout(token string) error <span class="cov8" title="1">{
-        logger := s.log.
-                WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
-                WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
-                WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
-                WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
 
-        corrId, _ := logger.Data()[log.LOG_FIELD_CORRELATION_ID].(string)
+        corrId, _ := s.log.Data()[log.LOG_FIELD_CORRELATION_ID].(string)
         send := message{
                 CorrelationId: corrId,
                 Message:       token,
@@ -8000,13 +8000,13 @@ func (s *sendLogoutService) SendLogout(token string) error <span class="cov8" ti
                 "fanout", // type
         )
         if err != nil </span><span class="cov0" title="0">{
-                logger.Error(err)
+                s.log.Error(err)
                 return err
         }</span>
 
         <span class="cov8" title="1">body, err := json.Marshal(send)
         if err != nil </span><span class="cov0" title="0">{
-                logger.Error(err)
+                s.log.Error(err)
                 return err
         }</span>
 
@@ -8015,11 +8015,11 @@ func (s *sendLogoutService) SendLogout(token string) error <span class="cov8" ti
                 "",     // routing key
                 body)
         if err != nil </span><span class="cov0" title="0">{
-                logger.Error(err)
+                s.log.Error(err)
                 return err
         }</span>
 
-        <span class="cov8" title="1">logger.Info("Rabbit logout enviado", string(body))
+        <span class="cov8" title="1">s.log.Info("Rabbit logout enviado", string(body))
         return nil</span>
 }
 
@@ -10392,7 +10392,7 @@ func (m *MockLogRusEntry) EXPECT() *MockLogRusEntryMockRecorder <span class="cov
 }</span>
 
 // Data mocks base method.
-func (m *MockLogRusEntry) Data() logrus.Fields <span class="cov8" title="1">{
+func (m *MockLogRusEntry) Data() logrus.Fields <span class="cov0" title="0">{
         m.ctrl.T.Helper()
         ret := m.ctrl.Call(m, "Data")
         ret0, _ := ret[0].(logrus.Fields)

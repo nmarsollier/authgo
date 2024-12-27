@@ -179,7 +179,7 @@ func (i *Deps) SendLogoutService() rabbit.SendLogoutService {
 		return i.CurrSendLogoutService
 	}
 
-	i.CurrSendLogoutService, _ = rabbit.NewSendLogoutService(i.CurrLog, i.RabbitChannel())
+	i.CurrSendLogoutService, _ = rabbit.NewSendLogoutService(env.Get().FluentUrl, i.RabbitChannel())
 
 	return i.CurrSendLogoutService
 }

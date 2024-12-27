@@ -8,8 +8,8 @@ github.com/nmarsollier/authgo/internal/engine/log/factory.go:61.2,61.12 1 0
 github.com/nmarsollier/authgo/internal/engine/log/factory.go:64.59,66.2 1 0
 github.com/nmarsollier/authgo/internal/engine/log/factory.go:68.49,71.2 2 0
 github.com/nmarsollier/authgo/internal/engine/log/logger.go:18.49,20.2 1 0
-github.com/nmarsollier/authgo/internal/engine/log/logger.go:22.75,26.2 1 0
-github.com/nmarsollier/authgo/internal/engine/log/logger.go:28.48,30.2 1 0
-github.com/nmarsollier/authgo/internal/engine/log/logger.go:32.48,34.2 1 0
-github.com/nmarsollier/authgo/internal/engine/log/logger.go:36.49,38.2 1 0
-github.com/nmarsollier/authgo/internal/engine/log/logger.go:40.43,42.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:22.75,25.2 2 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:27.48,29.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:31.48,33.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:35.49,37.2 1 0
+github.com/nmarsollier/authgo/internal/engine/log/logger.go:39.43,41.2 1 0

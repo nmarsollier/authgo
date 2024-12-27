@@ -49,7 +49,7 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 6, 0, 2, 1, 0, 0)
+	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongo)
 	deps.SetTokenCollection(mongo)
 	deps.SetRabbitChannel(rabbitMock)

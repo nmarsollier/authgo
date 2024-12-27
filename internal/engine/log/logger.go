@@ -20,9 +20,8 @@ func (l logRusEntry) Error(args ...interface{}) {
 }
 
 func (l logRusEntry) WithField(key string, value interface{}) LogRusEntry {
-	return logRusEntry{
-		entry: l.entry.WithField(key, value),
-	}
+	l.entry.WithField(key, value)
+	return l
 }
 
 func (l logRusEntry) Info(args ...interface{}) {
