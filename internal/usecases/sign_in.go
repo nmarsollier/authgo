@@ -30,7 +30,7 @@ type SignInRequest struct {
 func (s *signInUseCase) SignIn(request *SignInRequest) (*TokenResponse, error) {
 	user, err := s.userService.SignIn(request.Login, request.Password)
 	if err != nil {
-		return nil, errs.Unauthorized
+		return nil, err
 	}
 
 	newToken, err := s.tokenService.Create(user.Id)

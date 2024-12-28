@@ -1,6 +1,9 @@
 mode: set
 github.com/nmarsollier/authgo/test/mock/generic.go:8.77,10.72 1 0
 github.com/nmarsollier/authgo/test/mock/generic.go:10.72,12.4 1 0
+github.com/nmarsollier/authgo/test/mock/generic.go:16.79,18.2 1 0
+github.com/nmarsollier/authgo/test/mock/generic.go:20.79,22.2 1 0
+github.com/nmarsollier/authgo/test/mock/generic.go:24.63,26.2 1 0
 github.com/nmarsollier/authgo/test/mock/token.go:13.41,23.2 3 0
 github.com/nmarsollier/authgo/test/mock/token.go:25.90,27.82 1 0
 github.com/nmarsollier/authgo/test/mock/token.go:27.82,31.4 2 0

@@ -9,7 +9,6 @@ import (
 	"github.com/nmarsollier/authgo/internal/engine/errs"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/user"
-	"github.com/nmarsollier/authgo/test/engine/db"
 	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
 	"github.com/nmarsollier/authgo/test/mockgen"
@@ -134,7 +133,7 @@ func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
 
 	mock.ExpectTokenFindOne(mongo, tokenData, 1)
 
-	db.ExpectFindOneError(mongo, topology.ErrServerSelectionTimeout, 1)
+	mock.ExpectFindOneError(mongo, topology.ErrServerSelectionTimeout, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)

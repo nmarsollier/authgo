@@ -9,7 +9,6 @@ import (
 	"github.com/nmarsollier/authgo/internal/engine/errs"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/token"
-	"github.com/nmarsollier/authgo/test/engine/db"
 	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
 	"github.com/nmarsollier/authgo/test/mockgen"
@@ -72,7 +71,7 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 
 	mongo := mockgen.NewMockCollection(ctrl)
 	mock.ExpectTokenAuthFindOne(t, mongo, tokenData)
-	db.ExpectUpdateOneError(mongo, errs.NotFound, 1)
+	mock.ExpectUpdateOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
@@ -110,7 +109,7 @@ func TestGetUserSignOutDbFindError(t *testing.T) {
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := mockgen.NewMockCollection(ctrl)
-	db.ExpectFindOneError(mongo, errs.NotFound, 1)
+	mock.ExpectFindOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 1, 2, 1, 0, 0, 0)

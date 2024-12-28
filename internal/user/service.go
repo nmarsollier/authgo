@@ -80,7 +80,11 @@ func (s *userService) New(login string, name string, password string) (*UserData
 	newUser.SetPasswordText(password)
 
 	result, err := s.repository.Insert(newUser)
-	return NewUserData(result), err
+	if err != nil {
+		return nil, err
+	}
+
+	return NewUserData(result), nil
 }
 
 func (s *userService) Get(userID string) (*UserData, error) {

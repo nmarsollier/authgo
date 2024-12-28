@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"github.com/nmarsollier/authgo/internal/engine/errs"
 	"github.com/nmarsollier/authgo/internal/token"
 	"github.com/nmarsollier/authgo/internal/user"
 )
@@ -39,14 +38,13 @@ func (s *signUpUseCase) SignUp(request *SignUpRequest) (*TokenResponse, error) {
 	}
 
 	newToken, err := s.tokenService.Create(user.Id)
-
 	if err != nil {
-		return nil, errs.Internal
+		return nil, err
 	}
 
 	tokenString, err := token.Encode(newToken)
 	if err != nil {
-		return nil, errs.Unauthorized
+		return nil, err
 	}
 
 	return &TokenResponse{Token: tokenString}, nil
