@@ -6,11 +6,12 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/internal/engine/errs"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
-	"github.com/nmarsollier/authgo/test/mockgen"
+	"github.com/nmarsollier/commongo/errs"
+	"github.com/nmarsollier/commongo/test/mktools"
+	"github.com/nmarsollier/commongo/test/mockgen"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,9 +22,9 @@ func TestPostUserInHappyPath(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mongodb := mockgen.NewMockCollection(ctrl)
 
-	mock.ExpectInsertOne(mongodb, 1)
+	mktools.ExpectInsertOne(mongodb, 1)
 
-	mock.ExpectInsertOne(mongodb, 1)
+	mktools.ExpectInsertOne(mongodb, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
@@ -33,7 +34,7 @@ func TestPostUserInHappyPath(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/signup", SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
+	req, w := mktools.TestPostRequest("/users/signup", SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -53,7 +54,7 @@ func TestPostUserMissingLogin(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/signup", SignUpRequest{Password: password}, "")
+	req, w := mktools.TestPostRequest("/users/signup", SignUpRequest{Password: password}, "")
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -72,7 +73,7 @@ func TestPostUserInvalidLoginMinRule(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/signup", SignUpRequest{Login: "a", Name: "b", Password: "c"}, "")
+	req, w := mktools.TestPostRequest("/users/signup", SignUpRequest{Login: "a", Name: "b", Password: "c"}, "")
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -92,7 +93,7 @@ func TestPostUserIvalidPassword(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/signup", SignUpRequest{Name: userData.Name, Login: userData.Login}, "")
+	req, w := mktools.TestPostRequest("/users/signup", SignUpRequest{Name: userData.Name, Login: userData.Login}, "")
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -109,7 +110,7 @@ func TestPostUserDatabaseError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mongodb := mockgen.NewMockCollection(ctrl)
 
-	mock.ExpectInsertOneError(mongodb, mock.TestOtherDbError, 1)
+	mktools.ExpectInsertOneError(mongodb, mktools.TestOtherDbError, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
@@ -119,10 +120,10 @@ func TestPostUserDatabaseError(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/signup", SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
+	req, w := mktools.TestPostRequest("/users/signup", SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
 	r.ServeHTTP(w, req)
 
-	AssertInternalServerError(t, w)
+	mktools.AssertInternalServerError(t, w)
 }
 
 func TestPostUserAlreayExist(t *testing.T) {
@@ -132,7 +133,7 @@ func TestPostUserAlreayExist(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mongodb := mockgen.NewMockCollection(ctrl)
 
-	mock.ExpectInsertOneError(mongodb, mock.TestIsUniqueError, 1)
+	mktools.ExpectInsertOneError(mongodb, mktools.TestIsUniqueError, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
@@ -142,10 +143,10 @@ func TestPostUserAlreayExist(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/signup", SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
+	req, w := mktools.TestPostRequest("/users/signup", SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
 	r.ServeHTTP(w, req)
 
-	AssertBadRequestError(t, w)
+	mktools.AssertBadRequestError(t, w)
 }
 
 func TestPostTokenDatabaseError(t *testing.T) {
@@ -155,9 +156,9 @@ func TestPostTokenDatabaseError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mongodb := mockgen.NewMockCollection(ctrl)
 
-	mock.ExpectInsertOne(mongodb, 1)
+	mktools.ExpectInsertOne(mongodb, 1)
 
-	mock.ExpectInsertOneError(mongodb, errs.Internal, 1)
+	mktools.ExpectInsertOneError(mongodb, errs.Internal, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
@@ -167,10 +168,10 @@ func TestPostTokenDatabaseError(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/signup", SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
+	req, w := mktools.TestPostRequest("/users/signup", SignUpRequest{Login: userData.Login, Password: password, Name: userData.Name}, "")
 	r.ServeHTTP(w, req)
 
-	AssertInternalServerError(t, w)
+	mktools.AssertInternalServerError(t, w)
 }
 
 type SignUpRequest struct {

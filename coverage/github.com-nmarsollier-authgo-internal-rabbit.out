@@ -1,9 +1,0 @@
-mode: set
-github.com/nmarsollier/authgo/internal/rabbit/send_logout.go:22.30,33.2 2 0
-github.com/nmarsollier/authgo/internal/rabbit/send_logout.go:44.60,56.16 4 0
-github.com/nmarsollier/authgo/internal/rabbit/send_logout.go:56.16,59.3 2 0
-github.com/nmarsollier/authgo/internal/rabbit/send_logout.go:61.2,62.16 2 0
-github.com/nmarsollier/authgo/internal/rabbit/send_logout.go:62.16,65.3 2 0
-github.com/nmarsollier/authgo/internal/rabbit/send_logout.go:67.2,71.16 2 0
-github.com/nmarsollier/authgo/internal/rabbit/send_logout.go:71.16,74.3 2 0
-github.com/nmarsollier/authgo/internal/rabbit/send_logout.go:76.2,77.12 2 0

@@ -1,8 +1,9 @@
 package token
 
 import (
-	"github.com/nmarsollier/authgo/internal/engine/errs"
-	"github.com/nmarsollier/authgo/internal/engine/log"
+	"github.com/nmarsollier/commongo/cache"
+	"github.com/nmarsollier/commongo/errs"
+	"github.com/nmarsollier/commongo/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,7 +16,7 @@ type TokenService interface {
 
 func NewTokenService(
 	log log.LogRusEntry,
-	cache TokenCache,
+	cache cache.Cache[Token],
 	repository TokenRepository,
 ) TokenService {
 	return &tokenService{
@@ -27,7 +28,7 @@ func NewTokenService(
 
 type tokenService struct {
 	log        log.LogRusEntry
-	cache      TokenCache
+	cache      cache.Cache[Token]
 	repository TokenRepository
 }
 
@@ -43,7 +44,12 @@ func (s *tokenService) Create(userID string) (*Token, error) {
 		return nil, err
 	}
 
-	s.cache.Add(token)
+	tokenString, err := Encode(token)
+	if err != nil {
+		return nil, err
+	}
+
+	s.cache.Add(tokenString, token)
 
 	return token, nil
 }
@@ -94,7 +100,12 @@ func (s *tokenService) Find(tokenID string) (*Token, error) {
 		return nil, err
 	}
 
-	s.cache.Add(token)
+	tokenString, err := Encode(token)
+	if err != nil {
+		return nil, err
+	}
+
+	s.cache.Add(tokenString, token)
 
 	return token, nil
 }

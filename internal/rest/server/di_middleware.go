@@ -2,9 +2,9 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/internal/engine/di"
-	"github.com/nmarsollier/authgo/internal/engine/env"
-	"github.com/nmarsollier/authgo/internal/engine/log"
+	"github.com/nmarsollier/authgo/internal/di"
+	"github.com/nmarsollier/authgo/internal/env"
+	"github.com/nmarsollier/commongo/log"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -34,7 +34,7 @@ func GinDi(c *gin.Context) di.Injector {
 }
 
 func ginLogger(c *gin.Context) log.LogRusEntry {
-	return log.Get(env.Get().FluentUrl).
+	return log.Get(env.Get().FluentURL, "authgo").
 		WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(c)).
 		WithField(log.LOG_FIELD_CONTROLLER, "Rest").
 		WithField(log.LOG_FIELD_HTTP_METHOD, c.Request.Method).

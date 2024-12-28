@@ -1,15 +1,6 @@
 mode: set
-github.com/nmarsollier/authgo/test/mock/generic.go:8.77,10.72 1 0
-github.com/nmarsollier/authgo/test/mock/generic.go:10.72,12.4 1 0
-github.com/nmarsollier/authgo/test/mock/generic.go:16.79,18.2 1 0
-github.com/nmarsollier/authgo/test/mock/generic.go:20.79,22.2 1 0
-github.com/nmarsollier/authgo/test/mock/generic.go:24.63,26.2 1 0
 github.com/nmarsollier/authgo/test/mock/token.go:13.41,23.2 3 0
-github.com/nmarsollier/authgo/test/mock/token.go:25.90,27.82 1 0
-github.com/nmarsollier/authgo/test/mock/token.go:27.82,31.4 2 0
-github.com/nmarsollier/authgo/test/mock/token.go:35.97,37.89 1 0
-github.com/nmarsollier/authgo/test/mock/token.go:37.89,42.4 3 0
-github.com/nmarsollier/authgo/test/mock/user.go:10.38,18.2 7 0
-github.com/nmarsollier/authgo/test/mock/user.go:20.43,28.2 7 0
-github.com/nmarsollier/authgo/test/mock/user.go:30.86,32.79 1 0
-github.com/nmarsollier/authgo/test/mock/user.go:32.79,35.4 2 0
+github.com/nmarsollier/authgo/test/mock/token.go:25.97,27.89 1 0
+github.com/nmarsollier/authgo/test/mock/token.go:27.89,32.4 3 0
+github.com/nmarsollier/authgo/test/mock/user.go:8.38,16.2 7 0
+github.com/nmarsollier/authgo/test/mock/user.go:18.43,26.2 7 0

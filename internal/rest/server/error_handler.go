@@ -6,9 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/nmarsollier/authgo/internal/engine/db"
-	"github.com/nmarsollier/authgo/internal/engine/di"
-	"github.com/nmarsollier/authgo/internal/engine/errs"
+	"github.com/nmarsollier/authgo/internal/di"
+	"github.com/nmarsollier/commongo/db"
+	"github.com/nmarsollier/commongo/errs"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )

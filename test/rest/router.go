@@ -4,8 +4,7 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
-	_ "github.com/nmarsollier/authgo/docs"
-	"github.com/nmarsollier/authgo/internal/engine/di"
+	"github.com/nmarsollier/authgo/internal/di"
 	"github.com/nmarsollier/authgo/internal/rest/server"
 )
 

@@ -9,7 +9,8 @@ import (
 	"github.com/nmarsollier/authgo/internal/user"
 	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
-	"github.com/nmarsollier/authgo/test/mockgen"
+	"github.com/nmarsollier/commongo/test/mktools"
+	"github.com/nmarsollier/commongo/test/mockgen"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -54,7 +55,7 @@ func TestPostUserEnableHappyPath(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
+	req, w := mktools.TestPostRequest("/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -69,7 +70,7 @@ func TestPostUserEnableFindUserError_1(t *testing.T) {
 
 	mock.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
-	mock.ExpectFindOneError(mongodb, user.ErrID, 1)
+	mktools.ExpectFindOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 1, 0)
@@ -79,10 +80,10 @@ func TestPostUserEnableFindUserError_1(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
+	req, w := mktools.TestPostRequest("/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertUnauthorized(t, w)
+	mktools.AssertUnauthorized(t, w)
 }
 
 func TestPostUserEnableFindUserError_2(t *testing.T) {
@@ -105,7 +106,7 @@ func TestPostUserEnableFindUserError_2(t *testing.T) {
 			return nil
 		},
 	).Times(1)
-	mock.ExpectFindOneError(mongodb, user.ErrID, 1)
+	mktools.ExpectFindOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
@@ -115,10 +116,10 @@ func TestPostUserEnableFindUserError_2(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
+	req, w := mktools.TestPostRequest("/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertBadRequestError(t, w)
+	mktools.AssertBadRequestError(t, w)
 }
 
 func TestPostUserEnableNotAdmin(t *testing.T) {
@@ -150,8 +151,8 @@ func TestPostUserEnableNotAdmin(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
+	req, w := mktools.TestPostRequest("/users/"+tokenData.UserID.Hex()+"/enable", "", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertUnauthorized(t, w)
+	mktools.AssertUnauthorized(t, w)
 }

@@ -1,9 +1,9 @@
 package usecases
 
 import (
-	"github.com/nmarsollier/authgo/internal/engine/log"
-	"github.com/nmarsollier/authgo/internal/rabbit"
 	"github.com/nmarsollier/authgo/internal/token"
+	"github.com/nmarsollier/commongo/log"
+	"github.com/nmarsollier/commongo/rbt"
 )
 
 type InvalidateTokenUseCase interface {
@@ -13,7 +13,7 @@ type InvalidateTokenUseCase interface {
 func NewInvalidateTokenUseCase(
 	log log.LogRusEntry,
 	tokenService token.TokenService,
-	sendLogout rabbit.SendLogoutService,
+	sendLogout rbt.RabbitPublisher[string],
 ) InvalidateTokenUseCase {
 	return &invalidateTokenUseCase{
 		log:          log,
@@ -25,7 +25,7 @@ func NewInvalidateTokenUseCase(
 type invalidateTokenUseCase struct {
 	log          log.LogRusEntry
 	tokenService token.TokenService
-	rabbit       rabbit.SendLogoutService
+	rabbit       rbt.RabbitPublisher[string]
 }
 
 func (s *invalidateTokenUseCase) InvalidateToken(token string) error {
@@ -41,7 +41,7 @@ func (s *invalidateTokenUseCase) InvalidateToken(token string) error {
 			return
 		}
 
-		if err = s.rabbit.SendLogout("Bearer " + token); err != nil {
+		if err = s.rabbit.Publish("Bearer " + token); err != nil {
 			s.log.Info("Rabbit logout no se pudo enviar")
 		}
 	}()

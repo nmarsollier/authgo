@@ -17,10 +17,10 @@ github.com/nmarsollier/authgo/internal/rest/server/di_middleware.go:36.48,42.2 1
 github.com/nmarsollier/authgo/internal/rest/server/di_middleware.go:44.46,47.21 2 0
 github.com/nmarsollier/authgo/internal/rest/server/di_middleware.go:47.21,49.3 1 0
 github.com/nmarsollier/authgo/internal/rest/server/di_middleware.go:51.2,51.14 1 0
-github.com/nmarsollier/authgo/internal/rest/server/engine.go:16.27,17.19 1 0
-github.com/nmarsollier/authgo/internal/rest/server/engine.go:17.19,36.3 6 0
-github.com/nmarsollier/authgo/internal/rest/server/engine.go:38.2,38.15 1 0
-github.com/nmarsollier/authgo/internal/rest/server/engine.go:41.48,44.2 2 0
+github.com/nmarsollier/authgo/internal/rest/server/engine.go:15.27,16.19 1 0
+github.com/nmarsollier/authgo/internal/rest/server/engine.go:16.19,35.3 6 0
+github.com/nmarsollier/authgo/internal/rest/server/engine.go:37.2,37.15 1 0
+github.com/nmarsollier/authgo/internal/rest/server/engine.go:40.48,43.2 2 0
 github.com/nmarsollier/authgo/internal/rest/server/error_handler.go:16.35,19.2 2 0
 github.com/nmarsollier/authgo/internal/rest/server/error_handler.go:21.42,23.16 2 0
 github.com/nmarsollier/authgo/internal/rest/server/error_handler.go:23.16,25.3 1 0

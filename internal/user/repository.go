@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/nmarsollier/authgo/internal/engine/db"
-	"github.com/nmarsollier/authgo/internal/engine/log"
+	"github.com/nmarsollier/commongo/db"
+	"github.com/nmarsollier/commongo/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,11 +22,11 @@ type UserRepository interface {
 func NewUserRepository(
 	log log.LogRusEntry,
 	collection db.Collection,
-) (UserRepository, error) {
+) UserRepository {
 	return &userRepository{
 		log:        log,
 		collection: collection,
-	}, nil
+	}
 }
 
 type userRepository struct {
@@ -48,7 +48,20 @@ func (r *userRepository) Insert(user *User) (*User, error) {
 	return user, nil
 }
 
+type DbUserUpdateDocumentBody struct {
+	Name        string    `bson:"name" validate:"required,min=1,max=100"`
+	Password    string    `bson:"password" validate:"required"`
+	Permissions []string  `bson:"permissions"`
+	Enabled     bool      `bson:"enabled"`
+	Updated     time.Time `bson:"updated"`
+}
+
+type DbUserUpdateDocument struct {
+	Set DbUserUpdateDocumentBody `bson:"$set"`
+}
+
 func (r *userRepository) Update(user *User) (*User, error) {
+
 	if err := user.validateSchema(); err != nil {
 		r.log.Error(err)
 		return nil, err
@@ -75,18 +88,6 @@ func (r *userRepository) Update(user *User) (*User, error) {
 	}
 
 	return user, nil
-}
-
-type DbUserUpdateDocumentBody struct {
-	Name        string    `bson:"name" validate:"required,min=1,max=100"`
-	Password    string    `bson:"password" validate:"required"`
-	Permissions []string  `bson:"permissions"`
-	Enabled     bool      `bson:"enabled"`
-	Updated     time.Time `bson:"updated"`
-}
-
-type DbUserUpdateDocument struct {
-	Set DbUserUpdateDocumentBody `bson:"$set"`
 }
 
 func (r *userRepository) FindAll() ([]*User, error) {
@@ -131,6 +132,10 @@ type DbUserIdFilter struct {
 	ID primitive.ObjectID `bson:"_id"`
 }
 
+type DbUserLoginFilter struct {
+	Login string `bson:"login"`
+}
+
 func (r *userRepository) FindByLogin(login string) (*User, error) {
 	user := &User{}
 	filter := DbUserLoginFilter{Login: login}
@@ -144,8 +149,4 @@ func (r *userRepository) FindByLogin(login string) (*User, error) {
 	}
 
 	return user, nil
-}
-
-type DbUserLoginFilter struct {
-	Login string `bson:"login"`
 }

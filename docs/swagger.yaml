@@ -14,15 +14,6 @@ definitions:
       path:
         type: string
     type: object
-  rabbit.message:
-    properties:
-      correlation_id:
-        example: "123123"
-        type: string
-      message:
-        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklEIjoiNjZiNjBlYzhlMGYzYzY4OTUzMzJlOWNmIiwidXNlcklEIjoiNjZhZmQ3ZWU4YTBhYjRjZjQ0YTQ3NDcyIn0.who7upBctOpmlVmTvOgH1qFKOHKXmuQCkEjMV3qeySg
-        type: string
-    type: object
   rest.changePasswordBody:
     properties:
       currentPassword:
@@ -103,25 +94,6 @@ info:
   title: AuthGo
   version: "1.0"
 paths:
-  /rabbit/logout:
-    put:
-      consumes:
-      - application/json
-      description: SendLogout envía un broadcast a rabbit con logout. Esto no es Rest
-        es RabbitMQ.
-      parameters:
-      - description: Token deshabilitado
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/rabbit.message'
-      produces:
-      - application/json
-      responses: {}
-      summary: Mensage Rabbit
-      tags:
-      - Rabbit
   /users/:userID/grant:
     post:
       consumes:

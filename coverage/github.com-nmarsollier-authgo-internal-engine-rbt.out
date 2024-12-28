@@ -1,8 +1,0 @@
-mode: set
-github.com/nmarsollier/authgo/internal/engine/rbt/rabbit_channel.go:16.26,18.16 2 0
-github.com/nmarsollier/authgo/internal/engine/rbt/rabbit_channel.go:18.16,21.3 2 0
-github.com/nmarsollier/authgo/internal/engine/rbt/rabbit_channel.go:23.2,24.16 2 0
-github.com/nmarsollier/authgo/internal/engine/rbt/rabbit_channel.go:24.16,27.3 2 0
-github.com/nmarsollier/authgo/internal/engine/rbt/rabbit_channel.go:29.2,29.40 1 0
-github.com/nmarsollier/authgo/internal/engine/rbt/rabbit_channel.go:39.9,49.2 1 0
-github.com/nmarsollier/authgo/internal/engine/rbt/rabbit_channel.go:54.9,63.2 1 0

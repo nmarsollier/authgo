@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/nmarsollier/authgo/internal/engine/di"
+	"github.com/nmarsollier/authgo/internal/di"
 )
 
 func GqlDi(c context.Context) di.Injector {

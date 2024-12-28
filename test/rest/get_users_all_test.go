@@ -5,12 +5,13 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/internal/engine/db"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/user"
 	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
-	"github.com/nmarsollier/authgo/test/mockgen"
+	"github.com/nmarsollier/commongo/db"
+	"github.com/nmarsollier/commongo/test/mktools"
+	"github.com/nmarsollier/commongo/test/mockgen"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -66,7 +67,7 @@ func TestGetUsersHappyPath(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/all", tokenString)
+	req, w := mktools.TestGetRequest("/users/all", tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -111,8 +112,8 @@ func TestGetUsersFindError(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/all", tokenString)
+	req, w := mktools.TestGetRequest("/users/all", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertDocumentNotFound(t, w)
+	mktools.AssertDocumentNotFound(t, w)
 }

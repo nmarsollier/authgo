@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/internal/engine/env"
+	"github.com/nmarsollier/authgo/internal/env"
 	"github.com/nmarsollier/authgo/internal/rest/server"
 )
 

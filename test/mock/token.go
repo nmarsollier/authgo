@@ -5,7 +5,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/internal/token"
-	"github.com/nmarsollier/authgo/test/mockgen"
+	"github.com/nmarsollier/commongo/test/mockgen"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -20,16 +20,6 @@ func TestToken() (*token.Token, string) {
 	tokenString, _ := token.Encode(tokenData)
 
 	return tokenData, tokenString
-}
-
-func ExpectTokenFindOne(coll *mockgen.MockCollection, tokenData *token.Token, times int) {
-	coll.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, params token.DbTokenIdFilter, token *token.Token) error {
-			// Asign return values
-			*token = *tokenData
-			return nil
-		},
-	).Times(times)
 }
 
 func ExpectTokenAuthFindOne(t *testing.T, coll *mockgen.MockCollection, tokenData *token.Token) {

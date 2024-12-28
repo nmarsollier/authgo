@@ -1,3 +1,3 @@
 swag fmt
-swag init
+swag init --parseDependency --parseInternal
 npx swagger-markdown -i ./docs/swagger.yaml -o README-API.md

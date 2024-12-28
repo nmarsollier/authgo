@@ -6,7 +6,6 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
-	_ "github.com/nmarsollier/authgo/docs"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )

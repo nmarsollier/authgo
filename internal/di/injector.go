@@ -1,20 +1,20 @@
 package di
 
 import (
-	"github.com/nmarsollier/authgo/internal/engine/db"
-	"github.com/nmarsollier/authgo/internal/engine/env"
-	"github.com/nmarsollier/authgo/internal/engine/log"
-	"github.com/nmarsollier/authgo/internal/engine/rbt"
-	"github.com/nmarsollier/authgo/internal/rabbit"
+	"github.com/nmarsollier/authgo/internal/env"
 	"github.com/nmarsollier/authgo/internal/token"
 	"github.com/nmarsollier/authgo/internal/usecases"
 	"github.com/nmarsollier/authgo/internal/user"
+	"github.com/nmarsollier/commongo/cache"
+	"github.com/nmarsollier/commongo/db"
+	"github.com/nmarsollier/commongo/log"
+	"github.com/nmarsollier/commongo/rbt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 // Singletons
-var tokenCache token.TokenCache
+var tokenCache cache.Cache[token.Token]
 var tokenCollection db.Collection
 var userCollection db.Collection
 var database *mongo.Database
@@ -23,34 +23,32 @@ type Injector interface {
 	Database() *mongo.Database
 	InvalidateTokenUseCase() usecases.InvalidateTokenUseCase
 	Logger() log.LogRusEntry
-	RabbitChannel() rbt.RabbitChannel
-	SendLogoutService() rabbit.SendLogoutService
 	SignInUseCase() usecases.SignInUseCase
 	SignUpUseCase() usecases.SignUpUseCase
-	TokenCache() token.TokenCache
+	TokenCache() cache.Cache[token.Token]
 	TokenCollection() db.Collection
 	TokenRepository() token.TokenRepository
 	TokenService() token.TokenService
 	UserCollection() db.Collection
 	UserRepository() user.UserRepository
 	UserService() user.UserService
+	SendLogoutPublisher() rbt.RabbitPublisher[string]
 }
 
 type Deps struct {
 	CurrInvalidateTokenUseCase usecases.InvalidateTokenUseCase
 	CurrLog                    log.LogRusEntry
-	CurrSendLogoutService      rabbit.SendLogoutService
 	CurrSignInUseCase          usecases.SignInUseCase
 	CurrSignUpUseCase          usecases.SignUpUseCase
 	CurrTokenRepository        token.TokenRepository
 	CurrTokenService           token.TokenService
 	CurrUserRepository         user.UserRepository
 	CurrUserService            user.UserService
-	CurrRabbitChannel          rbt.RabbitChannel
-	CurrTokenCache             token.TokenCache
+	CurrTokenCache             cache.Cache[token.Token]
 	CurrTokenCollection        db.Collection
 	CurrUserCollection         db.Collection
 	CurrDatabase               *mongo.Database
+	CurrSendLogout             rbt.RabbitPublisher[string]
 }
 
 func NewInjector(log log.LogRusEntry) Injector {
@@ -105,7 +103,7 @@ func (i *Deps) TokenRepository() token.TokenRepository {
 	return i.CurrTokenRepository
 }
 
-func (i *Deps) TokenCache() token.TokenCache {
+func (i *Deps) TokenCache() cache.Cache[token.Token] {
 	if i.CurrTokenCache != nil {
 		return i.CurrTokenCache
 	}
@@ -114,7 +112,7 @@ func (i *Deps) TokenCache() token.TokenCache {
 		return tokenCache
 	}
 
-	tokenCache = token.NewTokenCache()
+	tokenCache = cache.NewCache[token.Token]()
 
 	return tokenCache
 }
@@ -134,11 +132,7 @@ func (i *Deps) UserRepository() user.UserRepository {
 		return i.CurrUserRepository
 	}
 
-	repository, err := user.NewUserRepository(i.CurrLog, i.UserCollection())
-	if err != nil {
-		i.CurrLog.Fatal(err)
-		return nil
-	}
+	repository := user.NewUserRepository(i.CurrLog, i.UserCollection())
 
 	i.CurrUserRepository = repository
 	return i.CurrUserRepository
@@ -169,19 +163,9 @@ func (i *Deps) InvalidateTokenUseCase() usecases.InvalidateTokenUseCase {
 		return i.CurrInvalidateTokenUseCase
 	}
 
-	i.CurrInvalidateTokenUseCase = usecases.NewInvalidateTokenUseCase(i.CurrLog, i.TokenService(), i.SendLogoutService())
+	i.CurrInvalidateTokenUseCase = usecases.NewInvalidateTokenUseCase(i.CurrLog, i.TokenService(), i.SendLogoutPublisher())
 
 	return i.CurrInvalidateTokenUseCase
-}
-
-func (i *Deps) SendLogoutService() rabbit.SendLogoutService {
-	if i.CurrSendLogoutService != nil {
-		return i.CurrSendLogoutService
-	}
-
-	i.CurrSendLogoutService, _ = rabbit.NewSendLogoutService(env.Get().FluentUrl, i.RabbitChannel())
-
-	return i.CurrSendLogoutService
 }
 
 func (i *Deps) TokenCollection() db.Collection {
@@ -220,19 +204,31 @@ func (i *Deps) UserCollection() db.Collection {
 	return userCollection
 }
 
-func (i *Deps) RabbitChannel() rbt.RabbitChannel {
-	if i.CurrRabbitChannel != nil {
-		return i.CurrRabbitChannel
-	}
-
-	i.CurrRabbitChannel, _ = rbt.NewRabbitChannel(env.Get().RabbitURL, i.CurrLog)
-
-	return i.CurrRabbitChannel
-}
-
 // IsDbTimeoutError función a llamar cuando se produce un error de db
 func IsDbTimeoutError(err interface{}) {
 	if err == topology.ErrServerSelectionTimeout {
 		database = nil
 	}
+}
+
+func (i *Deps) SendLogoutPublisher() rbt.RabbitPublisher[string] {
+	if i.CurrSendLogout != nil {
+		return i.CurrSendLogout
+	}
+
+	logger := i.Logger().
+		WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
+		WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
+		WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
+		WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
+
+	i.CurrSendLogout, _ = rbt.NewRabbitPublisher[string](
+		logger,
+		env.Get().RabbitURL,
+		"auth",
+		"fanout",
+		"",
+	)
+
+	return i.CurrSendLogout
 }

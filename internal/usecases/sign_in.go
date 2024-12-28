@@ -1,9 +1,9 @@
 package usecases
 
 import (
-	"github.com/nmarsollier/authgo/internal/engine/errs"
 	"github.com/nmarsollier/authgo/internal/token"
 	"github.com/nmarsollier/authgo/internal/user"
+	"github.com/nmarsollier/commongo/errs"
 )
 
 type SignInUseCase interface {

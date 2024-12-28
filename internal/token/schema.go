@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go/v4"
-	"github.com/nmarsollier/authgo/internal/engine/env"
-	"github.com/nmarsollier/authgo/internal/engine/errs"
+	"github.com/nmarsollier/authgo/internal/env"
+	"github.com/nmarsollier/commongo/errs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

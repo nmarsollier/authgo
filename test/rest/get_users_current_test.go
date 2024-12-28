@@ -6,12 +6,13 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/internal/engine/errs"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/user"
 	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
-	"github.com/nmarsollier/authgo/test/mockgen"
+	"github.com/nmarsollier/commongo/errs"
+	"github.com/nmarsollier/commongo/test/mktools"
+	"github.com/nmarsollier/commongo/test/mockgen"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
@@ -42,7 +43,7 @@ func TestGetUserCurrentHappyPath(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/current", tokenString)
+	req, w := mktools.TestGetRequest("/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -71,10 +72,10 @@ func TestGetUserCurrentErrorDisabledToken(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/current", tokenString)
+	req, w := mktools.TestGetRequest("/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertUnauthorized(t, w)
+	mktools.AssertUnauthorized(t, w)
 }
 
 func TestGetUserCurrentErrorDisabledUser(t *testing.T) {
@@ -86,7 +87,7 @@ func TestGetUserCurrentErrorDisabledUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mongo := mockgen.NewMockCollection(ctrl)
 	mock.ExpectTokenAuthFindOne(t, mongo, tokenData)
-	mock.ExpectUserFindOne(mongo, userData, 1)
+	mktools.ExpectFindOne(mongo, userData, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
@@ -96,10 +97,10 @@ func TestGetUserCurrentErrorDisabledUser(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/current", tokenString)
+	req, w := mktools.TestGetRequest("/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertDocumentNotFound(t, w)
+	mktools.AssertDocumentNotFound(t, w)
 }
 
 func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
@@ -108,7 +109,7 @@ func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := mockgen.NewMockCollection(ctrl)
-	mock.ExpectFindOneError(mongo, errs.Internal, 1)
+	mktools.ExpectFindOneError(mongo, errs.Internal, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 1, 2, 1, 0, 0, 0)
@@ -118,10 +119,10 @@ func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/current", tokenString)
+	req, w := mktools.TestGetRequest("/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertUnauthorized(t, w)
+	mktools.AssertUnauthorized(t, w)
 }
 
 func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
@@ -131,9 +132,9 @@ func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mongo := mockgen.NewMockCollection(ctrl)
 
-	mock.ExpectTokenFindOne(mongo, tokenData, 1)
+	mktools.ExpectFindOne(mongo, tokenData, 1)
 
-	mock.ExpectFindOneError(mongo, topology.ErrServerSelectionTimeout, 1)
+	mktools.ExpectFindOneError(mongo, topology.ErrServerSelectionTimeout, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
@@ -143,8 +144,8 @@ func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/current", tokenString)
+	req, w := mktools.TestGetRequest("/users/current", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertInternalServerError(t, w)
+	mktools.AssertInternalServerError(t, w)
 }

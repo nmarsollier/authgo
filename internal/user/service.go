@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/nmarsollier/authgo/internal/engine/errs"
+	"github.com/nmarsollier/commongo/errs"
 )
 
 type UserService interface {

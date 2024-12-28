@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/internal/engine/errs"
 	"github.com/nmarsollier/authgo/internal/token"
+	"github.com/nmarsollier/commongo/errs"
 )
 
 // HeaderAuthorization token string from Authorization header

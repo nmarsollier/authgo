@@ -18,33 +18,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/rabbit/logout": {
-            "put": {
-                "description": "SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Rabbit"
-                ],
-                "summary": "Mensage Rabbit",
-                "parameters": [
-                    {
-                        "description": "Token deshabilitado",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/rabbit.message"
-                        }
-                    }
-                ],
-                "responses": {}
-            }
-        },
         "/users/:userID/grant": {
             "post": {
                 "description": "Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso \"admin\".",
@@ -652,19 +625,6 @@ const docTemplate = `{
                 },
                 "path": {
                     "type": "string"
-                }
-            }
-        },
-        "rabbit.message": {
-            "type": "object",
-            "properties": {
-                "correlation_id": {
-                    "type": "string",
-                    "example": "123123"
-                },
-                "message": {
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklEIjoiNjZiNjBlYzhlMGYzYzY4OTUzMzJlOWNmIiwidXNlcklEIjoiNjZhZmQ3ZWU4YTBhYjRjZjQ0YTQ3NDcyIn0.who7upBctOpmlVmTvOgH1qFKOHKXmuQCkEjMV3qeySg"
                 }
             }
         },

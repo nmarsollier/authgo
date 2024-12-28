@@ -2,17 +2,16 @@ package di
 
 import (
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/internal/engine/db"
-	"github.com/nmarsollier/authgo/internal/engine/di"
-	"github.com/nmarsollier/authgo/internal/engine/log"
-	"github.com/nmarsollier/authgo/internal/engine/rbt"
-	"github.com/nmarsollier/authgo/internal/rabbit"
+	"github.com/nmarsollier/authgo/internal/di"
 	"github.com/nmarsollier/authgo/internal/token"
 	"github.com/nmarsollier/authgo/internal/usecases"
 	"github.com/nmarsollier/authgo/internal/user"
-	tlog "github.com/nmarsollier/authgo/test/engine/log"
-	"github.com/nmarsollier/authgo/test/mockgen"
-	trabbit "github.com/nmarsollier/authgo/test/rabbit"
+	"github.com/nmarsollier/commongo/cache"
+	"github.com/nmarsollier/commongo/db"
+	"github.com/nmarsollier/commongo/log"
+	"github.com/nmarsollier/commongo/rbt"
+	"github.com/nmarsollier/commongo/test/mktools"
+	"github.com/nmarsollier/commongo/test/mockgen"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -26,14 +25,14 @@ func NewTestInjector(
 
 	result := &TestInjector{
 		Deps: di.Deps{
-			CurrLog: tlog.NewTestLogger(ctrl, withFieldCount, errorCount, infoCount, dataCount, warnCount, fatalCount),
+			CurrLog: mktools.NewTestLogger(ctrl, withFieldCount, errorCount, infoCount, dataCount, warnCount, fatalCount),
 		},
 	}
 
 	mongo := mockgen.NewMockCollection(ctrl)
 	result.SetTokenCollection(mongo)
 	result.SetUserCollection(mongo)
-	result.SetRabbitChannel(trabbit.DefaultMockRabbitChannel(ctrl, 0))
+	result.SetSendLogoutPublisher(mktools.NewMockRabbitPublisher[string](ctrl))
 	return result
 }
 
@@ -49,8 +48,8 @@ func (t *TestInjector) SetInvalidateTokenUseCase(useCase usecases.InvalidateToke
 	t.CurrInvalidateTokenUseCase = useCase
 }
 
-func (t *TestInjector) SetSendLogoutService(service rabbit.SendLogoutService) {
-	t.CurrSendLogoutService = service
+func (t *TestInjector) SetSendLogoutPublisher(service rbt.RabbitPublisher[string]) {
+	t.CurrSendLogout = service
 }
 
 func (t *TestInjector) SetSignInUseCase(useCase usecases.SignInUseCase) {
@@ -77,11 +76,7 @@ func (t *TestInjector) SetUserService(service user.UserService) {
 	t.CurrUserService = service
 }
 
-func (t *TestInjector) SetRabbitChannel(channel rbt.RabbitChannel) {
-	t.CurrRabbitChannel = channel
-}
-
-func (t *TestInjector) SetTokenCache(cache token.TokenCache) {
+func (t *TestInjector) SetTokenCache(cache cache.Cache[token.Token]) {
 	t.CurrTokenCache = cache
 }
 

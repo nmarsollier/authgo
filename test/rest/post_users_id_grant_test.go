@@ -5,12 +5,13 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/internal/engine/errs"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/user"
 	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
-	"github.com/nmarsollier/authgo/test/mockgen"
+	"github.com/nmarsollier/commongo/errs"
+	"github.com/nmarsollier/commongo/test/mktools"
+	"github.com/nmarsollier/commongo/test/mockgen"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -67,7 +68,7 @@ func TestPostUserGrantHappyPath(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
+	req, w := mktools.TestPostRequest("/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -83,7 +84,7 @@ func TestPostUserGrantFindUserError_1(t *testing.T) {
 
 	mock.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
-	mock.ExpectFindOneError(mongodb, errs.NotFound, 1)
+	mktools.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 1, 0)
@@ -93,10 +94,10 @@ func TestPostUserGrantFindUserError_1(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
+	req, w := mktools.TestPostRequest("/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertUnauthorized(t, w)
+	mktools.AssertUnauthorized(t, w)
 
 }
 
@@ -122,7 +123,7 @@ func TestPostUserGrantFindUserError_2(t *testing.T) {
 		},
 	).Times(1)
 
-	mock.ExpectFindOneError(mongodb, errs.NotFound, 1)
+	mktools.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
@@ -132,10 +133,10 @@ func TestPostUserGrantFindUserError_2(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
+	req, w := mktools.TestPostRequest("/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertDocumentNotFound(t, w)
+	mktools.AssertDocumentNotFound(t, w)
 }
 
 func TestPostUserGrantNotAdmin(t *testing.T) {
@@ -167,10 +168,10 @@ func TestPostUserGrantNotAdmin(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestPostRequest("/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
+	req, w := mktools.TestPostRequest("/users/"+userData.ID.Hex()+"/grant", grantPermissionBody{Permissions: []string{"people"}}, tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertUnauthorized(t, w)
+	mktools.AssertUnauthorized(t, w)
 }
 
 type grantPermissionBody struct {

@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/authgo/internal/engine/errs"
-	"github.com/nmarsollier/authgo/internal/engine/log"
+	"github.com/nmarsollier/commongo/errs"
+	"github.com/nmarsollier/commongo/log"
 )
 
 // Gin middleware to validate logged in user token

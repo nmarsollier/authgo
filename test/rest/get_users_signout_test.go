@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/nmarsollier/authgo/internal/engine/errs"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/token"
 	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
-	"github.com/nmarsollier/authgo/test/mockgen"
-	"github.com/nmarsollier/authgo/test/rabbit"
+	"github.com/nmarsollier/commongo/errs"
+	"github.com/nmarsollier/commongo/test/mktools"
+	"github.com/nmarsollier/commongo/test/mockgen"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,12 +35,9 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
-	rabbitMock := rabbit.DefaultMockRabbitChannel(ctrl, 1)
-	rabbitMock.EXPECT().Publish(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(exchange string, routingKey string, body []byte) error {
-			assert.Equal(t, "auth", exchange)
-			assert.Equal(t, "", routingKey)
-			bodyStr := string(body)
+	rabbitMock := mktools.NewMockRabbitPublisher[string](ctrl)
+	rabbitMock.EXPECT().Publish(gomock.Any()).DoAndReturn(
+		func(bodyStr string) error {
 			assert.Contains(t, bodyStr, "Bearer")
 
 			return nil
@@ -51,12 +48,12 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongo)
 	deps.SetTokenCollection(mongo)
-	deps.SetRabbitChannel(rabbitMock)
+	deps.SetSendLogoutPublisher(rabbitMock)
 
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/signout", tokenString)
+	req, w := mktools.TestGetRequest("/users/signout", tokenString)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -71,7 +68,7 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 
 	mongo := mockgen.NewMockCollection(ctrl)
 	mock.ExpectTokenAuthFindOne(t, mongo, tokenData)
-	mock.ExpectUpdateOneError(mongo, errs.NotFound, 1)
+	mktools.ExpectUpdateOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
@@ -81,10 +78,10 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/signout", tokenString)
+	req, w := mktools.TestGetRequest("/users/signout", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertDocumentNotFound(t, w)
+	mktools.AssertDocumentNotFound(t, w)
 }
 
 func TestGetUserSignOutInvalidToken(t *testing.T) {
@@ -97,10 +94,10 @@ func TestGetUserSignOutInvalidToken(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/signout", "123")
+	req, w := mktools.TestGetRequest("/users/signout", "123")
 	r.ServeHTTP(w, req)
 
-	AssertUnauthorized(t, w)
+	mktools.AssertUnauthorized(t, w)
 }
 
 func TestGetUserSignOutDbFindError(t *testing.T) {
@@ -109,7 +106,7 @@ func TestGetUserSignOutDbFindError(t *testing.T) {
 	// Db Mocks
 	ctrl := gomock.NewController(t)
 	mongo := mockgen.NewMockCollection(ctrl)
-	mock.ExpectFindOneError(mongo, errs.NotFound, 1)
+	mktools.ExpectFindOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
 	deps := di.NewTestInjector(ctrl, 1, 2, 1, 0, 0, 0)
@@ -119,8 +116,8 @@ func TestGetUserSignOutDbFindError(t *testing.T) {
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
 
-	req, w := TestGetRequest("/users/signout", tokenString)
+	req, w := mktools.TestGetRequest("/users/signout", tokenString)
 	r.ServeHTTP(w, req)
 
-	AssertUnauthorized(t, w)
+	mktools.AssertUnauthorized(t, w)
 }

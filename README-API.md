@@ -8,29 +8,6 @@ Nestor Marsollier
 nmarsollier@gmail.com  
 
 ---
-### /rabbit/logout
-
-#### PUT
-##### Summary
-
-Mensage Rabbit
-
-##### Description
-
-SendLogout envía un broadcast a rabbit con logout. Esto no es Rest es RabbitMQ.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ------ |
-| body | body | Token deshabilitado | Yes | [rabbit.message](#rabbitmessage) |
-
-##### Responses
-
-| Code | Description |
-| ---- | ----------- |
-
----
 ### /users/:userID/grant
 
 #### POST
@@ -320,13 +297,6 @@ Registra un nuevo usuario en el sistema.
 | ---- | ---- | ----------- | -------- |
 | message | string |  | No |
 | path | string |  | No |
-
-#### rabbit.message
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| correlation_id | string | *Example:* `"123123"` | No |
-| message | string | *Example:* `"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbklEIjoiNjZiNjBlYzhlMGYzYzY4OTUzMzJlOWNmIiwidXNlcklEIjoiNjZhZmQ3ZWU4YTBhYjRjZjQ0YTQ3NDcyIn0.who7upBctOpmlVmTvOgH1qFKOHKXmuQCkEjMV3qeySg"` | No |
 
 #### rest.changePasswordBody
 
