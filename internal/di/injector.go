@@ -208,6 +208,8 @@ func (i *Deps) UserCollection() db.Collection {
 func IsDbTimeoutError(err error) {
 	if err == topology.ErrServerSelectionTimeout {
 		database = nil
+		tokenCollection = nil
+		userCollection = nil
 	}
 }
 

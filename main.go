@@ -3,7 +3,7 @@ package main
 import (
 	_ "github.com/nmarsollier/authgo/docs"
 	"github.com/nmarsollier/authgo/internal/graph"
-	routes "github.com/nmarsollier/authgo/internal/rest"
+	"github.com/nmarsollier/authgo/internal/rest"
 )
 
 //	@title			AuthGo
@@ -18,5 +18,5 @@ import (
 func main() {
 	go graph.Start()
 
-	routes.Start()
+	rest.Start()
 }
