@@ -8,7 +8,7 @@ import (
 
 // Gin middleware to validate logged in user token
 func IsAuthenticatedMiddleware(c *gin.Context) {
-	token, err := fetchAuthHeader(c)
+	token, err := loadTokenFromHeader(c)
 	if err != nil {
 		c.Error(errs.Unauthorized)
 		c.Abort()

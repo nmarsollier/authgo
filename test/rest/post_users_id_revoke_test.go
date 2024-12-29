@@ -7,7 +7,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/user"
-	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
 	"github.com/nmarsollier/commongo/errs"
 	"github.com/nmarsollier/commongo/test/mktools"
@@ -61,7 +60,7 @@ func TestPostUserRevokeHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -87,7 +86,7 @@ func TestPostUserRevokeFindUserError_1(t *testing.T) {
 	mktools.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 1, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 1, 1, 0, 1, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -126,7 +125,7 @@ func TestPostUserRevokeFindUserError_2(t *testing.T) {
 	mktools.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -161,7 +160,7 @@ func TestPostUserRevokeNotAdmin(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 1, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 1, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -178,7 +177,7 @@ func TestGetUserSignOutMissingTokenHeader(t *testing.T) {
 
 	// REQUEST
 	ctrl := gomock.NewController(t)
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)

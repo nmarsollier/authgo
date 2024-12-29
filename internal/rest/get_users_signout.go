@@ -3,6 +3,7 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/internal/rest/server"
+	"github.com/nmarsollier/commongo/rst"
 )
 
 // @Summary		Logout
@@ -12,7 +13,7 @@ import (
 // @Produce		json
 // @Param			Authorization	header	string	true	"Bearer {token}"
 // @Success		200				"No Content"
-// @Failure		500				{object}	server.ErrorData	"Error response"
+// @Failure		500				{object}	rst.ErrorData	"Error response"
 // @Router			/users/signout [get]
 //
 // Desloguea un usuario en el sistema, invalida el token.
@@ -25,11 +26,11 @@ func getUserSignOutRoute(engine *gin.Engine) {
 }
 
 func signOut(c *gin.Context) {
-	tokenString, _ := server.HeaderAuthorization(c)
+	tokenString, _ := rst.GetHeaderToken(c)
 	di := server.GinDi(c)
 
 	if err := di.InvalidateTokenUseCase().InvalidateToken(tokenString); err != nil {
-		server.AbortWithError(c, err)
+		rst.AbortWithError(c, err)
 		return
 	}
 

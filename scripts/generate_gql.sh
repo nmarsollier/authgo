@@ -1,1 +1,3 @@
+set -e
+
 gqlgen generate

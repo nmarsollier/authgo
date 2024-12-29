@@ -1,14 +1,12 @@
 package rest
 
 import (
-	"encoding/json"
 	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/user"
-	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
 	"github.com/nmarsollier/commongo/errs"
 	"github.com/nmarsollier/commongo/test/mktools"
@@ -54,7 +52,7 @@ func TestPostUserPasswordHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -77,7 +75,7 @@ func TestPostUserPasswordMissingCurrent(t *testing.T) {
 	mock.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -104,7 +102,7 @@ func TestPostUserPasswordMissingNew(t *testing.T) {
 	mock.ExpectTokenAuthFindOne(t, mongodb, tokenData)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -144,7 +142,7 @@ func TestPostUserPasswordWrongCurrent(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -156,12 +154,10 @@ func TestPostUserPasswordWrongCurrent(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 
-	var result map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &result)
+	result := w.Body.String()
 
-	assert.NotEmpty(t, result["error"])
-	assert.Contains(t, result["error"], "password")
-	assert.Contains(t, result["error"], "invalid")
+	assert.Contains(t, result, "password")
+	assert.Contains(t, result, "invalid")
 }
 
 func TestPostUserPasswordUserNotFound(t *testing.T) {
@@ -176,7 +172,7 @@ func TestPostUserPasswordUserNotFound(t *testing.T) {
 	mktools.ExpectFindOneError(mongodb, errs.NotFound, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -213,7 +209,7 @@ func TestPostUserPasswordUpdateFails(t *testing.T) {
 	mktools.ExpectUpdateOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -225,12 +221,10 @@ func TestPostUserPasswordUpdateFails(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 
-	var result map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &result)
+	result := w.Body.String()
 
-	assert.NotEmpty(t, result["error"])
-	assert.Contains(t, result["error"], "id")
-	assert.Contains(t, result["error"], "Invalid")
+	assert.Contains(t, result, "id")
+	assert.Contains(t, result, "Invalid")
 }
 
 type changePasswordBody struct {

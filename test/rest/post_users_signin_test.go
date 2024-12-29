@@ -9,7 +9,6 @@ import (
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/token"
 	"github.com/nmarsollier/authgo/internal/user"
-	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
 	"github.com/nmarsollier/commongo/errs"
 	"github.com/nmarsollier/commongo/test/mktools"
@@ -45,7 +44,7 @@ func TestPostSignInHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -87,7 +86,7 @@ func TestPostSignInWrongPassword(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -99,12 +98,9 @@ func TestPostSignInWrongPassword(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 
-	var result map[string]interface{}
-	json.Unmarshal(w.Body.Bytes(), &result)
+	message := w.Body.String()
 
-	assert.NotEmpty(t, result["error"])
-	assert.Contains(t, result["error"], "password")
-	assert.Contains(t, result["error"], "invalid")
+	assert.Equal(t, "{\"messages\":[{\"path\":\"password\",\"message\":\"invalid\"}]}", message)
 }
 
 func TestPostSignInUserDisabled(t *testing.T) {
@@ -127,7 +123,7 @@ func TestPostSignInUserDisabled(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -145,7 +141,7 @@ func TestPostSignInMissingLogin(t *testing.T) {
 
 	// REQUEST
 	ctrl := gomock.NewController(t)
-	deps := di.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
 
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
@@ -165,7 +161,7 @@ func TestPostSignInMissingPassword(t *testing.T) {
 
 	// REQUEST
 	ctrl := gomock.NewController(t)
-	deps := di.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
 
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
@@ -190,7 +186,7 @@ func TestPostSignInUserDbError(t *testing.T) {
 	mktools.ExpectFindOneError(mongodb, errs.Internal, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -217,7 +213,7 @@ func TestPostSignInUserNotFound(t *testing.T) {
 	mktools.ExpectFindOneError(mongodb, mongo.ErrNoDocuments, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -251,7 +247,7 @@ func TestPostTokenDbError(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 

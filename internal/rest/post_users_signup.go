@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/internal/rest/server"
 	"github.com/nmarsollier/authgo/internal/usecases"
+	"github.com/nmarsollier/commongo/rst"
 )
 
 //	@Summary		Registrar Usuario
@@ -14,9 +15,9 @@ import (
 //	@Param			body	body		usecases.SignUpRequest	true	"Informacion de ususario"
 //	@Success		200		{object}	usecases.TokenResponse	"User Token"
 //	@Failure		400		{object}	errs.ValidationErr		"Bad Request"
-//	@Failure		401		{object}	server.ErrorData		"Unauthorized"
-//	@Failure		404		{object}	server.ErrorData		"Not Found"
-//	@Failure		500		{object}	server.ErrorData		"Internal Server Error"
+//	@Failure		401		{object}	rst.ErrorData			"Unauthorized"
+//	@Failure		404		{object}	rst.ErrorData			"Not Found"
+//	@Failure		500		{object}	rst.ErrorData			"Internal Server Error"
 //	@Router			/users/signup [post]
 //
 // Registra un nuevo usuario en el sistema.
@@ -30,14 +31,14 @@ func postUsersRoute(engine *gin.Engine) {
 func signUp(c *gin.Context) {
 	body := usecases.SignUpRequest{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		server.AbortWithError(c, err)
+		rst.AbortWithError(c, err)
 		return
 	}
 
 	di := server.GinDi(c)
 	token, err := di.SignUpUseCase().SignUp(&body)
 	if err != nil {
-		server.AbortWithError(c, err)
+		rst.AbortWithError(c, err)
 		return
 	}
 

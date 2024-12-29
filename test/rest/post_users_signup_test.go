@@ -7,7 +7,6 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/internal/rest"
-	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
 	"github.com/nmarsollier/commongo/errs"
 	"github.com/nmarsollier/commongo/test/mktools"
@@ -27,7 +26,7 @@ func TestPostUserInHappyPath(t *testing.T) {
 	mktools.ExpectInsertOne(mongodb, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -49,7 +48,7 @@ func TestPostUserMissingLogin(t *testing.T) {
 
 	// REQUEST
 	ctrl := gomock.NewController(t)
-	deps := di.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
 
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
@@ -68,7 +67,7 @@ func TestPostUserMissingLogin(t *testing.T) {
 func TestPostUserInvalidLoginMinRule(t *testing.T) {
 	// REQUEST
 	ctrl := gomock.NewController(t)
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
@@ -88,7 +87,7 @@ func TestPostUserIvalidPassword(t *testing.T) {
 
 	// REQUEST
 	ctrl := gomock.NewController(t)
-	deps := di.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 0, 1, 0, 0, 0)
 
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
@@ -113,7 +112,7 @@ func TestPostUserDatabaseError(t *testing.T) {
 	mktools.ExpectInsertOneError(mongodb, mktools.TestOtherDbError, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -126,7 +125,7 @@ func TestPostUserDatabaseError(t *testing.T) {
 	mktools.AssertInternalServerError(t, w)
 }
 
-func TestPostUserAlreayExist(t *testing.T) {
+func TestPostUserAlreadyExist(t *testing.T) {
 	userData, password := mock.TestUser()
 
 	// Db Mocks
@@ -136,7 +135,7 @@ func TestPostUserAlreayExist(t *testing.T) {
 	mktools.ExpectInsertOneError(mongodb, mktools.TestIsUniqueError, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -161,7 +160,7 @@ func TestPostTokenDatabaseError(t *testing.T) {
 	mktools.ExpectInsertOneError(mongodb, errs.Internal, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 

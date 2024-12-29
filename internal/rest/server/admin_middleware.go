@@ -8,7 +8,7 @@ import (
 
 // Gin middleware to validate user token and Admin Access
 func IsAdminMiddleware(c *gin.Context) {
-	payload, err := fetchAuthHeader(c)
+	payload, err := loadTokenFromHeader(c)
 
 	if err != nil {
 		c.Error(errs.Unauthorized)

@@ -37,7 +37,7 @@ definitions:
     required:
     - permissions
     type: object
-  server.ErrorData:
+  rst.ErrorData:
     properties:
       error:
         type: string
@@ -129,15 +129,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Haiblitar permisos
       tags:
       - Seguridad
@@ -176,15 +176,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Quitar permisos
       tags:
       - Seguridad
@@ -217,15 +217,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Deshabilitar Usuario
       tags:
       - Seguridad
@@ -258,15 +258,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Enable User
       tags:
       - Seguridad
@@ -298,15 +298,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Listar Usuarios
       tags:
       - Seguridad
@@ -335,15 +335,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Usuario Actual
       tags:
       - Seguridad
@@ -376,15 +376,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Cambiar Password
       tags:
       - Seguridad
@@ -414,15 +414,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Login
       tags:
       - Seguridad
@@ -445,7 +445,7 @@ paths:
         "500":
           description: Error response
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Logout
       tags:
       - Seguridad
@@ -475,15 +475,15 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/server.ErrorData'
+            $ref: '#/definitions/rst.ErrorData'
       summary: Registrar Usuario
       tags:
       - Seguridad

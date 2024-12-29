@@ -8,7 +8,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/user"
-	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
 	"github.com/nmarsollier/commongo/errs"
 	"github.com/nmarsollier/commongo/test/mktools"
@@ -36,7 +35,7 @@ func TestGetUserCurrentHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetTokenCollection(mongo)
 	deps.SetUserCollection(mongo)
 
@@ -66,7 +65,7 @@ func TestGetUserCurrentErrorDisabledToken(t *testing.T) {
 	mock.ExpectTokenAuthFindOne(t, mongo, tokenData)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 	deps.SetTokenCollection(mongo)
 
 	r := TestRouter(ctrl, deps)
@@ -90,7 +89,7 @@ func TestGetUserCurrentErrorDisabledUser(t *testing.T) {
 	mktools.ExpectFindOne(mongo, userData, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetTokenCollection(mongo)
 	deps.SetUserCollection(mongo)
 
@@ -112,7 +111,7 @@ func TestGetUserCurrentErrorTokenNotFound(t *testing.T) {
 	mktools.ExpectFindOneError(mongo, errs.Internal, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 2, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 2, 1, 0, 0, 0)
 	deps.SetUserCollection(mongo)
 	deps.SetTokenCollection(mongo)
 
@@ -137,7 +136,7 @@ func TestGetUserCurrentErrorUserNotFound(t *testing.T) {
 	mktools.ExpectFindOneError(mongo, topology.ErrServerSelectionTimeout, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongo)
 	deps.SetTokenCollection(mongo)
 

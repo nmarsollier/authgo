@@ -1,4 +1,4 @@
-package di
+package mock
 
 import (
 	"github.com/golang/mock/gomock"

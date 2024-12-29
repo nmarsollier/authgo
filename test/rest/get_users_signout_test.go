@@ -8,7 +8,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/token"
-	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
 	"github.com/nmarsollier/commongo/errs"
 	"github.com/nmarsollier/commongo/test/mktools"
@@ -45,7 +44,7 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongo)
 	deps.SetTokenCollection(mongo)
 	deps.SetSendLogoutPublisher(rabbitMock)
@@ -71,7 +70,7 @@ func TestGetUserSignOutDbUpdateError(t *testing.T) {
 	mktools.ExpectUpdateOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongo)
 	deps.SetTokenCollection(mongo)
 
@@ -89,7 +88,7 @@ func TestGetUserSignOutInvalidToken(t *testing.T) {
 	ctrl := gomock.NewController(t)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 1, 1, 0, 0, 0)
 
 	r := TestRouter(ctrl, deps)
 	rest.InitRoutes(r)
@@ -109,7 +108,7 @@ func TestGetUserSignOutDbFindError(t *testing.T) {
 	mktools.ExpectFindOneError(mongo, errs.NotFound, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 1, 2, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 1, 2, 1, 0, 0, 0)
 	deps.SetUserCollection(mongo)
 	deps.SetTokenCollection(mongo)
 

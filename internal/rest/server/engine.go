@@ -6,6 +6,8 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
+	"github.com/nmarsollier/authgo/internal/token"
+	"github.com/nmarsollier/commongo/rst"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -29,7 +31,7 @@ func Router() *gin.Engine {
 			ValidateHeaders: false,
 		}))
 
-		engine.Use(ErrorHandler)
+		engine.Use(rst.ErrorHandler)
 
 		engine.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
@@ -37,7 +39,26 @@ func Router() *gin.Engine {
 	return engine
 }
 
-func AbortWithError(c *gin.Context, err error) {
-	c.Error(err)
-	c.Abort()
+// GetCtxToken Token data from Authorization header
+func GetCtxToken(c *gin.Context) *token.Token {
+	return c.MustGet("auth_header").(*token.Token)
+}
+
+func loadTokenFromHeader(c *gin.Context) (*token.Token, error) {
+	di := GinDi(c)
+	tokenString, err := rst.GetHeaderToken(c)
+	if err != nil {
+		di.Logger().Error(err)
+		return nil, err
+	}
+
+	payload, err := di.TokenService().Validate(tokenString)
+	if err != nil {
+		di.Logger().Error(err)
+		return nil, err
+	}
+
+	c.Set("auth_header", payload)
+
+	return payload, nil
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/internal/rest"
 	"github.com/nmarsollier/authgo/internal/user"
-	"github.com/nmarsollier/authgo/test/engine/di"
 	"github.com/nmarsollier/authgo/test/mock"
 	"github.com/nmarsollier/commongo/test/mktools"
 	"github.com/nmarsollier/commongo/test/mockgen"
@@ -49,7 +48,7 @@ func TestPostUserDisableHappyPath(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -74,7 +73,7 @@ func TestPostUserDisableFindUserError_1(t *testing.T) {
 	mktools.ExpectFindOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 1, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 1, 1, 0, 1, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -110,7 +109,7 @@ func TestPostUserDisableFindUserError_2(t *testing.T) {
 	mktools.ExpectFindOneError(mongodb, user.ErrID, 1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 1, 1, 0, 0, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 
@@ -145,7 +144,7 @@ func TestPostUserDisableNotAdmin(t *testing.T) {
 	).Times(1)
 
 	// REQUEST
-	deps := di.NewTestInjector(ctrl, 2, 0, 1, 0, 1, 0)
+	deps := mock.NewTestInjector(ctrl, 2, 0, 1, 0, 1, 0)
 	deps.SetUserCollection(mongodb)
 	deps.SetTokenCollection(mongodb)
 

@@ -5,7 +5,7 @@ import (
 	"github.com/nmarsollier/authgo/internal/di"
 	"github.com/nmarsollier/authgo/internal/env"
 	"github.com/nmarsollier/commongo/log"
-	uuid "github.com/satori/go.uuid"
+	"github.com/nmarsollier/commongo/rst"
 )
 
 func DiInjectorMiddleware() gin.HandlerFunc {
@@ -14,7 +14,7 @@ func DiInjectorMiddleware() gin.HandlerFunc {
 		dep_param, exists := c.Get("di")
 
 		if !exists {
-			logger := ginLogger(c)
+			logger := rst.GinLogger(c, env.Get().FluentURL, "authgo")
 			deps = di.NewInjector(logger)
 			c.Set("di", deps)
 		} else {
@@ -31,22 +31,4 @@ func DiInjectorMiddleware() gin.HandlerFunc {
 
 func GinDi(c *gin.Context) di.Injector {
 	return c.MustGet("di").(di.Injector)
-}
-
-func ginLogger(c *gin.Context) log.LogRusEntry {
-	return log.Get(env.Get().FluentURL, "authgo").
-		WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(c)).
-		WithField(log.LOG_FIELD_CONTROLLER, "Rest").
-		WithField(log.LOG_FIELD_HTTP_METHOD, c.Request.Method).
-		WithField(log.LOG_FIELD_HTTP_PATH, c.Request.URL.Path)
-}
-
-func getCorrelationId(c *gin.Context) string {
-	value := c.GetHeader(log.LOG_FIELD_CORRELATION_ID)
-
-	if len(value) == 0 {
-		value = uuid.NewV4().String()
-	}
-
-	return value
 }

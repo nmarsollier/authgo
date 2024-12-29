@@ -3,6 +3,7 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/internal/rest/server"
+	"github.com/nmarsollier/commongo/rst"
 )
 
 //	@Summary		Quitar permisos
@@ -15,9 +16,9 @@ import (
 //	@Param			body			body	grantPermissionBody	true	"Permisos a Qutiar"
 //	@Success		200				"No Content"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
-//	@Failure		401				{object}	server.ErrorData	"Unauthorized"
-//	@Failure		404				{object}	server.ErrorData	"Not Found"
-//	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
+//	@Failure		401				{object}	rst.ErrorData		"Unauthorized"
+//	@Failure		404				{object}	rst.ErrorData		"Not Found"
+//	@Failure		500				{object}	rst.ErrorData		"Internal Server Error"
 //	@Router			/users/:userID/revoke [post]
 //
 // Quita permisos al usuario indicado.
@@ -36,7 +37,7 @@ type revokePermissionBody struct {
 func revokePermission(c *gin.Context) {
 	body := revokePermissionBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		server.AbortWithError(c, err)
+		rst.AbortWithError(c, err)
 		return
 	}
 
@@ -44,7 +45,7 @@ func revokePermission(c *gin.Context) {
 
 	di := server.GinDi(c)
 	if err := di.UserService().Revoke(userId, body.Permissions); err != nil {
-		server.AbortWithError(c, err)
+		rst.AbortWithError(c, err)
 		return
 	}
 }

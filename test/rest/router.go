@@ -6,6 +6,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/nmarsollier/authgo/internal/di"
 	"github.com/nmarsollier/authgo/internal/rest/server"
+	"github.com/nmarsollier/commongo/rst"
 )
 
 func TestRouter(ctrl *gomock.Controller, deps di.Injector) *gin.Engine {
@@ -17,7 +18,7 @@ func TestRouter(ctrl *gomock.Controller, deps di.Injector) *gin.Engine {
 
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 	engine.Use(server.DiInjectorMiddleware())
-	engine.Use(server.ErrorHandler)
+	engine.Use(rst.ErrorHandler)
 
 	return engine
 }

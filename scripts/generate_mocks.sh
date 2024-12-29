@@ -1,5 +1,7 @@
 rm -rf ./test/mockgen
 
+set -e
+
 mockgen -source=./internal/token/repository.go -destination=./test/mockgen/token_repository_mocks.go -package=mockgen
 mockgen -source=./internal/token/service.go -destination=./test/mockgen/token_service_mocks.go -package=mockgen
 

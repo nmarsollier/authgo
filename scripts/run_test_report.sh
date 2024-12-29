@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e
+
 # Ensure gocovmerge is installed
 if ! command -v gocovmerge &> /dev/null; then
     echo "gocovmerge could not be found, installing..."

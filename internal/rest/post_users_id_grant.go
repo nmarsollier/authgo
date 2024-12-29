@@ -3,6 +3,7 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/internal/rest/server"
+	"github.com/nmarsollier/commongo/rst"
 )
 
 //	@Summary		Haiblitar permisos
@@ -15,9 +16,9 @@ import (
 //	@Param			body			body	grantPermissionBody	true	"Permisos a Habilitar"
 //	@Success		200				"No Content"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
-//	@Failure		401				{object}	server.ErrorData	"Unauthorized"
-//	@Failure		404				{object}	server.ErrorData	"Not Found"
-//	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
+//	@Failure		401				{object}	rst.ErrorData		"Unauthorized"
+//	@Failure		404				{object}	rst.ErrorData		"Not Found"
+//	@Failure		500				{object}	rst.ErrorData		"Internal Server Error"
 //	@Router			/users/:userID/grant [post]
 //
 // Otorga permisos al usuario indicado.
@@ -36,14 +37,14 @@ type grantPermissionBody struct {
 func grantPermission(c *gin.Context) {
 	body := grantPermissionBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		server.AbortWithError(c, err)
+		rst.AbortWithError(c, err)
 		return
 	}
 	userId := c.Param("userID")
 
 	di := server.GinDi(c)
 	if err := di.UserService().Grant(userId, body.Permissions); err != nil {
-		server.AbortWithError(c, err)
+		rst.AbortWithError(c, err)
 		return
 	}
 }

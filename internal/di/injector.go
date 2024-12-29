@@ -177,7 +177,7 @@ func (i *Deps) TokenCollection() db.Collection {
 		return tokenCollection
 	}
 
-	tokenCollection, err := db.NewCollection(i.CurrLog, i.Database(), "tokens", "userId")
+	tokenCollection, err := db.NewCollection(i.CurrLog, i.Database(), "tokens", IsDbTimeoutError, "userId")
 	if err != nil {
 		i.CurrLog.Fatal(err)
 		return nil
@@ -195,7 +195,7 @@ func (i *Deps) UserCollection() db.Collection {
 		return userCollection
 	}
 
-	userCollection, err := db.NewCollection(i.CurrLog, i.Database(), "users")
+	userCollection, err := db.NewCollection(i.CurrLog, i.Database(), "users", IsDbTimeoutError)
 	if err != nil {
 		i.CurrLog.Fatal(err)
 		return nil
@@ -205,7 +205,7 @@ func (i *Deps) UserCollection() db.Collection {
 }
 
 // IsDbTimeoutError función a llamar cuando se produce un error de db
-func IsDbTimeoutError(err interface{}) {
+func IsDbTimeoutError(err error) {
 	if err == topology.ErrServerSelectionTimeout {
 		database = nil
 	}
