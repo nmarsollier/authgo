@@ -24,8 +24,8 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 	mongo := mockgen.NewMockCollection(ctrl)
 	mock.ExpectTokenAuthFindOne(t, mongo, tokenData)
 
-	mongo.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, filter token.DbTokenIdFilter, update token.DbDeleteTokenDocument) (int64, error) {
+	mongo.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+		func(arg1 interface{}, filter token.DbTokenIdFilter, update token.DbDeleteTokenDocument, options interface{}) (int64, error) {
 			assert.Equal(t, tokenData.ID, filter.ID)
 
 			assert.Equal(t, false, update.Set.Enabled)

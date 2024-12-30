@@ -35,8 +35,8 @@ func TestPostUserPasswordHappyPath(t *testing.T) {
 		},
 	).Times(1)
 
-	mongodb.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-		func(arg1 interface{}, filter user.DbUserIdFilter, update user.DbUserUpdateDocument) (int64, error) {
+	mongodb.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
+		func(arg1 interface{}, filter user.DbUserIdFilter, update user.DbUserUpdateDocument, opts interface{}) (int64, error) {
 			// Check parameters
 			assert.Equal(t, userData.ID, filter.ID)
 

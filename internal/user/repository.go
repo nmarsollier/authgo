@@ -80,6 +80,7 @@ func (r *userRepository) Update(user *User) (*User, error) {
 				Permissions: user.Permissions,
 			},
 		},
+		nil,
 	)
 
 	if err != nil {

@@ -64,6 +64,7 @@ func (r *tokenRepository) Delete(tokenID primitive.ObjectID) error {
 	_, err := r.collection.UpdateOne(context.Background(),
 		DbTokenIdFilter{ID: tokenID},
 		DbDeleteTokenDocument{Set: DbDeleteTokenBody{Enabled: false}},
+		nil,
 	)
 
 	return err
