@@ -36,9 +36,8 @@ func TestGetUserSignOutHappyPath(t *testing.T) {
 
 	rabbitMock := mktools.NewMockRabbitPublisher[string](ctrl)
 	rabbitMock.EXPECT().Publish(
-		gomock.Any(),
 		gomock.Any()).DoAndReturn(
-		func(token string, bodyStr string) error {
+		func(bodyStr string) error {
 			assert.Contains(t, bodyStr, "Bearer")
 
 			return nil

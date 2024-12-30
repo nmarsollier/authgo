@@ -218,14 +218,8 @@ func (i *Deps) SendLogoutPublisher() rbt.RabbitPublisher[string] {
 		return i.CurrSendLogout
 	}
 
-	logger := i.Logger().
-		WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
-		WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
-		WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
-		WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
-
 	i.CurrSendLogout, _ = rbt.NewRabbitPublisher[string](
-		logger,
+		rbt.RbtLogger(env.Get().FluentURL, "authgo", i.Logger().CorrelationId()),
 		env.Get().RabbitURL,
 		"auth",
 		"fanout",

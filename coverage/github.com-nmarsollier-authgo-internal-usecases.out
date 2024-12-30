@@ -5,9 +5,9 @@ github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:34.16,36.3 1
 github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:38.2,38.12 1 0
 github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:38.12,39.22 1 0
 github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:39.22,42.4 2 0
-github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:44.3,46.33 1 0
-github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:46.33,48.4 1 0
-github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:51.2,51.12 1 0
+github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:44.3,45.35 1 0
+github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:45.35,47.4 1 0
+github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:50.2,50.12 1 0
 github.com/nmarsollier/authgo/internal/usecases/sign_in.go:13.100,18.2 1 0
 github.com/nmarsollier/authgo/internal/usecases/sign_in.go:30.80,32.16 2 0
 github.com/nmarsollier/authgo/internal/usecases/sign_in.go:32.16,34.3 1 0

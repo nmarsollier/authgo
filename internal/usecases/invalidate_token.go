@@ -42,8 +42,7 @@ func (s *invalidateTokenUseCase) InvalidateToken(token string) error {
 		}
 
 		if err = s.rabbit.Publish(
-			s.log.CorrelationId(),
-			"Bearer "+token); err != nil {
+			"Bearer " + token); err != nil {
 			s.log.Info("Rabbit logout no se pudo enviar")
 		}
 	}()

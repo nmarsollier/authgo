@@ -54,7 +54,7 @@ github.com/nmarsollier/authgo/internal/di/injector.go:208.34,209.47 1 0
 github.com/nmarsollier/authgo/internal/di/injector.go:209.47,213.3 3 0
 github.com/nmarsollier/authgo/internal/di/injector.go:216.66,217.29 1 1
 github.com/nmarsollier/authgo/internal/di/injector.go:217.29,219.3 1 1
-github.com/nmarsollier/authgo/internal/di/injector.go:221.2,235.25 3 0
+github.com/nmarsollier/authgo/internal/di/injector.go:221.2,234.25 3 0
 github.com/nmarsollier/authgo/internal/env/env.go:20.27,29.2 1 1
 github.com/nmarsollier/authgo/internal/env/env.go:32.27,33.19 1 1
 github.com/nmarsollier/authgo/internal/env/env.go:33.19,35.3 1 1
@@ -200,9 +200,9 @@ github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:34.16,36.3 1
 github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:38.2,38.12 1 1
 github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:38.12,39.22 1 1
 github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:39.22,42.4 2 0
-github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:44.3,46.33 1 1
-github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:46.33,48.4 1 0
-github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:51.2,51.12 1 1
+github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:44.3,45.35 1 1
+github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:45.35,47.4 1 0
+github.com/nmarsollier/authgo/internal/usecases/invalidate_token.go:50.2,50.12 1 1
 github.com/nmarsollier/authgo/internal/usecases/sign_in.go:13.100,18.2 1 1
 github.com/nmarsollier/authgo/internal/usecases/sign_in.go:30.80,32.16 2 1
 github.com/nmarsollier/authgo/internal/usecases/sign_in.go:32.16,34.3 1 1

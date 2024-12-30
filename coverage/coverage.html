@@ -1145,11 +1145,10 @@ func (i *Deps) SendLogoutPublisher() rbt.RabbitPublisher[string] <span class="co
                 return i.CurrSendLogout
         }</span>
 
-        <span class="cov0" title="0">logger := i.Logger().
+        <span class="cov0" title="0">logger := log.Get(env.Get().FluentURL, "authgo").
+                WithField(log.LOG_FIELD_CORRELATION_ID, i.Logger().CorrelationId()).
                 WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
-                WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit").
-                WithField(log.LOG_FIELD_RABBIT_EXCHANGE, "auth").
-                WithField(log.LOG_FIELD_RABBIT_QUEUE, "logout")
+                WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit")
 
         i.CurrSendLogout, _ = rbt.NewRabbitPublisher[string](
                 logger,
@@ -8244,8 +8243,7 @@ func (s *invalidateTokenUseCase) InvalidateToken(token string) error <span class
                 }</span>
 
                 <span class="cov8" title="1">if err = s.rabbit.Publish(
-                        s.log.CorrelationId(),
-                        "Bearer "+token); err != nil </span><span class="cov0" title="0">{
+                        "Bearer " + token); err != nil </span><span class="cov0" title="0">{
                         s.log.Info("Rabbit logout no se pudo enviar")
                 }</span>
         }()
