@@ -57,7 +57,7 @@
 				
 				<option value="file0">github.com/nmarsollier/authgo/docs/docs.go (0.0%)</option>
 				
-				<option value="file1">github.com/nmarsollier/authgo/internal/di/injector.go (49.4%)</option>
+				<option value="file1">github.com/nmarsollier/authgo/internal/di/injector.go (50.0%)</option>
 				
 				<option value="file2">github.com/nmarsollier/authgo/internal/env/env.go (90.0%)</option>
 				
@@ -1145,13 +1145,8 @@ func (i *Deps) SendLogoutPublisher() rbt.RabbitPublisher[string] <span class="co
                 return i.CurrSendLogout
         }</span>
 
-        <span class="cov0" title="0">logger := log.Get(env.Get().FluentURL, "authgo").
-                WithField(log.LOG_FIELD_CORRELATION_ID, i.Logger().CorrelationId()).
-                WithField(log.LOG_FIELD_CONTROLLER, "Rabbit").
-                WithField(log.LOG_FIELD_RABBIT_ACTION, "Emit")
-
-        i.CurrSendLogout, _ = rbt.NewRabbitPublisher[string](
-                logger,
+        <span class="cov0" title="0">i.CurrSendLogout, _ = rbt.NewRabbitPublisher[string](
+                rbt.RbtLogger(env.Get().FluentURL, "authgo", i.Logger().CorrelationId()),
                 env.Get().RabbitURL,
                 "auth",
                 "fanout",

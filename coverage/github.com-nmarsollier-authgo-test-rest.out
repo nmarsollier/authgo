@@ -54,7 +54,7 @@ github.com/nmarsollier/authgo/internal/di/injector.go:208.34,209.47 1 0
 github.com/nmarsollier/authgo/internal/di/injector.go:209.47,213.3 3 0
 github.com/nmarsollier/authgo/internal/di/injector.go:216.66,217.29 1 1
 github.com/nmarsollier/authgo/internal/di/injector.go:217.29,219.3 1 1
-github.com/nmarsollier/authgo/internal/di/injector.go:221.2,234.25 3 0
+github.com/nmarsollier/authgo/internal/di/injector.go:221.2,229.25 2 0
 github.com/nmarsollier/authgo/internal/env/env.go:20.27,29.2 1 1
 github.com/nmarsollier/authgo/internal/env/env.go:32.27,33.19 1 1
 github.com/nmarsollier/authgo/internal/env/env.go:33.19,35.3 1 1
