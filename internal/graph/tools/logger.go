@@ -12,7 +12,7 @@ import (
 func newLogger(ctx context.Context) log.LogRusEntry {
 	operationContext := graphql.GetOperationContext(ctx)
 
-	return log.Get(env.Get().FluentURL, "authgo").
+	return log.Get(env.Get().FluentURL, env.Get().ServerName).
 		WithField(log.LOG_FIELD_CORRELATION_ID, getCorrelationId(ctx)).
 		WithField(log.LOG_FIELD_CONTROLLER, "GraphQL").
 		WithField(log.LOG_FIELD_HTTP_METHOD, operationContext.OperationName).

@@ -15,6 +15,7 @@ func TestDefault(t *testing.T) {
 	assert.Equal(t, "mongodb://localhost:27017", config.MongoURL)
 	assert.Equal(t, "localhost:24224", config.FluentURL)
 	assert.Equal(t, 3000, config.Port)
+	assert.Equal(t, 4000, config.GqlPort)
 	assert.Equal(t, "ecb6d3479ac3823f1da7f314d871989b", config.JWTSecret)
 }
 

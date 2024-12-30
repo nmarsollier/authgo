@@ -13,7 +13,7 @@ import (
 )
 
 func Start() {
-	logger := log.Get(env.Get().FluentURL, "authgo")
+	logger := log.Get(env.Get().FluentURL, env.Get().ServerName)
 	port := env.Get().GqlPort
 	srv := handler.NewDefaultServer(model.NewExecutableSchema(model.Config{Resolvers: &schema.Resolver{}}))
 

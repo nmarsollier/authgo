@@ -219,7 +219,7 @@ func (i *Deps) SendLogoutPublisher() rbt.RabbitPublisher[string] {
 	}
 
 	i.CurrSendLogout, _ = rbt.NewRabbitPublisher[string](
-		rbt.RbtLogger(env.Get().FluentURL, "authgo", i.Logger().CorrelationId()),
+		rbt.RbtLogger(env.Get().FluentURL, env.Get().ServerName, i.Logger().CorrelationId()),
 		env.Get().RabbitURL,
 		"auth",
 		"fanout",
