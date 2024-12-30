@@ -7997,6 +7997,7 @@ func (r *tokenRepository) Delete(tokenID primitive.ObjectID) error <span class="
         _, err := r.collection.UpdateOne(context.Background(),
                 DbTokenIdFilter{ID: tokenID},
                 DbDeleteTokenDocument{Set: DbDeleteTokenBody{Enabled: false}},
+                nil,
         )
 
         return err
@@ -8454,6 +8455,7 @@ func (r *userRepository) Update(user *User) (*User, error) <span class="cov8" ti
                                 Permissions: user.Permissions,
                         },
                 },
+                nil,
         )
 
         if err != nil </span><span class="cov8" title="1">{
