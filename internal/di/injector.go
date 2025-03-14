@@ -20,9 +20,9 @@ var userCollection db.Collection
 var database *mongo.Database
 
 type Injector interface {
+	Logger() log.LogRusEntry
 	Database() *mongo.Database
 	InvalidateTokenUseCase() usecases.InvalidateTokenUseCase
-	Logger() log.LogRusEntry
 	SignInUseCase() usecases.SignInUseCase
 	SignUpUseCase() usecases.SignUpUseCase
 	TokenCache() cache.Cache[token.Token]

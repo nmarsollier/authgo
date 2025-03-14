@@ -41,8 +41,7 @@ func (s *invalidateTokenUseCase) InvalidateToken(token string) error {
 			return
 		}
 
-		if err = s.rabbit.Publish(
-			"Bearer " + token); err != nil {
+		if err = s.rabbit.Publish("Bearer " + token); err != nil {
 			s.log.Info("Rabbit logout no se pudo enviar")
 		}
 	}()
