@@ -947,9 +947,9 @@ var userCollection db.Collection
 var database *mongo.Database
 
 type Injector interface {
+        Logger() log.LogRusEntry
         Database() *mongo.Database
         InvalidateTokenUseCase() usecases.InvalidateTokenUseCase
-        Logger() log.LogRusEntry
         SignInUseCase() usecases.SignInUseCase
         SignUpUseCase() usecases.SignUpUseCase
         TokenCache() cache.Cache[token.Token]
@@ -8208,8 +8208,7 @@ func (s *invalidateTokenUseCase) InvalidateToken(token string) error <span class
                         return
                 }</span>
 
-                <span class="cov8" title="1">if err = s.rabbit.Publish(
-                        "Bearer " + token); err != nil </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">if err = s.rabbit.Publish("Bearer " + token); err != nil </span><span class="cov0" title="0">{
                         s.log.Info("Rabbit logout no se pudo enviar")
                 }</span>
         }()
