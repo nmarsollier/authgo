@@ -1,34 +1,17 @@
 package user
 
 import (
-	"github.com/nmarsollier/commongo/errs"
+	"github.com/nmarsollier/authgo/internal/common/errs"
+	"github.com/nmarsollier/authgo/internal/common/log"
 )
 
-type UserService interface {
-	ChangePassword(userID string, current string, newPassword string) error
-	Disable(userID string) error
-	Enable(userID string) error
-	FindById(userID string) (*UserData, error)
-	FindAllUsers() ([]*UserData, error)
-	Grant(userID string, permissions []string) error
-	Granted(userID string, permission string) bool
-	Revoke(userID string, permissions []string) error
-	New(login string, name string, password string) (result *UserData, err error)
-	SignIn(login string, password string) (user *UserData, err error)
-}
-
-func NewUserService(userRepository UserRepository) UserService {
-	return &userService{
-		repository: userRepository,
-	}
-}
-
-type userService struct {
-	repository UserRepository
-}
-
-func (s *userService) ChangePassword(userID string, current string, newPassword string) error {
-	user, err := s.repository.FindByID(userID)
+func ChangePassword(
+	log log.LogRusEntry,
+	userID string,
+	current string,
+	newPassword string,
+) error {
+	user, err := findByID(log, userID)
 	if err != nil {
 		return err
 	}
@@ -37,58 +20,61 @@ func (s *userService) ChangePassword(userID string, current string, newPassword 
 		return err
 	}
 
-	if err = user.SetPasswordText(newPassword); err != nil {
+	if err = user.setPasswordText(newPassword); err != nil {
 		return err
 	}
 
-	_, err = s.repository.Update(user)
+	_, err = update(log, user)
 
 	return err
 }
 
-func (s *userService) Disable(userID string) error {
-	usr, err := s.repository.FindByID(userID)
+func Disable(
+	log log.LogRusEntry,
+	userID string,
+) error {
+	usr, err := findByID(log, userID)
 	if err != nil {
 		return err
 	}
 
 	usr.Enabled = false
 
-	_, err = s.repository.Update(usr)
+	_, err = update(log, usr)
 
 	return err
 }
 
-func (s *userService) FindAllUsers() (users []*UserData, err error) {
-	user, err := s.repository.FindAll()
+func FindAllUsers(log log.LogRusEntry) (users []*UserData, err error) {
+	user, err := findAll(log)
 
 	if err != nil {
 		return
 	}
 
 	for i := 0; i < len(user); i = i + 1 {
-		users = append(users, NewUserData(user[i]))
+		users = append(users, newUserData(user[i]))
 	}
 
 	return
 }
 
-func (s *userService) New(login string, name string, password string) (*UserData, error) {
-	newUser := NewUser()
+func New(log log.LogRusEntry, login string, name string, password string) (*UserData, error) {
+	newUser := newUser()
 	newUser.Login = login
 	newUser.Name = name
-	newUser.SetPasswordText(password)
+	newUser.setPasswordText(password)
 
-	result, err := s.repository.Insert(newUser)
+	result, err := insert(log, newUser)
 	if err != nil {
 		return nil, err
 	}
 
-	return NewUserData(result), nil
+	return newUserData(result), nil
 }
 
-func (s *userService) Get(userID string) (*UserData, error) {
-	user, err := s.repository.FindByID(userID)
+func Get(log log.LogRusEntry, userID string) (*UserData, error) {
+	user, err := findByID(log, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -97,11 +83,11 @@ func (s *userService) Get(userID string) (*UserData, error) {
 		return nil, errs.NotFound
 	}
 
-	return NewUserData(user), err
+	return newUserData(user), err
 }
 
-func (s *userService) Grant(userID string, permissions []string) error {
-	user, err := s.repository.FindByID(userID)
+func Grant(log log.LogRusEntry, userID string, permissions []string) error {
+	user, err := findByID(log, userID)
 	if err != nil {
 		return err
 	}
@@ -109,13 +95,13 @@ func (s *userService) Grant(userID string, permissions []string) error {
 	for _, value := range permissions {
 		user.grant(value)
 	}
-	_, err = s.repository.Update(user)
+	_, err = update(log, user)
 
 	return err
 }
 
-func (s *userService) Granted(userID string, permission string) bool {
-	usr, err := s.repository.FindByID(userID)
+func Granted(log log.LogRusEntry, userID string, permission string) bool {
+	usr, err := findByID(log, userID)
 	if err != nil {
 		return false
 	}
@@ -123,8 +109,8 @@ func (s *userService) Granted(userID string, permission string) bool {
 	return usr.granted(permission)
 }
 
-func (s *userService) Revoke(userID string, permissions []string) error {
-	user, err := s.repository.FindByID(userID)
+func Revoke(log log.LogRusEntry, userID string, permissions []string) error {
+	user, err := findByID(log, userID)
 	if err != nil {
 		return err
 	}
@@ -132,13 +118,13 @@ func (s *userService) Revoke(userID string, permissions []string) error {
 	for _, value := range permissions {
 		user.revoke(value)
 	}
-	_, err = s.repository.Update(user)
+	_, err = update(log, user)
 
 	return err
 }
 
-func (s *userService) SignIn(login string, password string) (*UserData, error) {
-	user, err := s.repository.FindByLogin(login)
+func SignIn(log log.LogRusEntry, login string, password string) (*UserData, error) {
+	user, err := findByLogin(log, login)
 	if err != nil {
 		return nil, err
 	}
@@ -151,23 +137,23 @@ func (s *userService) SignIn(login string, password string) (*UserData, error) {
 		return nil, err
 	}
 
-	return NewUserData(user), nil
+	return newUserData(user), nil
 }
 
-func (s *userService) Enable(userID string) error {
-	usr, err := s.repository.FindByID(userID)
+func Enable(log log.LogRusEntry, userID string) error {
+	usr, err := findByID(log, userID)
 	if err != nil {
 		return err
 	}
 
 	usr.Enabled = true
-	_, err = s.repository.Update(usr)
+	_, err = update(log, usr)
 
 	return err
 }
 
-func (s *userService) FindById(userID string) (*UserData, error) {
-	user, err := s.repository.FindByID(userID)
+func FindById(log log.LogRusEntry, userID string) (*UserData, error) {
+	user, err := findByID(log, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -176,5 +162,5 @@ func (s *userService) FindById(userID string) (*UserData, error) {
 		return nil, errs.NotFound
 	}
 
-	return NewUserData(user), err
+	return newUserData(user), err
 }

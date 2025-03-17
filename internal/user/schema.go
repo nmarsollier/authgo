@@ -20,8 +20,8 @@ type User struct {
 	Updated     time.Time          `bson:"updated"`
 }
 
-// NewUser Nueva instancia de usuario
-func NewUser() *User {
+// newUser Nueva instancia de usuario
+func newUser() *User {
 	return &User{
 		ID:          primitive.NewObjectID(),
 		Enabled:     true,
@@ -31,8 +31,8 @@ func NewUser() *User {
 	}
 }
 
-// SetPasswordText Asigna la contraseña en modo texto, la encripta
-func (e *User) SetPasswordText(pwd string) error {
+// setPasswordText Asigna la contraseña en modo texto, la encripta
+func (e *User) setPasswordText(pwd string) error {
 	hash, err := encryptPassword(pwd)
 	if err != nil {
 		return ErrPassword

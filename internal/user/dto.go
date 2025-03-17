@@ -10,7 +10,7 @@ type UserData struct {
 
 func (UserData) IsEntity() {}
 
-func NewUserData(user *User) *UserData {
+func newUserData(user *User) *UserData {
 	return &UserData{
 		Id:          user.ID.Hex(),
 		Name:        user.Name,

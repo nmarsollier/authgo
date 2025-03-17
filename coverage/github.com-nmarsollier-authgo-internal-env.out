@@ -1,4 +1,11 @@
 mode: set
+github.com/nmarsollier/authgo/internal/common/strs/json.go:5.37,8.2 2 0
+github.com/nmarsollier/authgo/internal/common/strs/numbers.go:5.29,7.16 2 1
+github.com/nmarsollier/authgo/internal/common/strs/numbers.go:7.16,9.3 1 1
+github.com/nmarsollier/authgo/internal/common/strs/numbers.go:10.2,10.10 1 1
+github.com/nmarsollier/authgo/internal/common/strs/numbers.go:13.41,15.16 2 0
+github.com/nmarsollier/authgo/internal/common/strs/numbers.go:15.16,17.3 1 0
+github.com/nmarsollier/authgo/internal/common/strs/numbers.go:18.2,18.10 1 0
 github.com/nmarsollier/authgo/internal/env/env.go:24.27,25.19 1 0
 github.com/nmarsollier/authgo/internal/env/env.go:25.19,27.3 1 0
 github.com/nmarsollier/authgo/internal/env/env.go:29.2,29.15 1 0

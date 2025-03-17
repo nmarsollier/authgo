@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	jwt "github.com/dgrijalva/jwt-go/v4"
+	"github.com/nmarsollier/authgo/internal/common/errs"
 	"github.com/nmarsollier/authgo/internal/env"
-	"github.com/nmarsollier/commongo/errs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -38,7 +38,7 @@ func Encode(t *Token) (string, error) {
 	return tokenString, nil
 }
 
-func ExtractPayload(tokenString string) (string, string, error) {
+func extractPayload(tokenString string) (string, string, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])

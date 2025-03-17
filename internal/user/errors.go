@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/nmarsollier/commongo/errs"
+	"github.com/nmarsollier/authgo/internal/common/errs"
 )
 
 // ErrID el id del documento es invalido

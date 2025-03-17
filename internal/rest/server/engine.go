@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
 	"github.com/nmarsollier/authgo/internal/token"
-	"github.com/nmarsollier/commongo/rst"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -31,7 +30,7 @@ func Router() *gin.Engine {
 			ValidateHeaders: false,
 		}))
 
-		engine.Use(rst.ErrorHandler)
+		engine.Use(ErrorHandler)
 
 		engine.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
@@ -45,16 +44,16 @@ func GetCtxToken(c *gin.Context) *token.Token {
 }
 
 func loadTokenFromHeader(c *gin.Context) (*token.Token, error) {
-	di := GinDi(c)
-	tokenString, err := rst.GetHeaderToken(c)
+	log := GinLogger(c)
+	tokenString, err := GetHeaderToken(c)
 	if err != nil {
-		di.Logger().Error(err)
+		log.Error(err)
 		return nil, err
 	}
 
-	payload, err := di.TokenService().Validate(tokenString)
+	payload, err := token.Validate(log, tokenString)
 	if err != nil {
-		di.Logger().Error(err)
+		log.Error(err)
 		return nil, err
 	}
 

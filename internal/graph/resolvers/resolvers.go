@@ -15,8 +15,8 @@ func ChangePassword(ctx context.Context, oldPassword string, newPassword string)
 		return false, err
 	}
 
-	di := tools.GqlDi(ctx)
-	if err := di.UserService().ChangePassword(token.UserID.Hex(), oldPassword, newPassword); err != nil {
+	log := tools.GqlLogger(ctx)
+	if err := user.ChangePassword(log, token.UserID.Hex(), oldPassword, newPassword); err != nil {
 		return false, err
 	}
 
@@ -29,8 +29,8 @@ func CurrentUser(ctx context.Context) (*model.User, error) {
 		return nil, err
 	}
 
-	di := tools.GqlDi(ctx)
-	user, err := di.UserService().FindById(token.UserID.Hex())
+	log := tools.GqlLogger(ctx)
+	user, err := user.FindById(log, token.UserID.Hex())
 	if err != nil {
 		return nil, err
 	}
@@ -43,9 +43,9 @@ func Disable(ctx context.Context, userID string) (bool, error) {
 		return false, err
 	}
 
-	di := tools.GqlDi(ctx)
+	log := tools.GqlLogger(ctx)
 
-	if err := di.UserService().Disable(userID); err != nil {
+	if err := user.Disable(log, userID); err != nil {
 		return false, err
 	}
 
@@ -57,9 +57,9 @@ func Enable(ctx context.Context, userID string) (bool, error) {
 		return false, err
 	}
 
-	di := tools.GqlDi(ctx)
+	log := tools.GqlLogger(ctx)
 
-	if err := di.UserService().Enable(userID); err != nil {
+	if err := user.Enable(log, userID); err != nil {
 		return false, err
 	}
 
@@ -71,8 +71,8 @@ func FindAllUsers(ctx context.Context) ([]*model.User, error) {
 		return nil, err
 	}
 
-	env := tools.GqlDi(ctx)
-	users, err := env.UserService().FindAllUsers()
+	log := tools.GqlLogger(ctx)
+	users, err := user.FindAllUsers(log)
 
 	if err != nil {
 		return nil, err
@@ -87,8 +87,8 @@ func FindAllUsers(ctx context.Context) ([]*model.User, error) {
 }
 
 func FindUserByID(ctx context.Context, id string) (*model.User, error) {
-	di := tools.GqlDi(ctx)
-	user, err := di.UserService().FindById(id)
+	log := tools.GqlLogger(ctx)
+	user, err := user.FindById(log, id)
 	if err != nil {
 		return nil, err
 	}
@@ -101,9 +101,9 @@ func Grant(ctx context.Context, userID string, permissions []string) (bool, erro
 		return false, err
 	}
 
-	di := tools.GqlDi(ctx)
+	log := tools.GqlLogger(ctx)
 
-	if err := di.UserService().Grant(userID, permissions); err != nil {
+	if err := user.Grant(log, userID, permissions); err != nil {
 		return false, err
 	}
 
@@ -114,9 +114,9 @@ func Revoke(ctx context.Context, userID string, permissions []string) (bool, err
 		return false, err
 	}
 
-	di := tools.GqlDi(ctx)
+	log := tools.GqlLogger(ctx)
 
-	if err := di.UserService().Revoke(userID, permissions); err != nil {
+	if err := user.Revoke(log, userID, permissions); err != nil {
 		return false, err
 	}
 
@@ -125,9 +125,9 @@ func Revoke(ctx context.Context, userID string, permissions []string) (bool, err
 
 // SignIn is the resolver for the signIn field.
 func SignIn(ctx context.Context, login string, password string) (*model.Token, error) {
-	env := tools.GqlDi(ctx)
+	log := tools.GqlLogger(ctx)
 
-	tokenString, err := env.SignInUseCase().SignIn(&usecases.SignInRequest{Login: login, Password: password})
+	tokenString, err := usecases.SignIn(log, &usecases.SignInRequest{Login: login, Password: password})
 	if err != nil {
 		return nil, err
 	}
@@ -143,9 +143,9 @@ func SignOut(ctx context.Context) (bool, error) {
 		return false, err
 	}
 
-	env := tools.GqlDi(ctx)
+	log := tools.GqlLogger(ctx)
 
-	if err := env.InvalidateTokenUseCase().InvalidateToken(tokenString); err != nil {
+	if err := usecases.InvalidateToken(log, tokenString); err != nil {
 		return false, err
 	}
 
@@ -153,8 +153,8 @@ func SignOut(ctx context.Context) (bool, error) {
 }
 
 func SignUp(ctx context.Context, name string, login string, password string) (*model.Token, error) {
-	env := tools.GqlDi(ctx)
-	token, err := env.SignUpUseCase().SignUp(&usecases.SignUpRequest{
+	log := tools.GqlLogger(ctx)
+	token, err := usecases.SignUp(log, &usecases.SignUpRequest{
 		Name:     name,
 		Login:    login,
 		Password: password,

@@ -1,0 +1,18 @@
+mode: set
+github.com/nmarsollier/authgo/internal/common/log/factory.go:26.15,36.2 5 0
+github.com/nmarsollier/authgo/internal/common/log/factory.go:38.63,40.16 2 0
+github.com/nmarsollier/authgo/internal/common/log/factory.go:40.16,51.3 3 0
+github.com/nmarsollier/authgo/internal/common/log/factory.go:59.67,61.16 2 0
+github.com/nmarsollier/authgo/internal/common/log/factory.go:61.16,63.3 1 0
+github.com/nmarsollier/authgo/internal/common/log/factory.go:64.2,64.12 1 0
+github.com/nmarsollier/authgo/internal/common/log/factory.go:67.59,69.2 1 0
+github.com/nmarsollier/authgo/internal/common/log/factory.go:71.49,74.2 2 0
+github.com/nmarsollier/authgo/internal/common/log/logger.go:19.50,21.2 1 0
+github.com/nmarsollier/authgo/internal/common/log/logger.go:23.76,26.2 2 1
+github.com/nmarsollier/authgo/internal/common/log/logger.go:28.49,30.2 1 0
+github.com/nmarsollier/authgo/internal/common/log/logger.go:32.49,34.2 1 0
+github.com/nmarsollier/authgo/internal/common/log/logger.go:36.50,38.2 1 0
+github.com/nmarsollier/authgo/internal/common/log/logger.go:40.44,42.2 1 1
+github.com/nmarsollier/authgo/internal/common/log/logger.go:44.46,46.9 2 0
+github.com/nmarsollier/authgo/internal/common/log/logger.go:46.9,48.3 1 0
+github.com/nmarsollier/authgo/internal/common/log/logger.go:49.2,49.15 1 0

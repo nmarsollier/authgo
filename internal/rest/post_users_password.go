@@ -3,7 +3,7 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/nmarsollier/authgo/internal/rest/server"
-	"github.com/nmarsollier/commongo/rst"
+	"github.com/nmarsollier/authgo/internal/user"
 )
 
 //	@Summary		Cambiar Password
@@ -15,9 +15,9 @@ import (
 //	@Param			Authorization	header	string				true	"Bearer {token}"
 //	@Success		200				"No Content"
 //	@Failure		400				{object}	errs.ValidationErr	"Bad Request"
-//	@Failure		401				{object}	rst.ErrorData		"Unauthorized"
-//	@Failure		404				{object}	rst.ErrorData		"Not Found"
-//	@Failure		500				{object}	rst.ErrorData		"Internal Server Error"
+//	@Failure		401				{object}	server.ErrorData	"Unauthorized"
+//	@Failure		404				{object}	server.ErrorData	"Not Found"
+//	@Failure		500				{object}	server.ErrorData	"Internal Server Error"
 //	@Router			/users/password [post]
 //
 // Cambia la contraseña del usuario actual.
@@ -37,14 +37,14 @@ type changePasswordBody struct {
 func changePassword(c *gin.Context) {
 	body := changePasswordBody{}
 	if err := c.ShouldBindJSON(&body); err != nil {
-		rst.AbortWithError(c, err)
+		server.AbortWithError(c, err)
 		return
 	}
 	token := server.GetCtxToken(c)
 
-	di := server.GinDi(c)
-	if err := di.UserService().ChangePassword(token.UserID.Hex(), body.Current, body.New); err != nil {
-		rst.AbortWithError(c, err)
+	log := server.GinLogger(c)
+	if err := user.ChangePassword(log, token.UserID.Hex(), body.Current, body.New); err != nil {
+		server.AbortWithError(c, err)
 		return
 	}
 }

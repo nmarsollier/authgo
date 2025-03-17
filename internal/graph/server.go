@@ -6,10 +6,10 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/nmarsollier/authgo/internal/common/log"
 	"github.com/nmarsollier/authgo/internal/env"
 	"github.com/nmarsollier/authgo/internal/graph/model"
 	"github.com/nmarsollier/authgo/internal/graph/schema"
-	"github.com/nmarsollier/commongo/log"
 )
 
 func Start() {

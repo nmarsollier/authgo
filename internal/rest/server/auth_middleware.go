@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/commongo/errs"
-	"github.com/nmarsollier/commongo/log"
+	"github.com/nmarsollier/authgo/internal/common/errs"
+	"github.com/nmarsollier/authgo/internal/common/log"
 )
 
 // Gin middleware to validate logged in user token
@@ -15,5 +15,5 @@ func IsAuthenticatedMiddleware(c *gin.Context) {
 		return
 	}
 
-	GinDi(c).Logger().WithField(log.LOG_FIELD_USER_ID, token.UserID.Hex())
+	GinLogger(c).WithField(log.LOG_FIELD_USER_ID, token.UserID.Hex())
 }

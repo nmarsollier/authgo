@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/nmarsollier/authgo/internal/common/log"
 	"github.com/nmarsollier/authgo/internal/env"
-	"github.com/nmarsollier/commongo/log"
 	uuid "github.com/satori/go.uuid"
 )
 

@@ -4,7 +4,7 @@ import (
 	"cmp"
 	"os"
 
-	"github.com/nmarsollier/commongo/strs"
+	"github.com/nmarsollier/authgo/internal/common/strs"
 )
 
 // Configuration properties

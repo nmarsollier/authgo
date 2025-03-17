@@ -2,8 +2,9 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nmarsollier/commongo/errs"
-	"github.com/nmarsollier/commongo/log"
+	"github.com/nmarsollier/authgo/internal/common/errs"
+	"github.com/nmarsollier/authgo/internal/common/log"
+	"github.com/nmarsollier/authgo/internal/user"
 )
 
 // Gin middleware to validate user token and Admin Access
@@ -16,11 +17,10 @@ func IsAdminMiddleware(c *gin.Context) {
 		return
 	}
 
-	di := GinDi(c)
-	di.Logger().WithField(log.LOG_FIELD_USER_ID, payload.UserID.Hex())
+	log := GinLogger(c).WithField(log.LOG_FIELD_USER_ID, payload.UserID.Hex())
 
-	if !di.UserService().Granted(payload.UserID.Hex(), "admin") {
-		di.Logger().Warn("Unauthorized")
+	if !user.Granted(log, payload.UserID.Hex(), "admin") {
+		log.Warn("Unauthorized")
 		c.Error(errs.Unauthorized)
 		c.Abort()
 	}

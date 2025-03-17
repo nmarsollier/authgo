@@ -1,45 +1,22 @@
 package token
 
 import (
-	"github.com/nmarsollier/commongo/cache"
-	"github.com/nmarsollier/commongo/errs"
-	"github.com/nmarsollier/commongo/log"
+	"github.com/nmarsollier/authgo/internal/common/cache"
+	"github.com/nmarsollier/authgo/internal/common/errs"
+	"github.com/nmarsollier/authgo/internal/common/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type TokenService interface {
-	Create(userID string) (*Token, error)
-	Validate(tokenString string) (*Token, error)
-	Invalidate(tokenString string) error
-	Find(tokenID string) (*Token, error)
-}
+var tokenCache = cache.NewCache[Token]()
 
-func NewTokenService(
-	log log.LogRusEntry,
-	cache cache.Cache[Token],
-	repository TokenRepository,
-) TokenService {
-	return &tokenService{
-		log:        log,
-		cache:      cache,
-		repository: repository,
-	}
-}
-
-type tokenService struct {
-	log        log.LogRusEntry
-	cache      cache.Cache[Token]
-	repository TokenRepository
-}
-
-func (s *tokenService) Create(userID string) (*Token, error) {
+func Create(log log.LogRusEntry, userID string) (*Token, error) {
 	_id, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
-		s.log.Error(err)
+		log.Error(err)
 		return nil, errs.Unauthorized
 	}
 
-	token, err := s.repository.Insert(_id)
+	token, err := insert(log, _id)
 	if err != nil {
 		return nil, err
 	}
@@ -49,22 +26,22 @@ func (s *tokenService) Create(userID string) (*Token, error) {
 		return nil, err
 	}
 
-	s.cache.Add(tokenString, token)
+	tokenCache.Add(tokenString, token)
 
 	return token, nil
 }
 
-func (s *tokenService) Validate(tokenString string) (*Token, error) {
-	if token, err := s.cache.Get(tokenString); err == nil {
+func Validate(log log.LogRusEntry, tokenString string) (*Token, error) {
+	if token, err := tokenCache.Get(tokenString); err == nil {
 		return token, err
 	}
 
-	tokenID, _, err := ExtractPayload(tokenString)
+	tokenID, _, err := extractPayload(tokenString)
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := s.repository.FindByID(tokenID)
+	token, err := findByID(log, tokenID)
 	if err != nil || !token.Enabled {
 		return nil, errs.Unauthorized
 	}
@@ -72,30 +49,30 @@ func (s *tokenService) Validate(tokenString string) (*Token, error) {
 	return token, nil
 }
 
-func (s *tokenService) Invalidate(tokenString string) error {
-	tokenID, _, err := ExtractPayload(tokenString)
+func Invalidate(log log.LogRusEntry, tokenString string) error {
+	tokenID, _, err := extractPayload(tokenString)
 	if err != nil {
 		return errs.Unauthorized
 	}
 
 	_id, err := primitive.ObjectIDFromHex(tokenID)
 	if err != nil {
-		s.log.Error(err)
+		log.Error(err)
 		return errs.Unauthorized
 	}
 
-	if err = s.repository.Delete(_id); err != nil {
+	if err = delete(_id); err != nil {
 		return err
 	}
 
-	s.cache.Remove(tokenString)
+	tokenCache.Remove(tokenString)
 
 	return nil
 }
 
 // Find busca un token en la db
-func (s *tokenService) Find(tokenID string) (*Token, error) {
-	token, err := s.repository.FindByID(tokenID)
+func Find(log log.LogRusEntry, tokenID string) (*Token, error) {
+	token, err := findByID(log, tokenID)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +82,7 @@ func (s *tokenService) Find(tokenID string) (*Token, error) {
 		return nil, err
 	}
 
-	s.cache.Add(tokenString, token)
+	tokenCache.Add(tokenString, token)
 
 	return token, nil
 }

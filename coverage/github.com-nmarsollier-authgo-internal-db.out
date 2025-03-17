@@ -1,0 +1,18 @@
+mode: set
+github.com/nmarsollier/authgo/internal/db/database.go:13.33,14.25 1 0
+github.com/nmarsollier/authgo/internal/db/database.go:14.25,16.3 1 0
+github.com/nmarsollier/authgo/internal/db/database.go:18.2,19.16 2 0
+github.com/nmarsollier/authgo/internal/db/database.go:19.16,23.3 3 0
+github.com/nmarsollier/authgo/internal/db/database.go:25.2,25.17 1 0
+github.com/nmarsollier/authgo/internal/db/database.go:28.34,29.47 1 0
+github.com/nmarsollier/authgo/internal/db/database.go:29.47,33.3 3 0
+github.com/nmarsollier/authgo/internal/db/tokenCollection.go:11.38,12.28 1 0
+github.com/nmarsollier/authgo/internal/db/tokenCollection.go:12.28,14.3 1 0
+github.com/nmarsollier/authgo/internal/db/tokenCollection.go:16.2,19.16 3 0
+github.com/nmarsollier/authgo/internal/db/tokenCollection.go:19.16,22.3 2 0
+github.com/nmarsollier/authgo/internal/db/tokenCollection.go:24.2,24.24 1 0
+github.com/nmarsollier/authgo/internal/db/userCollection.go:11.37,12.27 1 0
+github.com/nmarsollier/authgo/internal/db/userCollection.go:12.27,14.3 1 0
+github.com/nmarsollier/authgo/internal/db/userCollection.go:16.2,18.16 3 0
+github.com/nmarsollier/authgo/internal/db/userCollection.go:18.16,21.3 2 0
+github.com/nmarsollier/authgo/internal/db/userCollection.go:23.2,23.23 1 0

@@ -1,0 +1,9 @@
+mode: set
+github.com/nmarsollier/authgo/internal/common/errs/rest.go:18.57,23.2 1 0
+github.com/nmarsollier/authgo/internal/common/errs/rest.go:38.36,40.2 1 0
+github.com/nmarsollier/authgo/internal/common/errs/rest.go:43.34,45.2 1 0
+github.com/nmarsollier/authgo/internal/common/errs/validation.go:21.33,25.2 1 0
+github.com/nmarsollier/authgo/internal/common/errs/validation.go:33.40,35.16 2 0
+github.com/nmarsollier/authgo/internal/common/errs/validation.go:35.16,37.3 1 0
+github.com/nmarsollier/authgo/internal/common/errs/validation.go:38.2,38.21 1 0
+github.com/nmarsollier/authgo/internal/common/errs/validation.go:52.69,59.2 3 0

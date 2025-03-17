@@ -33,9 +33,9 @@ Otorga permisos al usuario indicado, el usuario logueado tiene que tener permiso
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [rst.ErrorData](#rsterrordata) |
-| 404 | Not Found | [rst.ErrorData](#rsterrordata) |
-| 500 | Internal Server Error | [rst.ErrorData](#rsterrordata) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
 ### /users/:userID/revoke
 
@@ -62,9 +62,9 @@ Quita permisos al usuario indicado, el usuario logueado tiene que tener permiso 
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [rst.ErrorData](#rsterrordata) |
-| 404 | Not Found | [rst.ErrorData](#rsterrordata) |
-| 500 | Internal Server Error | [rst.ErrorData](#rsterrordata) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
 ### /users/:userId/disable
 
@@ -90,9 +90,9 @@ Deshabilita un usuario en el sistema. El usuario logueado debe tener permisos "a
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [rst.ErrorData](#rsterrordata) |
-| 404 | Not Found | [rst.ErrorData](#rsterrordata) |
-| 500 | Internal Server Error | [rst.ErrorData](#rsterrordata) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
 ### /users/:userId/enable
 
@@ -118,9 +118,9 @@ Habilita un usuario en el sistema. El usuario logueado debe tener permisos "admi
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [rst.ErrorData](#rsterrordata) |
-| 404 | Not Found | [rst.ErrorData](#rsterrordata) |
-| 500 | Internal Server Error | [rst.ErrorData](#rsterrordata) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
 ### /users/all
 
@@ -145,9 +145,9 @@ Obtiene información de todos los usuarios. El usuario logueado debe tener permi
 | ---- | ----------- | ------ |
 | 200 | Users | [ [user.UserData](#useruserdata) ] |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [rst.ErrorData](#rsterrordata) |
-| 404 | Not Found | [rst.ErrorData](#rsterrordata) |
-| 500 | Internal Server Error | [rst.ErrorData](#rsterrordata) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
 ### /users/current
 
@@ -172,9 +172,9 @@ Obtiene información del usuario actual.
 | ---- | ----------- | ------ |
 | 200 | User data | [user.UserData](#useruserdata) |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [rst.ErrorData](#rsterrordata) |
-| 404 | Not Found | [rst.ErrorData](#rsterrordata) |
-| 500 | Internal Server Error | [rst.ErrorData](#rsterrordata) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
 ### /users/password
 
@@ -200,9 +200,9 @@ Cambia la contraseña del usuario actual.
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [rst.ErrorData](#rsterrordata) |
-| 404 | Not Found | [rst.ErrorData](#rsterrordata) |
-| 500 | Internal Server Error | [rst.ErrorData](#rsterrordata) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
 ### /users/signin
 
@@ -227,9 +227,9 @@ Loguea un usuario en el sistema.
 | ---- | ----------- | ------ |
 | 200 | User Token | [usecases.TokenResponse](#usecasestokenresponse) |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [rst.ErrorData](#rsterrordata) |
-| 404 | Not Found | [rst.ErrorData](#rsterrordata) |
-| 500 | Internal Server Error | [rst.ErrorData](#rsterrordata) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
 ### /users/signout
 
@@ -253,7 +253,7 @@ Desloguea un usuario en el sistema, invalida el token.
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | No Content |  |
-| 500 | Error response | [rst.ErrorData](#rsterrordata) |
+| 500 | Error response | [server.ErrorData](#servererrordata) |
 
 ### /users/signup
 
@@ -278,9 +278,9 @@ Registra un nuevo usuario en el sistema.
 | ---- | ----------- | ------ |
 | 200 | User Token | [usecases.TokenResponse](#usecasestokenresponse) |
 | 400 | Bad Request | [errs.ValidationErr](#errsvalidationerr) |
-| 401 | Unauthorized | [rst.ErrorData](#rsterrordata) |
-| 404 | Not Found | [rst.ErrorData](#rsterrordata) |
-| 500 | Internal Server Error | [rst.ErrorData](#rsterrordata) |
+| 401 | Unauthorized | [server.ErrorData](#servererrordata) |
+| 404 | Not Found | [server.ErrorData](#servererrordata) |
+| 500 | Internal Server Error | [server.ErrorData](#servererrordata) |
 
 ---
 ### Models
@@ -311,7 +311,7 @@ Registra un nuevo usuario en el sistema.
 | ---- | ---- | ----------- | -------- |
 | permissions | [ string ] |  | Yes |
 
-#### rst.ErrorData
+#### server.ErrorData
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

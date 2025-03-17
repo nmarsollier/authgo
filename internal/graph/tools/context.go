@@ -4,17 +4,17 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/nmarsollier/authgo/internal/di"
+	"github.com/nmarsollier/authgo/internal/common/log"
 )
 
-func GqlDi(c context.Context) di.Injector {
+func GqlLogger(c context.Context) log.LogRusEntry {
 	operationContext := graphql.GetOperationContext(c)
-	context_deps, exist := operationContext.Variables["di"]
+	context_deps, exist := operationContext.Variables["logger"]
 	if exist {
-		return context_deps.(di.Injector)
+		return context_deps.(log.LogRusEntry)
 	}
 
-	deps := di.NewInjector(newLogger(c))
-	operationContext.Variables["di"] = deps
-	return deps
+	logger := newLogger(c)
+	operationContext.Variables["logger"] = logger
+	return logger
 }
